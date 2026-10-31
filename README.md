@@ -4,6 +4,15 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.2: Projektlisten** – Verbraucherliste mit Kabelauslegung (Rechenweg der Excel-Vorlage
+„Leistungsdaten_Kabelauslegung“) und GA-Datenpunktliste nach VDI 3814, mit Excel-Import/-Export:
+
+![Verbraucherliste](docs/screenshots/verbraucherliste-desktop.png)
+
+| GA-Datenpunktliste | Verbraucher bearbeiten |
+|---|---|
+| ![GA-Datenpunktliste](docs/screenshots/ga-datenpunktliste.png) | ![Zeile](docs/screenshots/verbraucher-zeile.png) |
+
 | Start | Spannungsfall | Dunkles Design | Tabelle |
 |---|---|---|---|
 | ![Start](docs/screenshots/start.png) | ![Spannungsfall](docs/screenshots/spannungsfall.png) | ![Leitungsdimensionierung](docs/screenshots/leitungsdimensionierung-dunkel.png) | ![RJ45](docs/screenshots/tabelle-rj45.png) |
@@ -21,18 +30,19 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.1)
+## Funktionsumfang (Version 1.2)
 
-**63 Rechner und 35 Tabellen** in 11 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
+**2 Projektlisten, 63 Rechner und 39 Tabellen** in 12 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
 [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Kategorie | Inhalt |
 |---|---|
+| **Projektlisten** *(neu)* | **Verbraucherliste & Kabelauslegung**: je Verbraucher S, I_B, Schutzorgan (MSS/SelMod einstellbar, LS B/C, gG mit NH-Größe), F_ges = f1·f2·f3·f4 (f1/f2 manuell oder aus Temperatur/Häufung), Querschnitt nach Belastbarkeit, I_Z, Prüfung I_B ≤ I_N ≤ I_Z (+ I_2 ≤ 1,45·I_Z), Spannungsfall mit R′(70 °C) und X′, optional automatische Querschnittserhöhung; Summen je NN/NEA/USV, ELT/MSR, 400/230/24 V, Vorsicherung. **GA-Datenpunktliste (VDI 3814)**: ~30 Bauteil-Vorlagen → AI/AO/BI/BO/COM, Module mit Reserve, Kostenschätzung, Benutzeradressen (BAS) nach VDI 3814-4.1, Detailliste je Datenpunkt |
 | **Grundlagen** | Ohmsches Gesetz (beliebige 2 von U/I/R/P), Leistung P/Q/S/cos φ, Strom aus Leistung, Leiterwiderstand mit Temperatur, R/L- und C-Reihen-/Parallelschaltung, Energiekosten (€/CHF nach Normprofil) |
 | **Leitungen & Schutz** | Leitungsdimensionierung (Belastbarkeit + Spannungsfall + Schutzorgan in einem Schritt), Spannungsfall mit Grenzwert DE/CH, Strombelastbarkeit I_z (Verlegearten A1–E, PVC/VPE, Temperatur, Häufung), Überlastschutz I_B ≤ I_n ≤ I_z, Abschaltbedingung/L_max (TN), max. Länge für 24-V-Kreise, Kurzschlussfestigkeit I²t, Rohrfüllung |
 | **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung |
 | **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
-| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität, Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **feuchte Luft (Taupunkt, x, h)**, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)** |
+| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität (auch aus Leistung/ΔT wie in der Ventilliste VDI 3814-4.1), Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **feuchte Luft (Taupunkt, x, h)**, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)**; Tabellen VDI 3814-4.1 (Gewerke, Anlagen, Bauteile, Funktionskennungen) |
 | **Reinraum & Pharma** *(neu)* | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
 | **Rechenzentrum** *(neu)* | PUE/DCiE mit EnEfG-Grenzwerten, Rack-Kühlung & Kühlgeräte mit Redundanz (N+1/N+2/2N), USV-Module & Batterie-Autonomie, Verfügbarkeit/Ausfallzeit; Tabellen ASHRAE TC 9.9, EN 50600/Tier |
 | **Photovoltaik & Speicher** *(neu)* | String-Auslegung mit Temperaturkorrektur (U_oc bei Kälte, U_mpp bei Hitze, MPP-Bereich, Strangsicherung), Ertrag & Amortisation (€/CHF), DC-Leitungsverluste, Speichergröße mit Faustformeln |
@@ -42,6 +52,30 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 Weitere Funktionen: Live-Berechnung bei jeder Eingabe, Ergebnisleiste mit Ampelstatus, Suche, Favoriten,
 Ergebnis kopieren (für Berichte/E-Mails), dunkles Design, Dezimalkomma oder -punkt.
+
+### Projektlisten und Excel
+
+- **Aus Excel einfügen:** In Excel den Bereich **mit Kopfzeile** markieren → Strg+C → in der App *Aus Excel einfügen*
+  (Liste ersetzen oder anhängen). Spalten werden über die Überschrift erkannt – auch die Überschriften der Vorlage
+  „Leistungsdaten_Kabelauslegung“ (z. B. „Nennleistung ASV / kW“, „f2 Häufung“, „Länge Leitung / m“).
+  Leere Vorlagenzeilen ohne Namen werden übersprungen; fehlende Spalten erhalten Standardwerte.
+- **Für Excel kopieren:** Tabelle mit allen Eingaben, Ergebnissen und Status in die Zwischenablage → in Excel Strg+V.
+  *Mehr → Als CSV-Datei speichern* legt eine Datei in *Dokumente/ElektroRechner* ab (UTF-8, Semikolon, Dezimalkomma).
+- GA-Datenpunktliste: *Mehr → Datenpunktliste kopieren* gibt **eine Zeile je Datenpunkt** mit BAS, Klartext und Typ aus.
+- Die Listen werden automatisch gespeichert; *Mehr → Beispielprojekt laden / Liste leeren*.
+
+**Unterschiede zur Excel-Vorlage** (bewusst, fachlich begründet):
+
+| Punkt | Excel-Vorlage | App |
+|---|---|---|
+| Wirkwiderstand R′ | Spalte „bei 70 Grad“ enthält ≈ 20-°C-Werte (z. B. 1,5 mm²: 11,79 Ω/km) | R′ = ρ(70 °C)/A (1,5 mm²: 13,75 Ω/km) → ΔU ca. 13–17 % höher, auf der sicheren Seite |
+| Verkettungsfaktor | 1,73 | √3 (I_B um 0,1 % kleiner) |
+| Überlastschutz | nur I_B ≤ I_N ≤ I_Z | zusätzlich I_2 ≤ 1,45 · I_Z für LS und gG |
+| Spannungsfall | nur Anzeige | Grenzwert einstellbar (Standard 2,5 %), Querschnitt wahlweise automatisch erhöhen („nein“ = wie Excel) |
+| f1 / f2 | feste Liste | manuell **oder** aus Umgebungstemperatur, Isolierung, Anordnung und Anzahl Stromkreise |
+
+Gegenprobe: Zeilen 6 und 9 der Vorlage (0,5 kW/230 V → 1,5 mm², I_Z 16,02 A; 15 kW/400 V → 4 mm², I_Z 25,37 A)
+sind als Tests hinterlegt (`tests/test_lists.cpp`).
 
 ---
 
@@ -78,7 +112,7 @@ Ergebnis kopieren (für Berichte/E-Mails), dunkles Design, Dezimalkomma oder -pu
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DELC_BUILD_APP=OFF
 cmake --build build
-ctest --test-dir build --output-on-failure        # 62 Testfälle, > 6000 Prüfungen
+ctest --test-dir build --output-on-failure        # 75 Testfälle, > 7000 Prüfungen
 
 # mit AddressSanitizer + UBSan (Linux/macOS)
 cmake -S . -B build-asan -G Ninja -DCMAKE_BUILD_TYPE=Debug -DELC_SANITIZE=ON -DELC_BUILD_APP=OFF
@@ -93,6 +127,8 @@ elcalc show voltage_drop                      # Eingaben, Ergebnisse, Formeln
 elcalc run cable_sizing IB=32 L=85 method=E   # rechnen (fehlende Werte = Standardwerte)
 elcalc run voltage_drop --norm ch --lang en   # Schweizer Grenzwert, englische Ausgabe
 elcalc table fieldbuses                       # Tabelle ausgeben
+elcalc sheet consumer_list liste.txt          # Verbraucherliste aus Excel-Kopie (Tab/;) rechnen → CSV
+elcalc sheet ga_points - --detail < gaa.txt   # Datenpunktliste je Datenpunkt (stdin)
 elcalc markdown > docs/BERECHNUNGEN.md        # Formel-Doku neu erzeugen
 ```
 
@@ -110,10 +146,12 @@ ElektroRechner/
 │   └── src/
 │       ├── formulas/         reine Formeln (getestet): basics, cables, motors, automation, electronics, units
 │       ├── catalog/          Rechner-Definitionen (Eingaben, Ergebnisse, Texte DE/EN, Prüfungen)
-│       └── tables/           Nachschlagetabellen
+│       ├── lists/            Projektlisten: Verbraucherliste, GA-Datenpunktliste, CSV-Export/Import
+│       └── tables/           Nachschlagetabellen (inkl. VDI 3814-4.1 Codes)
 ├── app/                      Qt-6-Quick-App (Windows/Android)
 │   ├── CalcBridge.*          Brücke C++ ↔ QML (Sprache, Normprofil, Favoriten, Formatierung)
-│   └── qml/                  Main, HomePage, ListPage, CalculatorPage (generisch), TablePage, SettingsPage
+│   └── qml/                  Main, HomePage, ListPage, CalculatorPage (generisch), ProjectListPage,
+│                             RowEditorPage, TablePage, SettingsPage; Bausteine InputForm, ResultView, ResultBar
 ├── cli/                      Kommandozeilen-Tool elcalc
 ├── tests/                    Catch2-Tests (Formeln + Vertragstests für jeden Rechner)
 └── docs/                     BERECHNUNGEN.md, CALCULATIONS.md, ARCHITEKTUR.md, Screenshots
@@ -128,14 +166,15 @@ IEC 60364-5-52 / DIN VDE 0298-4 / NIN 5.2.3 (Strombelastbarkeit), DIN VDE 0100-5
 (Spannungsfall), IEC 60364-4-41/-43 (Schutz), IEC 60898-1, IEC 60269-1, IEC 60909-0, IEC/TR 60890, IEC 60751,
 DIN 43760, IEC 62386 (DALI), IEC 60529, IEC 61140, IEC 60445, IEC 60204-1, IEC 60034-1/-7/-8/-30-1, IEC 60062,
 IEC 60063, TIA-568, Modbus over Serial Line V1.02, NAMUR NE 43, ISO 14644-1/-3, EU-GMP Annex 1 (2022),
-EN 16798-1, ISO/IEC 30134-2, EnEfG, EN 50600, ASHRAE TC 9.9, IEC 62548 / DIN VDE 0100-712.
+EN 16798-1, ISO/IEC 30134-2, EnEfG, EN 50600, ASHRAE TC 9.9, IEC 62548 / DIN VDE 0100-712,
+VDI 3814 Blatt 3.1 (GA-Funktionen) und Blatt 4.1 (Kennzeichnung, Listen) – nur Codelisten/Strukturen, keine Normtexte.
 
 ## Ausbauplan
 
-- **Stufe 2 (mit VDI 3814 / AMEV):** GA-Funktionsliste und Datenpunkt-Rechner mit Anlagenvorlagen (RLT, Heizkreis,
-  Kälte …) → Anzahl der Ein- und Ausgänge, Module, Kostenschätzung; AMEV-Anlagenkennzeichnung; AMEV-BACnet-Profile;
-  GA-Effizienzklassen EN ISO 52120-1.
-- **Stufe 3:** Projekte speichern, PDF-Bericht, Spannungsfall über mehrere Abschnitte, Selektivität, Elektro-Symbole.
+- **Stufe 2 – erledigt (1.2):** Verbraucherliste/Kabelauslegung, GA-Datenpunktliste nach VDI 3814, VDI-Codetabellen,
+  Ventil aus Leistung. **Offen:** AMEV-Anlagenkennzeichnung und AMEV-BACnet-Profile (AMEV-Unterlagen fehlen noch),
+  GA-Effizienzklassen EN ISO 52120-1, Sensor-/Ventil-/BSK-Liste nach VDI 3814-4.1 Tab. 7–9 als weitere Projektlisten.
+- **Stufe 3:** mehrere Projekte je Liste, PDF-Bericht, Spannungsfall über mehrere Abschnitte, Selektivität, Elektro-Symbole.
 
 ## Lizenz
 

@@ -380,31 +380,52 @@ Calculator valveKv() {
     c.id = "valve_kv";
     c.category = "automation";
     c.title = {"Ventil kv/kvs & Ventilautorität", "Valve kv/kvs & authority"};
-    c.summary = {"kv-Wert, kvs-Auswahl, Δp, Autorität", "kv value, kvs selection, Δp, authority"};
+    c.summary = {"kv-Wert, kvs-Auswahl, Δp, Autorität – auch aus Leistung/ΔT", "kv value, kvs selection, Δp, authority – also from power/ΔT"};
     c.description = {
+        "V̇ = P · 3600 / (ρ · c · ΔT)   (Angaben der Ventilliste nach VDI 3814 Blatt 4.1, Tab. 8: Leistung, VL/RL, ΔT)\n"
         "kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 100 kPa\n"
         "Ventilautorität a = Δp_V100 / (Δp_V100 + Δp_MV)\n"
-        "Δp_MV = Druckverlust der mengenvariablen Strecke. Empfehlung a ≥ 0,5 (mind. 0,3).",
+        "Δp_MV = Druckverlust der mengenvariablen Strecke. Empfehlung a ≥ 0,5 (mind. 0,3).\n"
+        "Wasser: ρ = 1000 kg/m³, c = 4,187 kJ/(kg·K). Glykolgemische: ρ und c aus dem Datenblatt des Herstellers.",
+        "V̇ = P · 3600 / (ρ · c · ΔT)   (data of the valve list per VDI 3814 Part 4.1, Tab. 8: power, flow/return, ΔT)\n"
         "kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 100 kPa\n"
         "Valve authority a = Δp_V100 / (Δp_V100 + Δp_MV)\n"
-        "Δp_MV = pressure drop of the variable-flow section. Recommended a ≥ 0.5 (min. 0.3)."};
+        "Δp_MV = pressure drop of the variable-flow section. Recommended a ≥ 0.5 (min. 0.3).\n"
+        "Water: ρ = 1000 kg/m³, c = 4.187 kJ/(kg·K). Glycol mixtures: take ρ and c from the manufacturer's data sheet."};
     c.inputs = {
-        Num::number("Q", {"Volumenstrom V̇", "Flow rate V̇"}, "m³/h", 2.5).positive(),
+        Num::choice("mode", {"Auslegung aus", "Sizing from"},
+                    {{"flow", {"Volumenstrom", "Flow rate"}}, {"power", {"Leistung und ΔT (Ventilliste)", "Power and ΔT (valve list)"}}},
+                    "flow"),
+        Num::number("Q", {"Volumenstrom V̇", "Flow rate V̇"}, "m³/h", 2.5).positive().showIf("mode", {"flow"}),
+        Num::number("P", {"Leistung P", "Power P"}, "kW", 50).positive().showIf("mode", {"power"}),
+        Num::number("dT", {"Temperaturdifferenz ΔT (VL − RL)", "Temperature difference ΔT (flow − return)"}, "K", 20)
+            .positive()
+            .showIf("mode", {"power"}),
+        Num::choice("medium", {"Medium", "Medium"},
+                    {{"water", {"Wasser", "Water"}}, {"custom", {"Eigene Stoffwerte (z. B. Glykol)", "Custom (e.g. glycol)"}}}, "water"),
+        Num::number("rho", {"Dichte ρ", "Density ρ"}, "kg/m³", 1040).positive().showIf("medium", {"custom"}),
+        Num::number("c", {"Spez. Wärmekapazität c", "Specific heat c"}, "kJ/(kg·K)", 3.8).positive().showIf("medium", {"custom"})
+            .withHint({"Nur für Auslegung aus Leistung", "Only for sizing from power"}),
         Num::number("dp", {"Gewünschter Δp am Ventil", "Desired Δp across valve"}, "kPa", 10).positive(),
         Num::number("dpmv", {"Δp mengenvariable Strecke", "Δp variable-flow section"}, "kPa", 10).nonNegative(),
-        Num::number("rho", {"Dichte ρ", "Density ρ"}, "kg/m³", 1000).positive(),
     };
-    c.outputs = {Out::number("kv", {"Berechneter kv-Wert", "Calculated kv"}, "m³/h", 2),
+    c.outputs = {Out::number("Qv", {"Volumenstrom V̇", "Flow rate V̇"}, "m³/h", 3),
+                 Out::number("kv", {"Berechneter kv-Wert", "Calculated kv"}, "m³/h", 2),
                  Out::number("kvs", {"Gewählter kvs-Wert (Normreihe)", "Selected kvs (standard series)"}, "m³/h", 2).primary(),
                  Out::number("dpv", {"Δp bei kvs (voll offen)", "Δp at kvs (fully open)"}, "kPa", 2),
                  Out::number("a", {"Ventilautorität a", "Valve authority a"}, "", 2).primary()};
-    c.keywords = {"ventil", "kvs", "kv", "autorität", "hydraulik", "valve", "authority", "hlk"};
+    c.keywords = {"ventil", "kvs", "kv", "autorität", "hydraulik", "valve", "authority", "hlk", "ventilliste", "vdi 3814", "glykol"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
-        const double kv = kvValue(in.num("Q"), in.num("dp"), in.num("rho"));
+        const bool custom = in.choice("medium") == "custom";
+        const double rho = custom ? in.num("rho") : 1000.0;
+        const double cp = custom ? in.num("c") : 4.187;
+        const double Q = in.choice("mode") == "power" ? volumeFlowFromPower(in.num("P"), in.num("dT"), rho, cp) : in.num("Q");
+        const double kv = kvValue(Q, in.num("dp"), rho);
         const double kvs = nearestLog(kKvsSeries, kv);
-        const double dpv = pressureDrop(in.num("Q"), kvs, in.num("rho"));
+        const double dpv = pressureDrop(Q, kvs, rho);
         const double a = dpv / (dpv + in.num("dpmv"));
+        r.set("Qv", Q);
         r.set("kv", kv);
         r.set("kvs", kvs);
         r.set("dpv", dpv);

@@ -1,8 +1,16 @@
 #include "CalcBridge.h"
 
 #include <QClipboard>
+#include <QDate>
+#include <QDir>
+#include <QFile>
 #include <QGuiApplication>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLocale>
+#include <QStandardPaths>
+#include <algorithm>
 #include <cmath>
 
 #include "UiStrings.h"
@@ -13,6 +21,7 @@ namespace {
 QString q(const std::string& s) { return QString::fromStdString(s); }
 
 QString categoryColor(const std::string& id) {
+    if (id == "projects") return QStringLiteral("#1F6F5C");
     if (id == "basics") return QStringLiteral("#3D7EDB");
     if (id == "cables") return QStringLiteral("#E08A1E");
     if (id == "motors") return QStringLiteral("#2E9E6B");
@@ -42,6 +51,49 @@ QString severityName(elc::Severity s) {
     }
     return QStringLiteral("info");
 }
+
+int severityRank(elc::Severity s) {
+    switch (s) {
+        case elc::Severity::Info: return 0;
+        case elc::Severity::Ok: return 1;
+        case elc::Severity::Warning: return 2;
+        case elc::Severity::Error: return 3;
+    }
+    return 0;
+}
+
+/// Worst message of a result: "none", "info", "ok", "warning" or "error"
+QString statusOf(const elc::Result& r) {
+    int worst = -1;
+    elc::Severity sev = elc::Severity::Info;
+    for (const auto& m : r.messages) {
+        if (severityRank(m.severity) > worst) {
+            worst = severityRank(m.severity);
+            sev = m.severity;
+        }
+    }
+    return worst < 0 ? QStringLiteral("none") : severityName(sev);
+}
+
+bool isTextLike(const elc::InputDef& d) { return d.kind != elc::InputDef::Kind::Number; }
+
+/// UI values (text) → core inputs
+elc::Inputs toInputs(const std::vector<elc::InputDef>& defs, const QVariantMap& values) {
+    elc::Inputs in;
+    for (const auto& def : defs) {
+        const auto key = QString::fromStdString(def.id);
+        if (isTextLike(def)) {
+            in.setChoice(def.id, values.contains(key) ? values.value(key).toString().toStdString() : def.defaultChoice);
+        } else if (values.contains(key)) {
+            in.set(def.id, elc::parseNumber(values.value(key).toString().toStdString()).value_or(elc::kNaN));
+        } else {
+            in.set(def.id, def.defaultValue);
+        }
+    }
+    return in;
+}
+
+QString listKey(const QString& id, const char* what) { return QStringLiteral("lists/%1/%2").arg(id, QString::fromLatin1(what)); }
 
 }  // namespace
 
@@ -95,17 +147,27 @@ QVariantList CalcBridge::categories() const {
         int tables = 0;
         for (const auto& calc : elc::calculators()) calcs += calc.category == c.id ? 1 : 0;
         for (const auto& t : elc::tables()) tables += t.category == c.id ? 1 : 0;
+        const auto lists = std::count_if(elc::lists().begin(), elc::lists().end(),
+                                         [&](const elc::ListDef& l) { return l.category == c.id; });
         list.append(QVariantMap{{"id", q(c.id)},
                                 {"title", txt(c.title)},
                                 {"badge", q(c.badge)},
                                 {"color", categoryColor(c.id)},
-                                {"count", calcs + tables}});
+                                {"count", calcs + tables + static_cast<int>(lists)}});
     }
     return list;
 }
 
 QVariantMap CalcBridge::itemFor(const QString& id) const {
     const auto sid = id.toStdString();
+    if (const auto* l = elc::findList(sid)) {
+        return {{"id", id},
+                {"kind", "list"},
+                {"title", txt(l->title)},
+                {"summary", txt(l->summary)},
+                {"badge", QStringLiteral("Σ")},
+                {"color", categoryColor(l->category)}};
+    }
     if (const auto* c = elc::findCalculator(sid)) {
         const auto* cat = findCategory(c->category);
         return {{"id", id},
@@ -130,12 +192,16 @@ QString CalcBridge::kindOf(const QString& id) const {
     const auto sid = id.toStdString();
     if (elc::findCalculator(sid)) return QStringLiteral("calc");
     if (elc::findTable(sid)) return QStringLiteral("table");
+    if (elc::findList(sid)) return QStringLiteral("list");
     return {};
 }
 
 QVariantList CalcBridge::items(const QString& categoryId) const {
     QVariantList list;
     const auto cid = categoryId.toStdString();
+    for (const auto& l : elc::lists()) {
+        if (l.category == cid) list.append(itemFor(q(l.id)));
+    }
     for (const auto& c : elc::calculators()) {
         if (c.category == cid) list.append(itemFor(q(c.id)));
     }
@@ -155,6 +221,11 @@ QVariantList CalcBridge::search(const QString& text) const {
         }
         return true;
     };
+    for (const auto& l : elc::lists()) {
+        QString hay = q(l.id) + ' ' + q(l.title.de) + ' ' + q(l.title.en) + ' ' + q(l.summary.de) + ' ' + q(l.summary.en);
+        for (const auto& k : l.keywords) hay += ' ' + q(k);
+        if (matches(hay)) list.append(itemFor(q(l.id)));
+    }
     for (const auto& c : elc::calculators()) {
         QString hay = q(c.id) + ' ' + q(c.title.de) + ' ' + q(c.title.en) + ' ' + q(c.summary.de) + ' ' + q(c.summary.en);
         for (const auto& k : c.keywords) hay += ' ' + q(k);
@@ -190,17 +261,17 @@ void CalcBridge::copyToClipboard(const QString& text) const {
     if (auto* cb = QGuiApplication::clipboard()) cb->setText(text);
 }
 
-QVariantMap CalcBridge::calculator(const QString& id) const {
-    const auto* c = elc::findCalculator(id.toStdString());
-    if (!c) return {};
+QVariantList CalcBridge::inputList(const std::vector<elc::InputDef>& defs) const {
     QVariantList inputs;
-    for (const auto& in : c->inputs) {
+    for (const auto& in : defs) {
+        const char* kind = in.kind == elc::InputDef::Kind::Choice ? "choice" : (in.kind == elc::InputDef::Kind::Text ? "text" : "number");
         QVariantMap m{{"id", q(in.id)},
                       {"label", txt(in.label)},
                       {"unit", q(in.unit)},
-                      {"kind", in.kind == elc::InputDef::Kind::Choice ? "choice" : "number"},
-                      {"optional", in.optional},
-                      {"hint", txt(in.hint)}};
+                      {"kind", kind},
+                      {"optional", in.optional && in.kind == elc::InputDef::Kind::Number},
+                      {"hint", txt(in.hint)},
+                      {"section", txt(in.section)}};
         if (in.kind == elc::InputDef::Kind::Choice) {
             QVariantList opts;
             for (const auto& o : in.options) opts.append(QVariantMap{{"value", q(o.value)}, {"label", txt(o.label)}});
@@ -213,6 +284,56 @@ QVariantMap CalcBridge::calculator(const QString& id) const {
         }
         inputs.append(m);
     }
+    return inputs;
+}
+
+QVariantMap CalcBridge::textValues(const std::vector<elc::InputDef>& defs, const elc::Inputs& in) const {
+    QVariantMap m;
+    for (const auto& d : defs) {
+        if (isTextLike(d)) {
+            m.insert(q(d.id), q(in.choice(d.id)));
+        } else {
+            const double v = in.num(d.id);
+            m.insert(q(d.id), std::isfinite(v) ? q(elc::formatNumber(v, 6, lang_)) : QString());
+        }
+    }
+    return m;
+}
+
+QVariantList CalcBridge::outputList(const std::vector<elc::OutputDef>& defs, const elc::Result& r) const {
+    QVariantList outputs;
+    for (const auto& out : defs) {
+        QString value;
+        QString unit = q(out.unit);
+        if (out.isText) {
+            const auto it = r.texts.find(out.id);
+            if (it == r.texts.end()) continue;
+            value = txt(it->second);
+        } else {
+            const auto it = r.values.find(out.id);
+            if (it == r.values.end()) continue;
+            value = q(elc::formatNumber(it->second, out.decimals, lang_));
+            if (const auto u = r.units.find(out.id); u != r.units.end()) unit = q(u->second);
+        }
+        outputs.append(QVariantMap{{"id", q(out.id)},
+                                   {"label", txt(out.label)},
+                                   {"short", txt(out.shortLabel.de.empty() ? out.label : out.shortLabel)},
+                                   {"value", value},
+                                   {"unit", unit},
+                                   {"key", out.key}});
+    }
+    return outputs;
+}
+
+QVariantList CalcBridge::messageList(const elc::Result& r) const {
+    QVariantList messages;
+    for (const auto& m : r.messages) messages.append(QVariantMap{{"severity", severityName(m.severity)}, {"text", txt(m.text)}});
+    return messages;
+}
+
+QVariantMap CalcBridge::calculator(const QString& id) const {
+    const auto* c = elc::findCalculator(id.toStdString());
+    if (!c) return {};
     const auto* cat = findCategory(c->category);
     return {{"id", id},
             {"title", txt(c->title)},
@@ -220,7 +341,7 @@ QVariantMap CalcBridge::calculator(const QString& id) const {
             {"description", txt(c->description)},
             {"color", categoryColor(c->category)},
             {"category", cat ? txt(cat->title) : QString()},
-            {"inputs", inputs}};
+            {"inputs", inputList(c->inputs)}};
 }
 
 QVariantMap CalcBridge::defaults(const QString& id) const {
@@ -228,7 +349,7 @@ QVariantMap CalcBridge::defaults(const QString& id) const {
     if (!c) return {};
     QVariantMap m;
     for (const auto& in : c->inputs) {
-        if (in.kind == elc::InputDef::Kind::Choice) {
+        if (isTextLike(in)) {
             m.insert(q(in.id), q(in.defaultChoice));
         } else {
             m.insert(q(in.id), std::isfinite(in.defaultValue) ? q(elc::formatNumber(in.defaultValue, 6, lang_)) : QString());
@@ -240,15 +361,7 @@ QVariantMap CalcBridge::defaults(const QString& id) const {
 QVariantMap CalcBridge::compute(const QString& id, const QVariantMap& values) const {
     const auto* c = elc::findCalculator(id.toStdString());
     if (!c) return {};
-    elc::Inputs in;
-    for (const auto& def : c->inputs) {
-        const auto text = values.value(q(def.id)).toString().toStdString();
-        if (def.kind == elc::InputDef::Kind::Choice) {
-            in.setChoice(def.id, text);
-        } else {
-            in.set(def.id, elc::parseNumber(text).value_or(elc::kNaN));
-        }
-    }
+    const auto in = toInputs(c->inputs, values);
     const auto r = elc::evaluate(*c, in, elc::Context{norm_});
 
     QVariantList outputs;
@@ -308,4 +421,151 @@ QVariantMap CalcBridge::table(const QString& id) const {
             {"color", categoryColor(t->category)},
             {"columns", columns},
             {"rows", rows}};
+}
+
+// ---------------------------------------------------------------- project lists
+
+std::vector<elc::Inputs> CalcBridge::rowsFrom(const elc::ListDef& def, const QVariantList& rows) const {
+    std::vector<elc::Inputs> out;
+    out.reserve(static_cast<std::size_t>(rows.size()));
+    for (const auto& r : rows) out.push_back(toInputs(def.rowInputs, r.toMap()));
+    return out;
+}
+
+QVariantMap CalcBridge::listDef(const QString& id) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    const auto* cat = findCategory(l->category);
+    QVariantList rowOutputs;
+    for (const auto& o : l->rowOutputs) rowOutputs.append(QVariantMap{{"id", q(o.id)}, {"label", txt(o.label)}, {"key", o.key}});
+    return {{"id", id},
+            {"title", txt(l->title)},
+            {"summary", txt(l->summary)},
+            {"description", txt(l->description)},
+            {"color", categoryColor(l->category)},
+            {"category", cat ? txt(cat->title) : QString()},
+            {"settingsInputs", inputList(l->settingsInputs)},
+            {"rowInputs", inputList(l->rowInputs)},
+            {"rowOutputs", rowOutputs},
+            {"titleInput", q(l->rowInputs.front().id)},
+            {"hasDetail", static_cast<bool>(l->expand)},
+            {"detailTitle", txt(l->expandTitle)}};
+}
+
+QVariantList CalcBridge::exampleRows(const QString& id) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    QVariantList rows;
+    for (const auto& r : elc::exampleRows(*l)) rows.append(textValues(l->rowInputs, r));
+    return rows;
+}
+
+QVariantList CalcBridge::listRows(const QString& id) const {
+    const auto stored = settings_.value(listKey(id, "rows"));
+    if (!stored.isValid()) return exampleRows(id);
+    return QJsonDocument::fromJson(stored.toByteArray()).array().toVariantList();
+}
+
+QVariantMap CalcBridge::listSettings(const QString& id) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    auto values = textValues(l->settingsInputs, elc::defaultSettings(*l));
+    const auto stored = QJsonDocument::fromJson(settings_.value(listKey(id, "settings")).toByteArray()).object().toVariantMap();
+    for (auto it = stored.begin(); it != stored.end(); ++it) {
+        if (values.contains(it.key())) values.insert(it.key(), it.value());
+    }
+    return values;
+}
+
+void CalcBridge::saveList(const QString& id, const QVariantList& rows, const QVariantMap& settings) {
+    if (!elc::findList(id.toStdString())) return;
+    // QSettings stores the rows as compact JSON text – portable between Windows registry and Android ini files
+    settings_.setValue(listKey(id, "rows"), QJsonDocument(QJsonArray::fromVariantList(rows)).toJson(QJsonDocument::Compact));
+    settings_.setValue(listKey(id, "settings"), QJsonDocument(QJsonObject::fromVariantMap(settings)).toJson(QJsonDocument::Compact));
+}
+
+QVariantMap CalcBridge::defaultListRow(const QString& id) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    return textValues(l->rowInputs, elc::defaultRow(*l));
+}
+
+QVariantMap CalcBridge::computeList(const QString& id, const QVariantList& rows, const QVariantMap& settings) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    const auto in = rowsFrom(*l, rows);
+    const auto cfg = toInputs(l->settingsInputs, settings);
+    const auto res = elc::evaluateList(*l, in, cfg, elc::Context{norm_});
+
+    // second line of a row card: the remaining text inputs (e.g. trade · panel · room) or the first key text output
+    QVariantList outRows;
+    int nok = 0;
+    for (std::size_t i = 0; i < in.size(); ++i) {
+        const auto& r = res.rows[i];
+        QStringList sub;
+        for (std::size_t k = 1; k < l->rowInputs.size(); ++k) {
+            const auto& d = l->rowInputs[k];
+            if (d.kind == elc::InputDef::Kind::Text && !in[i].choice(d.id).empty()) sub.append(q(in[i].choice(d.id)));
+            if (sub.size() >= 3) break;
+        }
+        const auto status = statusOf(r);
+        nok += r.hasError() ? 1 : 0;
+        const auto outputs = outputList(l->rowOutputs, r);
+        QVariantList keys;
+        for (const auto& o : outputs) {
+            if (o.toMap().value("key").toBool()) keys.append(o);
+        }
+        outRows.append(QVariantMap{{"title", q(in[i].choice(l->rowInputs.front().id))},
+                                   {"subtitle", sub.join(QStringLiteral(" · "))},
+                                   {"status", status},
+                                   {"hasError", r.hasError()},
+                                   {"outputs", outputs},
+                                   {"keyOutputs", keys},
+                                   {"messages", messageList(r)}});
+    }
+    return {{"rows", outRows},
+            {"totals", outputList(l->totalOutputs, res.totals)},
+            {"totalMessages", messageList(res.totals)},
+            {"nok", nok}};
+}
+
+QVariantMap CalcBridge::computeRow(const QString& id, const QVariantMap& row, const QVariantMap& settings) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    const auto r = elc::evaluateRow(*l, toInputs(l->rowInputs, row), toInputs(l->settingsInputs, settings), elc::Context{norm_});
+    return {{"outputs", outputList(l->rowOutputs, r)}, {"messages", messageList(r)}, {"hasError", r.hasError()}, {"status", statusOf(r)}};
+}
+
+QString CalcBridge::exportList(const QString& id, const QVariantList& rows, const QVariantMap& settings, bool detail,
+                               bool tabs) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    return q(elc::exportCsv(*l, rowsFrom(*l, rows), toInputs(l->settingsInputs, settings), elc::Context{norm_}, lang_, detail,
+                            tabs ? '\t' : ';'));
+}
+
+QString CalcBridge::saveCsv(const QString& baseName, const QString& content) const {
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    if (dir.isEmpty()) dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    dir += QStringLiteral("/ElektroRechner");
+    if (!QDir().mkpath(dir)) return {};
+    const QString path = QStringLiteral("%1/%2_%3.csv").arg(dir, baseName, QDate::currentDate().toString(Qt::ISODate));
+    QFile f(path);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate)) return {};
+    f.write("\xEF\xBB\xBF");  // BOM: Excel then reads UTF-8 (umlauts, ², Δ) correctly
+    f.write(content.toUtf8());
+    return f.error() == QFile::NoError ? QDir::toNativeSeparators(path) : QString();
+}
+
+QVariantList CalcBridge::importList(const QString& id, const QString& text) const {
+    const auto* l = elc::findList(id.toStdString());
+    if (!l) return {};
+    QVariantList rows;
+    for (const auto& r : elc::importTable(*l, text.toStdString())) rows.append(textValues(l->rowInputs, r));
+    return rows;
+}
+
+QString CalcBridge::clipboardText() const {
+    if (const auto* cb = QGuiApplication::clipboard()) return cb->text();
+    return {};
 }

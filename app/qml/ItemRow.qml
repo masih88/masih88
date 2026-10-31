@@ -52,8 +52,9 @@ ItemDelegate {
             font.pixelSize: 16
         }
         Label {
-            text: row.item.kind === "table" ? Calc.ui.table : "›"
-            font.pixelSize: row.item.kind === "table" ? 11 : 22
+            readonly property bool tag: row.item.kind === "table" || row.item.kind === "list"
+            text: row.item.kind === "table" ? Calc.ui.table : (row.item.kind === "list" ? Calc.ui.list : "›")
+            font.pixelSize: tag ? 11 : 22
             opacity: 0.45
         }
     }

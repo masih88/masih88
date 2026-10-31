@@ -3,17 +3,22 @@
 //   elcalc show <id>                    inputs, outputs and formulas
 //   elcalc run <id> [key=value ...]     calculate (missing inputs use defaults)
 //   elcalc table <id>                   print a reference table
+//   elcalc sheet <list> [file] [--detail]  compute a project list from a CSV/TSV file (or stdin, "-")
+//                                       and print it as CSV; without file a one-row demo
 //   elcalc markdown                     Markdown reference of everything (docs/BERECHNUNGEN.md)
 // Options: --lang de|en  --norm de|ch
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <span>
 #include <string>
 #include <string_view>
 #include <vector>
 
+#include "elc/lists.hpp"
 #include "elc/registry.hpp"
 
 namespace {
@@ -23,6 +28,7 @@ using namespace elc;
 struct Options {
     Lang lang = Lang::De;
     NormProfile norm = NormProfile::DE;
+    bool detail = false;
     std::vector<std::string> args;
 };
 
@@ -34,6 +40,8 @@ Options parse(std::span<char*> argv) {
             o.lang = std::string_view(argv[++i]) == "en" ? Lang::En : Lang::De;
         } else if (a == "--norm" && i + 1 < argv.size()) {
             o.norm = std::string_view(argv[++i]) == "ch" ? NormProfile::CH : NormProfile::DE;
+        } else if (a == "--detail") {
+            o.detail = true;
         } else {
             o.args.emplace_back(a);
         }
@@ -54,6 +62,9 @@ const char* severityTag(Severity s) {
 int list(const Options& o) {
     for (const auto& cat : categories()) {
         std::cout << "\n== " << cat.title.in(o.lang) << " ==\n";
+        for (const auto& l : lists()) {
+            if (l.category == cat.id) std::cout << "  " << std::left << std::setw(28) << l.id << l.title.in(o.lang) << '\n';
+        }
         for (const auto& c : calculators()) {
             if (c.category == cat.id) std::cout << "  " << std::left << std::setw(28) << c.id << c.title.in(o.lang) << '\n';
         }
@@ -149,6 +160,37 @@ int table(const Options& o, const std::string& id) {
     return 0;
 }
 
+int sheet(const Options& o, const std::string& id) {
+    const auto* l = findList(id);
+    if (!l) {
+        std::cerr << "Unbekannt / unknown: " << id << '\n';
+        return 2;
+    }
+    std::vector<Inputs> rows;
+    if (o.args.size() >= 3) {
+        std::string text;
+        if (o.args[2] == "-") {
+            text.assign(std::istreambuf_iterator<char>(std::cin), {});
+        } else {
+            std::ifstream f(o.args[2], std::ios::binary);
+            if (!f) {
+                std::cerr << "Datei nicht lesbar / cannot read: " << o.args[2] << '\n';
+                return 2;
+            }
+            text.assign(std::istreambuf_iterator<char>(f), {});
+        }
+        rows = importTable(*l, text);
+        if (rows.empty()) {
+            std::cerr << "Keine passenden Spalten gefunden / no matching columns\n";
+            return 1;
+        }
+    } else {
+        rows.push_back(defaultRow(*l));
+    }
+    std::cout << exportCsv(*l, rows, defaultSettings(*l), Context{o.norm}, o.lang, o.detail);
+    return 0;
+}
+
 std::string mdEscape(std::string s) {
     for (std::size_t p = s.find('|'); p != std::string::npos; p = s.find('|', p + 2)) s.replace(p, 1, "\\|");
     return s;
@@ -163,8 +205,28 @@ int markdown(const Options& o) {
               << version() << ").\n"
               << (de ? "> Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.\n\n"
                      : "> No warranty – check standard values against the edition in force before use.\n\n");
+    const auto labels = [&](const auto& defs) {
+        for (std::size_t i = 0; i < defs.size(); ++i) {
+            const auto& d = defs[i];
+            std::cout << (i ? ", " : "") << d.label.in(o.lang) << (d.unit.empty() ? "" : " [" + d.unit + "]");
+        }
+        std::cout << "\n\n";
+    };
     for (const auto& cat : categories()) {
         std::cout << "## " << cat.title.in(o.lang) << "\n\n";
+        for (const auto& l : lists()) {
+            if (l.category != cat.id) continue;
+            std::cout << "### " << l.title.in(o.lang) << "\n\n*" << l.summary.in(o.lang) << "* — `" << l.id << "`\n\n```text\n"
+                      << l.description.in(o.lang) << "\n```\n\n";
+            std::cout << (de ? "**Projekteinstellungen:** " : "**Project settings:** ");
+            labels(l.settingsInputs);
+            std::cout << (de ? "**Spalten je Zeile:** " : "**Columns per row:** ");
+            labels(l.rowInputs);
+            std::cout << (de ? "**Ergebnisse je Zeile:** " : "**Results per row:** ");
+            labels(l.rowOutputs);
+            std::cout << (de ? "**Summen:** " : "**Totals:** ");
+            labels(l.totalOutputs);
+        }
         for (const auto& c : calculators()) {
             if (c.category != cat.id) continue;
             std::cout << "### " << c.title.in(o.lang) << "\n\n*" << c.summary.in(o.lang) << "* — `" << c.id << "`\n\n```text\n"
@@ -208,9 +270,10 @@ int main(int argc, char** argv) {
     if (o.args.size() >= 2 && o.args[0] == "show") return show(o, o.args[1]);
     if (o.args.size() >= 2 && o.args[0] == "run") return run(o, o.args[1]);
     if (o.args.size() >= 2 && o.args[0] == "table") return table(o, o.args[1]);
+    if (o.args.size() >= 2 && o.args[0] == "sheet") return sheet(o, o.args[1]);
     if (o.args[0] == "markdown") return markdown(o);
     std::cout << "ElektroRechner " << version()
-              << "\nUsage: elcalc list | show <id> | run <id> [key=value ...] | table <id> | markdown"
-                 " [--lang de|en] [--norm de|ch]\n";
+              << "\nUsage: elcalc list | show <id> | run <id> [key=value ...] | table <id> | sheet <list> [file|-] [--detail]"
+                 " | markdown [--lang de|en] [--norm de|ch]\n";
     return 0;
 }

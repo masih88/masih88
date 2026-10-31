@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(ElektroRechner
-    VERSION 1.1.0
+    VERSION 1.2.0
     DESCRIPTION "Elektro- und GA-Rechner fuer Gebaeudeautomation und Industrie"
     LANGUAGES CXX)
 

@@ -38,7 +38,8 @@ int main(int argc, char* argv[]) {
     const QString shot = qEnvironmentVariable("ELC_SCREENSHOT");
     if (!shot.isEmpty()) {
         auto* window = qobject_cast<QQuickWindow*>(engine.rootObjects().constFirst());
-        QTimer::singleShot(1500, &app, [window, shot] {
+        const int delay = qEnvironmentVariableIsSet("ELC_SCREENSHOT_DELAY") ? qEnvironmentVariableIntValue("ELC_SCREENSHOT_DELAY") : 1500;
+        QTimer::singleShot(delay, &app, [window, shot] {
             if (window) window->grabWindow().save(shot);
             QCoreApplication::exit(0);
         });

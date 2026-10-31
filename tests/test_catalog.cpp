@@ -8,6 +8,7 @@
 #include <catch2/catch_approx.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include "elc/lists.hpp"
 #include "elc/registry.hpp"
 
 using Catch::Approx;
@@ -39,7 +40,8 @@ TEST_CASE("Registry is populated") {
     CHECK(tables().size() >= 25);
     for (const auto& cat : categories()) {
         const bool any = std::any_of(calculators().begin(), calculators().end(), [&](const Calculator& c) { return c.category == cat.id; }) ||
-                         std::any_of(tables().begin(), tables().end(), [&](const Table& t) { return t.category == cat.id; });
+                         std::any_of(tables().begin(), tables().end(), [&](const Table& t) { return t.category == cat.id; }) ||
+                         std::any_of(lists().begin(), lists().end(), [&](const ListDef& l) { return l.category == cat.id; });
         INFO(cat.id);
         CHECK(any);
     }

@@ -26,6 +26,8 @@ ApplicationWindow {
             stack.push(Qt.resolvedUrl("CalculatorPage.qml"), { calcId: id })
         else if (kind === "table")
             stack.push(Qt.resolvedUrl("TablePage.qml"), { tableId: id })
+        else if (kind === "list")
+            stack.push(Qt.resolvedUrl("ProjectListPage.qml"), { listId: id })
     }
 
     function openCategory(categoryId) {
@@ -106,7 +108,13 @@ ApplicationWindow {
             openSettings()
         else if (start.indexOf("cat:") === 0)
             openCategory(start.substring(4))
-        else if (start !== "")
+        else if (start.indexOf("#") > 0) {
+            // "consumer_list#3": list with row editor (automated screenshots)
+            openItem(start.substring(0, start.indexOf("#")))
+            stack.currentItem.openRow(parseInt(start.substring(start.indexOf("#") + 1)))
+        } else if (start.indexOf("!") > 0) {
+            openItem(start.substring(0, start.indexOf("!")))  // "ga_points!settings": settings expanded
+        } else if (start !== "")
             openItem(start)
     }
 }

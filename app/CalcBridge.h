@@ -10,6 +10,7 @@
 #include <QVariantList>
 #include <QVariantMap>
 
+#include "elc/lists.hpp"
 #include "elc/types.hpp"
 
 class CalcBridge : public QObject {
@@ -42,7 +43,7 @@ public:
     Q_INVOKABLE QVariantList items(const QString& categoryId) const;
     Q_INVOKABLE QVariantList search(const QString& text) const;
     Q_INVOKABLE QVariantList favoriteItems() const;
-    Q_INVOKABLE QString kindOf(const QString& id) const;  // "calc", "table" or ""
+    Q_INVOKABLE QString kindOf(const QString& id) const;  // "calc", "table", "list" or ""
 
     /// Definition for the generic calculator page
     Q_INVOKABLE QVariantMap calculator(const QString& id) const;
@@ -51,6 +52,28 @@ public:
     /// Default input values as text
     Q_INVOKABLE QVariantMap defaults(const QString& id) const;
     Q_INVOKABLE QVariantMap table(const QString& id) const;
+
+    // ---- Project lists (consumer list, data point list) ----
+    /// {id, title, summary, description, color, category, settingsInputs, rowInputs, hasDetail, detailTitle}
+    Q_INVOKABLE QVariantMap listDef(const QString& id) const;
+    /// Saved rows (values as text) – the example project if nothing has been saved yet
+    Q_INVOKABLE QVariantList listRows(const QString& id) const;
+    Q_INVOKABLE QVariantMap listSettings(const QString& id) const;
+    Q_INVOKABLE void saveList(const QString& id, const QVariantList& rows, const QVariantMap& settings);
+    Q_INVOKABLE QVariantMap defaultListRow(const QString& id) const;
+    Q_INVOKABLE QVariantList exampleRows(const QString& id) const;
+    /// {rows: [{title, subtitle, status, outputs, keyOutputs}], totals: [...], status, nok}
+    Q_INVOKABLE QVariantMap computeList(const QString& id, const QVariantList& rows, const QVariantMap& settings) const;
+    /// One row like compute(): {outputs, messages, hasError}
+    Q_INVOKABLE QVariantMap computeRow(const QString& id, const QVariantMap& row, const QVariantMap& settings) const;
+    /// CSV (';', for files) or tab separated (for pasting into Excel); detail = expanded data point list
+    Q_INVOKABLE QString exportList(const QString& id, const QVariantList& rows, const QVariantMap& settings, bool detail,
+                                   bool tabs) const;
+    /// Writes a UTF-8 CSV (with BOM for Excel) to Documents/ElektroRechner, returns the path or "" on failure
+    Q_INVOKABLE QString saveCsv(const QString& baseName, const QString& content) const;
+    /// Rows from a pasted table (Excel copy, CSV); empty if no column matched
+    Q_INVOKABLE QVariantList importList(const QString& id, const QString& text) const;
+    Q_INVOKABLE QString clipboardText() const;
 
     Q_INVOKABLE bool isFavorite(const QString& id) const { return favorites_.contains(id); }
     Q_INVOKABLE void toggleFavorite(const QString& id);
@@ -65,6 +88,11 @@ signals:
 private:
     [[nodiscard]] QString txt(const elc::Text& t) const;
     [[nodiscard]] QVariantMap itemFor(const QString& id) const;
+    [[nodiscard]] QVariantList inputList(const std::vector<elc::InputDef>& defs) const;
+    [[nodiscard]] QVariantMap textValues(const std::vector<elc::InputDef>& defs, const elc::Inputs& in) const;
+    [[nodiscard]] QVariantList outputList(const std::vector<elc::OutputDef>& defs, const elc::Result& r) const;
+    [[nodiscard]] QVariantList messageList(const elc::Result& r) const;
+    [[nodiscard]] std::vector<elc::Inputs> rowsFrom(const elc::ListDef& def, const QVariantList& rows) const;
 
     QSettings settings_;
     elc::Lang lang_ = elc::Lang::De;

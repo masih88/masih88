@@ -22,6 +22,10 @@ add_library(elc_core STATIC
     src/catalog/electronics.cpp
     src/catalog/converters.cpp
     src/tables/tables.cpp
+    src/tables/vdi_tables.cpp
+    src/lists/lists.cpp
+    src/lists/loadlist.cpp
+    src/lists/gapoints.cpp
 )
 add_library(elc::core ALIAS elc_core)
 

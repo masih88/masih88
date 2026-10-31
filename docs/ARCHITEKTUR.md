@@ -1,6 +1,6 @@
 # Architektur & Entwurfsentscheidungen
 
-Stand: 31.10.2026 · Version 1.1.0
+Stand: 31.10.2026 · Version 1.2.0
 
 ## Ziel
 
@@ -14,12 +14,16 @@ erweiterbar sein.
 ```text
 ┌──────────────────────── app/ (Qt 6 Quick, QML) ───────────────────────┐
 │ Main.qml ─ HomePage ─ ListPage ─ CalculatorPage* ─ TablePage ─ Settings │
-│             (* generisch: rendert jeden Rechner aus seiner Definition)  │
+│                                 └ ProjectListPage* ─ RowEditorPage*      │
+│   (* generisch: rendern jeden Rechner / jede Projektliste aus der Definition;│
+│      Bausteine InputForm, ResultView, ResultBar, Status.js)             │
 │                         CalcBridge (Kontext-Property „Calc“)            │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │ QVariantMap / Strings
 ┌──────────────────────── core/ (C++20, ohne Qt) ────────────────────────┐
-│ registry   → categories(), calculators(), tables(), findCalculator()   │
+│ registry   → categories(), calculators(), tables(), lists(), find…()   │
+│ lists/*    → ListDef{ Spalten, Zeilen-/Summenergebnisse, computeRow,    │
+│              summarize, expand } + exportCsv()/importTable()           │
 │ catalog/*  → Calculator{ id, Texte DE/EN, InputDef[], OutputDef[], compute }│
 │ formulas/* → reine Funktionen (voltageDrop, baseAmpacity, rtdResistance …)│
 │ types      → Text, Inputs, Result, evaluate() (Validierung + Ausnahmen)  │
@@ -40,14 +44,18 @@ erweiterbar sein.
 | Normprofil | `Context{NormProfile}` wird jedem `compute` übergeben | Grenzwerte (3 %/4 %), Währung; weitere länderabhängige Werte leicht ergänzbar |
 | Fehler | `evaluate()` validiert Pflichtfelder/Bereiche; `CalcError` für physikalisch Unmögliches | Die UI zeigt verständliche Meldungen statt Abstürzen |
 | Sichtbarkeit | `InputDef::showIf(choiceId, {werte})` | Felder erscheinen nur, wenn relevant (z. B. cos φ nicht bei DC) |
-| Hervorhebung | `OutputDef::primary()` | Schlüsselergebnisse in der Ergebnisleiste (Handy) |
+| Hervorhebung | `OutputDef::primary()`, `abbrev()` | Schlüsselergebnisse in der Ergebnisleiste (Handy) und auf den Zeilenkarten |
+| Projektlisten | `ListDef`: viele Zeilen gleicher Art + Projekteinstellungen + Summen | Verbraucherliste und Datenpunktliste nutzen dieselbe Seite, denselben Export/Import |
+| Excel | Import über Spaltenüberschrift (ID, Bezeichnung DE/EN, `alias()`), Export Tab (Zwischenablage) bzw. `;` + BOM (Datei) | Kopieren/Einfügen funktioniert direkt mit Excel, auch mit der bestehenden Vorlage |
+| Speicherung | Zeilen als JSON-Text in `QSettings` (`lists/<id>/rows`) | Kein Datenbank-Code; läuft gleich auf Windows (Registry) und Android (ini) |
 | Tests | Formeltests mit Normwerten + **Vertragstests** für jeden Rechner/jede Tabelle | Jeder neue Rechner wird automatisch auf Vollständigkeit (DE/EN), Standardwerte und endliche Ergebnisse geprüft |
 | Qualität | `-Wall -Wextra -Wpedantic -Wshadow`, ASan/UBSan-Option, MSVC `/W4 /utf-8` | Vorgaben C++ Core Guidelines; `/utf-8` nötig wegen Ω, φ, ² in Strings |
 
 ## Datenmodell (core/include/elc/types.hpp)
 
 - `Text` – Deutsch + Englisch (ein String = beide Sprachen).
-- `InputDef` – Zahl oder Auswahl; Einheit, Standardwert, optional, Bereich (`positive()`, `range()`), `showIf()`, Hinweis.
+- `InputDef` – Zahl, Auswahl oder Text; Einheit, Standardwert, optional, Bereich (`positive()`, `range()`), `showIf()`,
+  Hinweis, `alias()` (zusätzliche Spaltennamen für den Import), `startsSection()` (Gruppenüberschrift im Formular).
 - `OutputDef` – Zahl (Einheit, Nachkommastellen) oder Text; `primary()` für Schlüsselergebnis.
 - `Inputs` – Werte nach ID; fehlende Zahlen sind `NaN`.
 - `Result` – Zahlenwerte, Texte, Einheiten-Overrides (z. B. kΩ/MΩ), Meldungen (`ok`, `warn`, `error`, `info`).
@@ -87,19 +95,38 @@ Calculator myCalculator() {
 
 Tabellen: `make(...)` in `core/src/tables/tables.cpp`, in `addTables()` registrieren.
 
+## Neue Projektliste hinzufügen
+
+`ListDef` in `core/src/lists/<name>.cpp` (Vorbild `loadlist.cpp`), in `registry.cpp` → `lists()` eintragen:
+
+- `settingsInputs` (Projektparameter), `rowInputs` (erste Eingabe = Text = Zeilenname), `rowOutputs`, `totalOutputs`.
+- `computeRow(row, settings, ctx)` → `Result` je Zeile; `summarize(rows, results, settings, ctx)` → Summen.
+- optional `expand` + `expandColumns` (Detailexport, z. B. ein Datenpunkt je Zeile) und `example` (Beispielprojekt als
+  Tab-getrennte Tabelle mit Eingabe-IDs als Kopf – wird über `importTable` geladen und so gleich mitgetestet).
+- Die Vertragstests in `tests/test_lists.cpp` prüfen Texte, Standardzeile und Beispielprojekt automatisch.
+
+## Qt-6.4-Hinweis (Layouts und Repeater)
+
+In Qt 6.4 positioniert ein `ColumnLayout` Kinder eines `Repeater`, die erst *nach* dem Erzeugen der Seite entstehen,
+neben einem Geschwister mit wechselnder Sichtbarkeit nicht mehr (Breite 0, alle bei y = 0) – und bringt dabei das
+ganze Seitenlayout durcheinander. Die Zeilenkarten stehen deshalb in einem `Column`-Positionierer mit
+`width: parent.width` (siehe `ProjectListPage.qml`). Für wechselnde Listen im Zweifel `Column` statt `ColumnLayout`.
+
 ## Bekannte Grenzen / Ideen für Version 2
 
 - Strombelastbarkeit nur Kupfer, 1,5–300 mm², Verlegearten A1–E (keine Einleiter F/G, kein Aluminium).
 - Kurzschlussberechnung vereinfacht (ohne K_T, ohne Motorbeiträge) – für Planung Netzberechnungsprogramm nutzen.
 - Abschaltbedingung mit konventioneller Methode; Sicherungen über manuell eingegebenes I_a.
+- Projektlisten: eine Liste je Typ (noch keine Projektverwaltung); Spannungsfall je Abgang, nicht über mehrere Abschnitte.
 - Ideen: Elektrische Symbole, Selektivität, RCD-Typen, Spannungsfall mehrerer Abschnitte, PDF-Export,
-  Projekte/Speichern von Eingaben, NIN-spezifische Tabellen, Aluminium-Belastbarkeit, Kabelrinnen-Füllung.
+  mehrere Projekte, NIN-spezifische Tabellen, Aluminium-Belastbarkeit, Kabelrinnen-Füllung.
 
 ## Testen der Oberfläche ohne Bildschirm
 
 Für automatische Screenshots (z. B. CI) liest die App Umgebungsvariablen:
-`ELC_OPEN=<rechner-id|table-id|cat:<kategorie>|settings>`, `ELC_LANG=de|en`, `ELC_THEME=dark|light`,
-`ELC_WINDOW_SIZE=1100x760`, `ELC_SCREENSHOT=datei.png` (speichert nach 1,5 s und beendet).
+`ELC_OPEN=<rechner-id|table-id|list-id|list-id#zeile|list-id!settings|cat:<kategorie>|settings>`, `ELC_LANG=de|en`,
+`ELC_THEME=dark|light`, `ELC_WINDOW_SIZE=1100x760`, `ELC_SCREENSHOT=datei.png` (speichert nach 1,5 s bzw.
+`ELC_SCREENSHOT_DELAY` ms und beendet). QML-Warnungen erscheinen mit `QT_FORCE_STDERR_LOGGING=1`.
 
 ```bash
 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ELC_OPEN=voltage_drop ELC_SCREENSHOT=vd.png ./ElektroRechner

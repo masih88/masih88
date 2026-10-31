@@ -1,7 +1,50 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.1.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.2.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
+
+## Projektlisten
+
+### Verbraucherliste & Kabelauslegung
+
+*Leistungsbilanz NN/NEA/USV, Schutzorgan, Querschnitt, ΔU je Verbraucher* — `consumer_list`
+
+```text
+Rechenkette je Verbraucher (wie Excel „Leistungsdaten_Kabelauslegung“):
+S = P / cos φ   I_B = S / (k · U), k = √3 (400 V) bzw. 1
+Schutzorgan: MSS/SelMod einstellbar (I_N = I_B, Auslegung auf I_B), LS/gG nächste Normstufe (Auslegung auf I_N)
+F_ges = f1 · f2 · f3 · f4   I_r,min = I_B bzw. I_N / F_ges → Querschnitt nach DIN VDE 0298-4 / IEC 60364-5-52
+I_Z = I_r · F_ges   Prüfung I_B ≤ I_N ≤ I_Z (LS/gG zusätzlich I_2 ≤ 1,45 · I_Z)
+ΔU = k · I_B · L · (R' cos φ + X' sin φ), k = √3 bzw. 2, R' = ρ(θ)/A, X' nach Querschnitt
+Spalten nach VDI 3814 Blatt 4.1 Tab. 6 (ELT-Verbraucherliste). f1/f2 leer = aus θ_a und Häufung berechnet.
+```
+
+**Projekteinstellungen:** Zul. Spannungsfall [%], Leitertemperatur für ΔU [°C], Querschnitt für ΔU automatisch erhöhen
+
+**Spalten je Zeile:** Anlage/Gerät, BAS / Kennzeichnung, Gewerk, System/Schaltschrank, Aufstellort/Raum, Anzahl, Anschluss ELT/MSR, Versorgung, Nennspannung, Nennleistung [kW], cos φ, Gleichzeitigkeitsfaktor, Redundant (Standby), Schutzeinrichtung, Verlegeart, Isolierung, Umgebungstemperatur [°C], f1 Temperatur (manuell), Häufung – Anordnung, Anzahl Stromkreise in Häufung, f2 Häufung (manuell), f3 Oberschwingungen, f4 weiterer Faktor, Leitungslänge [m], Querschnitt vorgeben
+
+**Ergebnisse je Zeile:** Anschlussleistung S [kVA], S mit Gzf, Anzahl [kVA], Betriebsstrom I_B [A], Schutzeinrichtung I_N [A], Schutzorgan, Auslegung auf, Gesamtfaktor F_ges, Mindest-Belastbarkeit I_r,min [A], Querschnitt nach Belastbarkeit [mm²], Gewählter Querschnitt [mm²], Tabellenwert I_r [A], Strombelastbarkeit I_Z [A], I_B ≤ I_N ≤ I_Z, Spannungsfall ΔU [V], Spannungsfall ΔU [%]
+
+**Summen:** Wirkleistung gesamt [kW], Scheinleistung gesamt [kVA], Gesamtstrom (400 V) [A], Vorsicherung gG (Vorschlag) [A], S Netz (NN/AV) [kVA], S Ersatzstrom (NEA/SV) [kVA], S USV [kVA], S Anschluss ELT [kVA], S Anschluss MSR [kVA], S 400 V [kVA], S 230 V [kVA], S 24 V [kVA], Anzahl Verbraucherzeilen, Davon nicht i. O., Größter Spannungsfall [%]
+
+### GA-Datenpunktliste (VDI 3814)
+
+*AI/AO/BI/BO/COM zählen, Module, BAS-Adressen nach VDI 3814-4.1* — `ga_points`
+
+```text
+GA-Funktionsliste – Ein-/Ausgabefunktionen (VDI 3814 Blatt 3.1: Analoge/Binäre Eingabe AI/BI, Analoge/Binäre Ausgabe AO/BO, kommunikative Datenpunkte COM) aus Bauteil-Vorlagen.
+Benutzeradresse (BAS) nach VDI 3814 Blatt 4.1: Liegenschaft_Gebäude_ISP_Gewerk_Anlage+Nr_Bauteil+Nr_Funktion+Nr, z. B. K_HG_01_L_VKA01_ZUV01_SB_01. Gewerk (Tab. 1), Anlage (Tab. 2), Bauteil (Tab. 3), Funktionskennung (Tab. 4).
+Module = ⌈Anzahl · (1 + Reserve) / Kanäle je Modul⌉. Störungs-/Gefahrmeldungen als Öffnerkontakt (VDI 3814-3.1).
+Die Vorlagen sind Planungspraxis und projektspezifisch anzupassen (Bauteil-Kürzel überschreibbar).
+```
+
+**Projekteinstellungen:** Liegenschaft, Gebäude/Bauteil, Informationsschwerpunkt (ISP), Trennzeichen, Reserve [%], Kanäle je AI-Modul, Kanäle je AO-Modul, Kanäle je BI-Modul, Kanäle je BO-Modul, Preis je physikalischem Datenpunkt [€ / CHF], Preis je kommunikativem Datenpunkt [€ / CHF]
+
+**Spalten je Zeile:** Klartext Bauteil, Anlage (VDI 3814-4.1 Tab. 2), Anlagennummer, Bauteil-Vorlage, Bauteil-Kürzel (leer = Vorlage), Bauteilnummer (Start), Anzahl
+
+**Ergebnisse je Zeile:** AI, AO, BI, BO, COM (Bus), Physikalische Datenpunkte, Erste Benutzeradresse, Funktionen
+
+**Summen:** Physikalische Datenpunkte, Kommunikative Datenpunkte, Analoge Eingabe AI, Analoge Ausgabe AO, Binäre Eingabe BI, Binäre Ausgabe BO, Physikalisch inkl. Reserve, AI-Module, AO-Module, BI-Module, BO-Module, Kostenschätzung Datenpunkte [€]
 
 ## Grundlagen
 
@@ -445,17 +488,19 @@ Stellantriebe nach Dimensionierungsleistung (VA) laut Datenblatt, nicht nach Bet
 
 ### Ventil kv/kvs & Ventilautorität
 
-*kv-Wert, kvs-Auswahl, Δp, Autorität* — `valve_kv`
+*kv-Wert, kvs-Auswahl, Δp, Autorität – auch aus Leistung/ΔT* — `valve_kv`
 
 ```text
+V̇ = P · 3600 / (ρ · c · ΔT)   (Angaben der Ventilliste nach VDI 3814 Blatt 4.1, Tab. 8: Leistung, VL/RL, ΔT)
 kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 100 kPa
 Ventilautorität a = Δp_V100 / (Δp_V100 + Δp_MV)
 Δp_MV = Druckverlust der mengenvariablen Strecke. Empfehlung a ≥ 0,5 (mind. 0,3).
+Wasser: ρ = 1000 kg/m³, c = 4,187 kJ/(kg·K). Glykolgemische: ρ und c aus dem Datenblatt des Herstellers.
 ```
 
-**Eingaben:** Volumenstrom V̇ [m³/h], Gewünschter Δp am Ventil [kPa], Δp mengenvariable Strecke [kPa], Dichte ρ [kg/m³]
+**Eingaben:** Auslegung aus, Volumenstrom V̇ [m³/h], Leistung P [kW], Temperaturdifferenz ΔT (VL − RL) [K], Medium, Dichte ρ [kg/m³], Spez. Wärmekapazität c [kJ/(kg·K)], Gewünschter Δp am Ventil [kPa], Δp mengenvariable Strecke [kPa]
 
-**Ergebnisse:** Berechneter kv-Wert [m³/h], Gewählter kvs-Wert (Normreihe) [m³/h], Δp bei kvs (voll offen) [kPa], Ventilautorität a
+**Ergebnisse:** Volumenstrom V̇ [m³/h], Berechneter kv-Wert [m³/h], Gewählter kvs-Wert (Normreihe) [m³/h], Δp bei kvs (voll offen) [kPa], Ventilautorität a
 
 ### Wärmeleistung ↔ Volumenstrom
 
@@ -512,6 +557,226 @@ CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je
 **Eingaben:** Verfahren, Personen, Raumfläche [m²], Raumhöhe (für Luftwechsel) [m], Kategorie, Gebäude-Emission, CO₂-Abgabe je Person [l/h], CO₂-Sollwert [ppm], CO₂ außen [ppm]
 
 **Ergebnisse:** Außenluftvolumenstrom [m³/h], Außenluftvolumenstrom [l/s], Je Person [m³/h], Luftwechselrate [1/h], CO₂-Konzentration (stationär) [ppm]
+
+### VDI 3814: Gewerkekennzeichnung
+
+| Kostengruppe/Gewerk | DIN 276-1 | BAS kurz | BAS lang | IEC 81346 |
+|---|---|---|---|---|
+| Türen, Tore, Fenster, Sonnenschutz | 330 | Z | TTF | BF/BD |
+| Abwasser-, Wasser-, Gasanlagen | 410 | W | GWA | TS/TT/TG |
+| Wärmeversorgungsanlagen | 420 | H | HZG | TH |
+| Lufttechnische Anlagen | 430 | L | RLT | TL |
+| Kälteanlagen | 434 | K | KAE | TK |
+| Starkstromanlagen | 440 | E | ELT | TE |
+| Fernmelde- und IT-Anlagen | 450 | N | FIA | TF/TD |
+| Gefahrenmelde- und Alarmanlagen | 456 | G | GMA | TF |
+| Förderanlagen | 460 | F | FTA | TJ |
+| Küchentechnische Anlagen | 471 | C | KTA | TQ |
+| Wäscherei- und Reinigungsanlagen | 472 | D | WRA | TN |
+| Medienversorgungsanlagen | 473 | O | MVA | TM |
+| Medizin- und labortechnische Anlagen | 474 | M | MED | TN |
+| Feuerlöschanlagen | 475 | S | FLA | TP |
+| Badetechnische Anlagen | 476 | B | BTA | TN |
+| Prozesswärme-, -kälte- und -luftanlagen | 477 | P | PRO | TN |
+| Entsorgungsanlagen | 478 | X | ENT | TU |
+| Gebäudeautomation allgemein | 480 | A | GAS | TC |
+| Automations-/Informationsschwerpunkt | 482 | I | ASP/ISP | TC |
+| Raumautomation | 484 | R | RAU | TC |
+| Technische Anlagen in Außenanlagen | 540 | Y | TAA | BG |
+
+*Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.*
+
+### VDI 3814: Anlagenkürzel
+
+| KG | Anlage | Kürzel |
+|---|---|---|
+| 300 | Fassade | FAS |
+| 300 | Natürlicher Rauchabzug | NRA |
+| 300 | Rauch- und Wärmeabzugsanlage | RWA |
+| 300 | Sonnenschutzanlage | SON |
+| 411 | Hebeanlage | HBA |
+| 411 | Neutralisationsanlage | NEU |
+| 412 | Druckerhöhungsanlage | DEA |
+| 412 | Enthärtungsanlage | EHA |
+| 412 | Trinkwasser | TWA |
+| 412 | Trinkwassererwärmung | TWE |
+| 412 | Umkehrosmoseanlage | UKO |
+| 412 | Vollentsalzungsanlage | VEA |
+| 421 | BHKW | BHK |
+| 421 | Fernwärmeübergabe | FWÜ |
+| 421 | Geothermieanlage | GTH |
+| 421 | Kessel | KES |
+| 421 | Reindampferzeugung | RDE |
+| 421 | Solaranlage | SOL |
+| 421 | Wärmepumpe | WPU |
+| 422 | Druckhaltung | DHG |
+| 422 | Heizkreis | HZK |
+| 422 | Pufferspeicher | PFS |
+| 422 | Wärmeübertrager | WTR |
+| 423 | Betonkernaktivierung | BKA |
+| 423 | Fußbodenheizung | FBH |
+| 423 | Heiz-/Kühldecke | HKD |
+| 423 | Statische Heizung | STH |
+| 430 | Abluftanlage | ABA |
+| 430 | Kreislaufverbundsystem | KVS |
+| 430 | Maschinelle Rauchabzugsanlage | MRA |
+| 430 | Rauchdruckanlage | RDA |
+| 430 | Raumlufttechnik allgemein | RLT |
+| 430 | Teilklimaanlage | TKA |
+| 430 | Umluftanlage | ULA |
+| 430 | Vollklimaanlage | VKA |
+| 430 | Wärmerückgewinnung | WRG |
+| 430 | Zuluftanlage | ZUA |
+| 430 | Entrauchungsanlage | ERA |
+| 434 | Fernkälteübergabe | FKÜ |
+| 434 | Kältekreis | KKR |
+| 434 | Kälteverteilnetz | KVN |
+| 434 | Kaltwassererzeugung | KWE |
+| 434 | Kältespeicher | KSP |
+| 434 | Kühldecke | KÜD |
+| 434 | Rückkühlwerk | RKW |
+| 441 | Schaltanlagen | STA |
+| 441 | Transformator | TRF |
+| 441 | Kompensationsanlage | KOA |
+| 442 | Batterieanlage | BAT |
+| 442 | Ersatzstromanlage | ESA |
+| 442 | Fotovoltaikanlage | PVA |
+| 442 | USV | USV |
+| 443 | Allgemeine Stromversorgung | ASV |
+| 443 | Sicherheitsstromversorgung | SSV |
+| 443 | Beleuchtungsanlage | BEL |
+| 443 | Sicherheitsbeleuchtung | SIB |
+
+*Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.*
+
+### VDI 3814: Geräte- und Sensorkürzel
+
+| Gruppe | Gerät/Komponente | Kürzel |
+|---|---|---|
+| 430 | Abluftventilator | ABV |
+| 430 | Zuluftventilator | ZUV |
+| 430 | Fortluftventilator | FOV |
+| 430 | Umluftventilator | UMV |
+| 430 | Befeuchter | BEF |
+| 430 | Brandschutzklappe | BSK |
+| 430 | Entrauchungsklappe | ERK |
+| 430 | Erhitzer allgemein | ERH |
+| 430 | Wasserlufterhitzer | WLH |
+| 430 | Wasservorerhitzer | WVH |
+| 430 | Wassernacherhitzer | WNH |
+| 430 | Elektrolufterhitzer | ELH |
+| 430 | Luftfilter | LFI |
+| 430 | Lüftungsklappe | LKL |
+| 430 | Pumpe | PPE |
+| 430 | Variabler Volumenstromregler | VVR |
+| 430 | Wärmerückgewinnung | WRG |
+| 430 | Umluftkühlgerät | ULK |
+| 434 | Kältemaschine | KMA |
+| 434 | Rückkühlwerk | RKW |
+| 440 | Leistungsschalter | LSS |
+| 440 | Netzanalysegerät | NAG |
+| 440 | Notstromaggregat | NSG |
+| 440 | Transformator | TRF |
+| 480 | Anlagenschalter | ANL |
+| 480 | Automationsstationseinrichtung | ASE |
+| 480 | Datenschnittstelleneinheit | DSE |
+| 480 | Feldbusmodul | FBM |
+| 481 T | Außentemperatur | TAU |
+| 481 T | Zulufttemperatur | TZU |
+| 481 T | Ablufttemperatur | TAB |
+| 481 T | Fortlufttemperatur | TFO |
+| 481 T | Mischlufttemperatur | TMI |
+| 481 T | Raumtemperatur | TRU |
+| 481 T | Vorlauftemperatur | TVL |
+| 481 T | Rücklauftemperatur | TRL |
+| 481 T | Frostschutzwächter | FSW |
+| 481 T | Sicherheitstemperaturbegrenzer | STB |
+| 481 T | Temperatur nach WRG | TNW |
+| 481 T | Temperatur Warmwasser | TWW |
+| 481 p | Differenzdruck | PDI |
+| 481 p | Zuluftdruck | PZU |
+| 481 p | Raumdruck | PRU |
+| 481 p | Druckwächter | DRW |
+| 481 Q | CO₂-Sensor | COM |
+| 481 Q | Luftqualität Raum | QRU |
+| 481 φ | Raumfeuchte relativ | MRU |
+| 481 φ | Zuluftfeuchte relativ | MZU |
+| 481 x | Zuluftfeuchte absolut | XZU |
+| 481 φ | Kondensationswächter | MKW |
+| 481 Z | Elektrozähler | ELZ |
+| 481 Z | Wärmemengenzähler | WMZ |
+| 481 Z | Kältemengenzähler | KMZ |
+| 481 Z | Wasserzähler | WAZ |
+| 481 S | Leckageüberwachung | LCK |
+| 481 S | Strömungswächter | SSW |
+| 481 S | Not-Aus-Taster | NOT |
+| 481 V̇ | Volumenstrom Zuluft | FZU |
+| 481 V̇ | Volumenstrom Abluft | FAB |
+| 481 A | Motorische Klappe | KLA |
+| 481 A | Motorventil | VEN |
+| 481 A | Heizkörperventil-Antrieb | HKV |
+| 485 | Präsenzmelder | PAE |
+| 485 | Raumbediengerät | RBG |
+| 485 | Raumautomationseinrichtung | RAE |
+
+*Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.*
+
+### VDI 3814: Funktionskennungen
+
+| Funktionskennung | Kürzel | Typ. E/A |
+|---|---|---|
+| Anforderung | AF_ | BI/COM |
+| Anlagenschalter | AS_ | BI |
+| Belegtzustand Raum | BEL | BI/COM |
+| Betriebsbereit | BB_ | BI |
+| Betriebsmeldung | BM_ | BI |
+| Betriebsstunden | BZ_ | virt. |
+| Einschaltfehler | EF_ | virt. |
+| Entriegelung | ENT | BO |
+| Freigabe | FR_ | BO |
+| Gefahrmeldung | GM_ | BI |
+| Grenzwert | GW_ | virt. |
+| Grenzwert MAX | GWX | virt. |
+| Grenzwert MIN | GWI | virt. |
+| LVB-Handmeldung | HD_ | BI |
+| Heizkennlinie Steilheit | HST | Par. |
+| Hysterese | HYS | Par. |
+| Kalender | KAL | virt. |
+| Laufzeitfehler | LFZ | virt. |
+| Loop-Objekt (Regler) | LP_ | virt. |
+| Messwert | MW_ | AI |
+| Mittelwert | MWT | virt. |
+| Nachlaufzeit | NL_ | Par. |
+| Nachstellzeit | TN_ | Par. |
+| Programm | PR_ | virt. |
+| Proportionalband | XP_ | Par. |
+| Rückmeldung AUF | RMA | BI |
+| Rückmeldung ZU | RMZ | BI |
+| Rückführwert | RW_ | AI |
+| Rückmeldung | RM_ | BI |
+| Ausführkontrolle | RF_ | virt. |
+| Schaltbefehl | SB_ | BO |
+| Scheduler | SCH | virt. |
+| Sollwert | SW_ | AO/virt. |
+| Sollwert Heizen | SWH | virt. |
+| Sollwert Kühlen | SWK | virt. |
+| Sollwert Nacht | SWN | virt. |
+| Sollwert Tag | SWT | virt. |
+| Sollwertversteller | SWV | AI/COM |
+| Status | STA | virt. |
+| Stellsignal | ST_ | AO |
+| Störung | SM_ | BI |
+| Taster | TS_ | BI |
+| Totzone | TZ_ | Par. |
+| Trend-Log-Objekt | TR_ | virt. |
+| Vorhaltezeit | TV_ | Par. |
+| Wartungsmeldung | WM_ | BI |
+| Wirkungsgrad | WG_ | virt. |
+| Zählwert | ZW_ | BI/COM |
+| Zeitprogramm | ZP_ | virt. |
+
+*Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.
+Zusatz-Erläuterung möglich, z. B. SWH01_ECO, ABV01_WM_01_REP. Spalte „Typ. E/A“ = übliche Zuordnung aus der Planungspraxis, nicht Teil der Richtlinie.*
 
 ## Reinraum & Pharma
 

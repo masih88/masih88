@@ -45,7 +45,7 @@ struct VisibleIf {
 };
 
 struct InputDef {
-    enum class Kind { Number, Choice };
+    enum class Kind { Number, Choice, Text };
 
     std::string id;
     Text label;
@@ -60,9 +60,18 @@ struct InputDef {
     std::string defaultChoice;
     std::optional<VisibleIf> visibleIf;
     Text hint;
+    std::vector<std::string> aliases;  // extra column names recognised when importing tables (e.g. Excel headers)
+    Text section;                      // non-empty: this input starts a new group in the form
 
     static InputDef number(std::string id, Text label, std::string unit, double def);
     static InputDef choice(std::string id, Text label, std::vector<Option> options, std::string def = {});
+    /// Free text (names, codes, rooms); stored like a choice value, never validated
+    static InputDef text(std::string id, Text label, std::string def = {});
+
+    InputDef& alias(std::vector<std::string> names) {
+        aliases.insert(aliases.end(), names.begin(), names.end());
+        return *this;
+    }
 
     InputDef& positive() { min = 0.0; minExclusive = true; return *this; }
     InputDef& nonNegative() { min = 0.0; minExclusive = false; return *this; }
@@ -74,6 +83,7 @@ struct InputDef {
         return *this;
     }
     InputDef& withHint(Text h) { hint = std::move(h); return *this; }
+    InputDef& startsSection(Text title) { section = std::move(title); return *this; }
 };
 
 struct OutputDef {
@@ -83,11 +93,13 @@ struct OutputDef {
     int decimals = 2;
     bool isText = false;
     bool key = false;  // highlighted in the UI and shown in the result bar
+    Text shortLabel;   // compact label for list rows (falls back to label)
 
     static OutputDef number(std::string id, Text label, std::string unit, int decimals = 2);
     static OutputDef text(std::string id, Text label);
 
     OutputDef& primary() { key = true; return *this; }
+    OutputDef& abbrev(Text s) { shortLabel = std::move(s); return *this; }
 };
 
 /// Input values keyed by input id. Missing numbers read as NaN, missing choices as "".
@@ -99,6 +111,7 @@ public:
     [[nodiscard]] double num(std::string_view id) const;
     [[nodiscard]] bool has(std::string_view id) const;
     [[nodiscard]] const std::string& choice(std::string_view id) const;
+    [[nodiscard]] const std::string& text(std::string_view id) const { return choice(id); }
     [[nodiscard]] std::optional<double> maybe(std::string_view id) const;
 
 private:
@@ -185,6 +198,11 @@ private:
 /// Applies choice defaults, validates visible numeric inputs, runs compute and turns
 /// exceptions into error messages. Never throws for bad user input.
 [[nodiscard]] Result evaluate(const Calculator& calc, const Inputs& in, const Context& ctx);
+
+/// Replaces unknown choice values by defaults and validates visible numeric inputs (error messages only).
+[[nodiscard]] Result normalizeAndValidate(const std::vector<InputDef>& defs, Inputs& in);
+/// Runs fn and turns CalcError/std::exception into an error Result.
+[[nodiscard]] Result guardedCompute(const std::function<Result()>& fn);
 
 /// Compact number formatting for messages, with decimal comma for German.
 [[nodiscard]] std::string formatNumber(double v, int decimals, Lang lang);

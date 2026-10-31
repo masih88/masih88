@@ -29,12 +29,32 @@ InputDef InputDef::choice(std::string id, Text label, std::vector<Option> option
     return d;
 }
 
+InputDef InputDef::text(std::string id, Text label, std::string def) {
+    InputDef d;
+    d.id = std::move(id);
+    d.label = std::move(label);
+    d.kind = Kind::Text;
+    d.defaultChoice = std::move(def);
+    d.optional = true;
+    return d;
+}
+
 OutputDef OutputDef::number(std::string id, Text label, std::string unit, int decimals) {
-    return OutputDef{std::move(id), std::move(label), std::move(unit), decimals, false};
+    OutputDef o;
+    o.id = std::move(id);
+    o.label = std::move(label);
+    o.unit = std::move(unit);
+    o.decimals = decimals;
+    return o;
 }
 
 OutputDef OutputDef::text(std::string id, Text label) {
-    return OutputDef{std::move(id), std::move(label), {}, 0, true};
+    OutputDef o;
+    o.id = std::move(id);
+    o.label = std::move(label);
+    o.decimals = 0;
+    o.isText = true;
+    return o;
 }
 
 double Inputs::num(std::string_view id) const {
@@ -70,7 +90,7 @@ bool isVisible(const InputDef& def, const Inputs& in) {
 Inputs defaultInputs(const Calculator& calc) {
     Inputs in;
     for (const auto& d : calc.inputs) {
-        if (d.kind == InputDef::Kind::Choice) {
+        if (d.kind == InputDef::Kind::Choice || d.kind == InputDef::Kind::Text) {
             in.setChoice(d.id, d.defaultChoice);
         } else {
             in.set(d.id, d.defaultValue);
@@ -143,21 +163,18 @@ Text rangeMessage(const InputDef& d) {
 
 }  // namespace
 
-Result evaluate(const Calculator& calc, const Inputs& raw, const Context& ctx) {
-    Inputs in = raw;
+Result normalizeAndValidate(const std::vector<InputDef>& defs, Inputs& in) {
     Result validation;
-
     // 1st pass: choices (visibility of numeric inputs depends on them)
-    for (const auto& d : calc.inputs) {
+    for (const auto& d : defs) {
         if (d.kind != InputDef::Kind::Choice) continue;
         const auto& v = in.choice(d.id);
         const bool known = std::any_of(d.options.begin(), d.options.end(),
                                        [&](const Option& o) { return o.value == v; });
         if (!known) in.setChoice(d.id, d.defaultChoice);
     }
-
     // 2nd pass: visible numbers
-    for (const auto& d : calc.inputs) {
+    for (const auto& d : defs) {
         if (d.kind != InputDef::Kind::Number || !isVisible(d, in)) continue;
         const double v = in.num(d.id);
         if (!std::isfinite(v)) {
@@ -169,6 +186,26 @@ Result evaluate(const Calculator& calc, const Inputs& raw, const Context& ctx) {
         const bool tooLow = v < d.min || (d.minExclusive && v <= d.min);
         if (tooLow || v > d.max) validation.error(rangeMessage(d));
     }
+    return validation;
+}
+
+Result guardedCompute(const std::function<Result()>& fn) {
+    try {
+        return fn();
+    } catch (const CalcError& e) {
+        Result r;
+        r.error(e.text());
+        return r;
+    } catch (const std::exception& e) {
+        Result r;
+        r.error({std::string("Berechnung nicht möglich: ") + e.what(), std::string("Calculation failed: ") + e.what()});
+        return r;
+    }
+}
+
+Result evaluate(const Calculator& calc, const Inputs& raw, const Context& ctx) {
+    Inputs in = raw;
+    Result validation = normalizeAndValidate(calc.inputs, in);
     if (validation.hasError()) return validation;
 
     try {

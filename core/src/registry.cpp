@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "catalog/helpers.hpp"
+#include "elc/lists.hpp"
 
 #ifndef ELC_VERSION
 #define ELC_VERSION "dev"
@@ -12,6 +13,7 @@ namespace elc {
 
 const std::vector<Category>& categories() {
     static const std::vector<Category> list{
+        {"projects", {"Projektlisten", "Project lists"}, "Σ"},
         {"basics", {"Grundlagen", "Basics"}, "Ω"},
         {"cables", {"Leitungen & Schutz", "Cables & protection"}, "mm²"},
         {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~"},
@@ -52,6 +54,7 @@ const std::vector<Table>& tables() {
         catalog::addTables(v);
         catalog::addCleanroomTables(v);
         catalog::addDatacenterTables(v);
+        catalog::addVdiTables(v);
         return v;
     }();
     return list;
@@ -66,6 +69,17 @@ const Calculator* findCalculator(std::string_view id) {
 const Table* findTable(std::string_view id) {
     const auto& all = tables();
     const auto it = std::find_if(all.begin(), all.end(), [&](const Table& t) { return t.id == id; });
+    return it == all.end() ? nullptr : &*it;
+}
+
+const std::vector<ListDef>& lists() {
+    static const std::vector<ListDef> list{catalog::consumerList(), catalog::dataPointList()};
+    return list;
+}
+
+const ListDef* findList(std::string_view id) {
+    const auto& all = lists();
+    const auto it = std::find_if(all.begin(), all.end(), [&](const ListDef& l) { return l.id == id; });
     return it == all.end() ? nullptr : &*it;
 }
 

@@ -2,6 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "elc/formulas/automation.hpp"
+#include "elc/registry.hpp"
 
 using Catch::Approx;
 using namespace elc::automation;
@@ -64,4 +65,24 @@ TEST_CASE("Valve kv and pressure drop") {
 TEST_CASE("Heat flow water: V = P / (1.163 · ΔT)") {
     CHECK(volumeFlowFromPower(10, 20, 1000, 4.187) == Approx(10.0 / (1.163 * 20)).epsilon(1e-3));
     CHECK(powerFromVolumeFlow(volumeFlowFromPower(10, 20, 1000, 4.187), 20, 1000, 4.187) == Approx(10));
+}
+
+TEST_CASE("Valve sized from power and ΔT (valve list VDI 3814-4.1)") {
+    const auto* c = elc::findCalculator("valve_kv");
+    REQUIRE(c);
+    auto in = elc::defaultInputs(*c);
+    in.setChoice("mode", "power");
+    in.set("P", 50);
+    in.set("dT", 20);
+    const auto r = elc::evaluate(*c, in, {});
+    // V = 50 · 3600 / (1000 · 4.187 · 20) = 2.1495 m³/h, kv = V · √10 = 6.797 → kvs 6.3
+    CHECK(r.values.at("Qv") == Approx(2.1495).epsilon(1e-4));
+    CHECK(r.values.at("kv") == Approx(6.797).epsilon(1e-3));
+    CHECK(r.values.at("kvs") == Approx(6.3));
+
+    in.setChoice("medium", "custom");  // glycol mixture from a data sheet
+    in.set("rho", 1040);
+    in.set("c", 3.8);
+    const auto g = elc::evaluate(*c, in, {});
+    CHECK(g.values.at("Qv") == Approx(50 * 3600 / (1040 * 3.8 * 20)).epsilon(1e-6));
 }

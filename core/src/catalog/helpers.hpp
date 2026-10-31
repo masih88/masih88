@@ -6,6 +6,7 @@
 
 #include "elc/formulas/cables.hpp"
 #include "elc/formulas/common.hpp"
+#include "elc/lists.hpp"
 #include "elc/types.hpp"
 
 namespace elc::catalog {
@@ -27,6 +28,10 @@ void addPv(std::vector<Calculator>& out);
 void addTables(std::vector<Table>& out);
 void addCleanroomTables(std::vector<Table>& out);
 void addDatacenterTables(std::vector<Table>& out);
+void addVdiTables(std::vector<Table>& out);
+ListDef consumerList();
+ListDef dataPointList();
+
 
 inline std::vector<Option> systemOptions(bool withDc = true) {
     std::vector<Option> o;

@@ -1,0 +1,25 @@
+# Build-Ordner
+build*/
+out/
+cmake-build-*/
+CMakeUserPresets.json
+CMakeLists.txt.user*
+*.user
+compile_commands.json
+
+# Qt Creator / IDEs
+.qtc_clangd/
+.vs/
+.vscode/
+.idea/
+
+# Android
+android-build/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# System
+.DS_Store
+Thumbs.db

@@ -28,8 +28,9 @@ Column {
             // first-line baselines of label and value are aligned
             readonly property real labelShift: stacked ? 0 : Math.max(0, valueLbl.baselineOffset - label.baselineOffset)
             readonly property real valueShift: Math.max(0, label.baselineOffset - valueLbl.baselineOffset)
+            readonly property bool hasAlt: (modelData.alt || "") !== ""
             height: gap + (stacked ? label.height + 2 + valueText.height
-                                   : Math.max(labelShift + label.height, valueShift + valueRow.height))
+                                   : Math.max(labelShift + label.height, valueShift + valueRow.height + (hasAlt ? altText.height : 0)))
 
             Rectangle {
                 visible: row.index > 0
@@ -68,6 +69,16 @@ Column {
                     font.pixelSize: 13
                     opacity: 0.75
                 }
+            }
+            Label {
+                // converted amount, e.g. "≈ 1904 €" below "1752 CHF"
+                id: altText
+                visible: row.hasAlt && !row.stacked
+                anchors.right: parent.right
+                y: valueRow.y + valueRow.height
+                text: row.modelData.alt || ""
+                font.pixelSize: 12
+                opacity: 0.6
             }
             Label {
                 id: valueText

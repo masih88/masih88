@@ -4,6 +4,19 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.4:**
+- **Währung € und CHF** – in den Einstellungen wählbar mit Wechselkurs; jedes Kostenergebnis zeigt zusätzlich den Betrag
+  in der anderen Währung, dazu ein Umrechner € ↔ CHF.
+- **Explosionsschutz** – Zone → Kategorie/EPL, Stoff → Temperaturklasse und Explosionsgruppe, Staub → zulässige
+  Oberflächentemperatur, Geräteprüfung und Kennzeichnungsbeispiel; Tabellen T1–T6, Gruppen, Zonen, Zündschutzarten, Stoffe.
+- **R&I-Kennbuchstaben-Finder** – Name eingeben („Temperatur Zuluft“, „Gas Methan“, „Leckage“, „Druckwächter min“) →
+  ISA-5.1 (z. B. TT-101), EN 62424/DIN 19227, VDI-3814-Kürzel mit Benutzeradresse, IEC 81346, Signal und PI-Symbol;
+  Tabelle mit 78 Sensoren und Wächtern für HLKS, MSR und Prozess sowie die Buchstabentabellen.
+
+| Kennbuchstaben-Finder | Explosionsschutz |
+|---|---|
+| ![Kennbuchstaben](docs/screenshots/kennbuchstaben-finder.png) | ![Ex-Schutz](docs/screenshots/ex-schutz.png) |
+
 **Neu in 1.3: h,x-Diagramm (Mollier)** mit Taupunkt, Kühlgrenze und Zustandsänderungen (Heizen, Kühlen/Entfeuchten,
 Dampf- und Verdunstungsbefeuchten, Mischen) – ins Diagramm tippen setzt Zustand 1. Dazu die **PUE-Bilanz** für
 Rechenzentren aus den Verbrauchern (IT, USV, Verteilung, Kühlung mit EER und freier Kühlung) mit Jahresverbrauch,
@@ -39,9 +52,9 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.3)
+## Funktionsumfang (Version 1.4)
 
-**2 Projektlisten, 65 Rechner und 39 Tabellen** in 12 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
+**2 Projektlisten, 68 Rechner und 47 Tabellen** in 12 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
 [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Kategorie | Inhalt |
@@ -52,11 +65,12 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 | **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung |
 | **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
 | **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität (auch aus Leistung/ΔT wie in der Ventilliste VDI 3814-4.1), Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **h,x-Diagramm (Mollier) mit Zustandsänderungen und Leistung/Kondensat**, feuchte Luft (Taupunkt, x, h) mit Diagramm, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)**; Tabellen VDI 3814-4.1 (Gewerke, Anlagen, Bauteile, Funktionskennungen) |
-| **Reinraum & Pharma** *(neu)* | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
+| **R&I-Kennzeichnung & Ex-Schutz** *(neu)* | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814-4.1, IEC 81346) für 78 Sensoren/Wächter, Explosionsschutz (Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub nach IEC 60079-14, Kennzeichnung, Geräteprüfung); Tabellen Kennbuchstaben, T-Klassen, Ex-Gruppen, Zonen, Zündschutzarten, Zündtemperaturen |
+| **Reinraum & Pharma** | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
 | **Rechenzentrum** | PUE/DCiE aus Leistung **oder Jahresverbrauch (Zähler)**, **PUE-Bilanz aus Verbrauchern** (pPUE Kühlung/Strom, Jahresverbrauch, Kosten, CO₂, Abwärme, ERF), EnEfG-Prüfung Bestand/Neubau (2023 oder Entwurf 2026), Rack-Kühlung & Kühlgeräte mit Redundanz (N+1/N+2/2N), USV-Module & Batterie-Autonomie, Verfügbarkeit/Ausfallzeit; Tabellen ASHRAE TC 9.9, EN 50600/Tier |
 | **Photovoltaik & Speicher** *(neu)* | String-Auslegung mit Temperaturkorrektur (U_oc bei Kälte, U_mpp bei Hitze, MPP-Bereich, Strangsicherung), Ertrag & Amortisation (€/CHF), DC-Leitungsverluste, Speichergröße mit Faustformeln |
 | **Elektronik** | Farbcode 4/5 Ringe, E-Reihen E6–E96, LED-Vorwiderstand, Spannungsteiler, RC-Glied, LC-Schwingkreis, Impedanz RLC, Akku-/USV-Laufzeit |
-| **Umrechner** | Leistung (W, PS, hp, BTU/h, kcal/h, TR), Energie, Temperatur, Druck (bar, psi, mWS), Volumenstrom (m³/h, l/s, CFM), AWG ↔ mm² |
+| **Umrechner** | **Währung € ↔ CHF**, Leistung (W, PS, hp, BTU/h, kcal/h, TR), Energie, Temperatur, Druck (bar, psi, mWS), Volumenstrom (m³/h, l/s, CFM), AWG ↔ mm² |
 | **Tabellen & Pinouts** | IP-Schutzarten, Schutzklassen, Netzsysteme, Aderfarben, Spannungsfall-Grenzwerte DE/CH, Strombelastbarkeit (4 Tabellen), Temperatur- und Häufungsfaktoren, LS-Charakteristiken, D-Sicherungen, Kabeltypen, **Feldbusse** (BACnet MS/TP, Modbus, KNX, DALI, LON, PROFIBUS, CAN, IO-Link, Ethernet), Isolierstoffklassen, Betriebsarten, IE-Klassen, Klemmbrett Y/Δ, Bauformen, Pinouts RJ45/PoE, RS-485, M12, KNX, RS-232, USB, HDMI, Farbcode, SI-Vorsätze |
 
 Weitere Funktionen: Live-Berechnung bei jeder Eingabe, Ergebnisleiste mit Ampelstatus, Suche, Favoriten,
@@ -121,7 +135,7 @@ sind als Tests hinterlegt (`tests/test_lists.cpp`).
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DELC_BUILD_APP=OFF
 cmake --build build
-ctest --test-dir build --output-on-failure        # 86 Testfälle, > 7900 Prüfungen
+ctest --test-dir build --output-on-failure        # 96 Testfälle, > 9400 Prüfungen
 
 # mit AddressSanitizer + UBSan (Linux/macOS)
 cmake -S . -B build-asan -G Ninja -DCMAKE_BUILD_TYPE=Debug -DELC_SANITIZE=ON -DELC_BUILD_APP=OFF
@@ -135,6 +149,8 @@ elcalc list                                   # alle Rechner und Tabellen
 elcalc show voltage_drop                      # Eingaben, Ergebnisse, Formeln
 elcalc run cable_sizing IB=32 L=85 method=E   # rechnen (fehlende Werte = Standardwerte)
 elcalc run voltage_drop --norm ch --lang en   # Schweizer Grenzwert, englische Ausgabe
+elcalc run energy_cost --currency chf --rate 0.92   # Kosten in CHF (mit Betrag in €)
+elcalc run pid_tags "name=Gas Methan"         # Kennbuchstaben: AT-101 (CH₄), QI, …
 elcalc table fieldbuses                       # Tabelle ausgeben
 elcalc sheet consumer_list liste.txt          # Verbraucherliste aus Excel-Kopie (Tab/;) rechnen → CSV
 elcalc sheet ga_points - --detail < gaa.txt   # Datenpunktliste je Datenpunkt (stdin)
@@ -176,7 +192,8 @@ IEC 60364-5-52 / DIN VDE 0298-4 / NIN 5.2.3 (Strombelastbarkeit), DIN VDE 0100-5
 DIN 43760, IEC 62386 (DALI), IEC 60529, IEC 61140, IEC 60445, IEC 60204-1, IEC 60034-1/-7/-8/-30-1, IEC 60062,
 IEC 60063, TIA-568, Modbus over Serial Line V1.02, NAMUR NE 43, ISO 14644-1/-3, EU-GMP Annex 1 (2022),
 EN 16798-1, ISO/IEC 30134-2, EnEfG, EN 50600, ASHRAE TC 9.9, IEC 62548 / DIN VDE 0100-712,
-VDI 3814 Blatt 3.1 (GA-Funktionen) und Blatt 4.1 (Kennzeichnung, Listen) – nur Codelisten/Strukturen, keine Normtexte.
+VDI 3814 Blatt 3.1 (GA-Funktionen) und Blatt 4.1 (Kennzeichnung, Listen) – nur Codelisten/Strukturen, keine Normtexte,
+ANSI/ISA-5.1, DIN EN 62424 / DIN 19227-1, IEC 81346-2, IEC/EN 60079-0/-14/-20-1, ATEX 2014/34/EU und 1999/92/EG.
 
 ## Ausbauplan
 

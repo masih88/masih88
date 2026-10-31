@@ -6,13 +6,14 @@
 //   elcalc sheet <list> [file] [--detail]  compute a project list from a CSV/TSV file (or stdin, "-")
 //                                       and print it as CSV; without file a one-row demo
 //   elcalc markdown                     Markdown reference of everything (docs/BERECHNUNGEN.md)
-// Options: --lang de|en  --norm de|ch
+// Options: --lang de|en  --norm de|ch  --currency eur|chf  --rate <CHF per €>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <optional>
 #include <span>
 #include <string>
 #include <string_view>
@@ -28,6 +29,8 @@ using namespace elc;
 struct Options {
     Lang lang = Lang::De;
     NormProfile norm = NormProfile::DE;
+    std::optional<Currency> currency;
+    double rate = 0.92;
     bool detail = false;
     std::vector<std::string> args;
 };
@@ -40,6 +43,10 @@ Options parse(std::span<char*> argv) {
             o.lang = std::string_view(argv[++i]) == "en" ? Lang::En : Lang::De;
         } else if (a == "--norm" && i + 1 < argv.size()) {
             o.norm = std::string_view(argv[++i]) == "ch" ? NormProfile::CH : NormProfile::DE;
+        } else if (a == "--currency" && i + 1 < argv.size()) {
+            o.currency = std::string_view(argv[++i]) == "chf" ? Currency::CHF : Currency::EUR;
+        } else if (a == "--rate" && i + 1 < argv.size()) {
+            o.rate = parseNumber(argv[++i]).value_or(o.rate);
         } else if (a == "--detail") {
             o.detail = true;
         } else {
@@ -47,6 +54,14 @@ Options parse(std::span<char*> argv) {
         }
     }
     return o;
+}
+
+Context context(const Options& o) {
+    Context c;
+    c.norm = o.norm;
+    c.currency = o.currency.value_or(o.norm == NormProfile::CH ? Currency::CHF : Currency::EUR);
+    c.chfPerEur = o.rate;
+    return c;
 }
 
 const char* severityTag(Severity s) {
@@ -117,13 +132,13 @@ int run(const Options& o, const std::string& id) {
             std::cerr << "Unbekannter Parameter / unknown input: " << key << '\n';
             return 2;
         }
-        if (def->kind == InputDef::Kind::Choice) {
+        if (def->kind != InputDef::Kind::Number) {
             in.setChoice(key, val);
         } else {
             in.set(key, parseNumber(val).value_or(kNaN));
         }
     }
-    const auto r = evaluate(*c, in, Context{o.norm});
+    const auto r = evaluate(*c, in, context(o));
     std::cout << c->title.in(o.lang) << '\n';
     for (const auto& out : c->outputs) {
         std::string text;
@@ -136,6 +151,7 @@ int run(const Options& o, const std::string& id) {
             if (it == r.values.end()) continue;
             const auto unit = r.units.contains(out.id) ? r.units.at(out.id) : out.unit;
             text = formatNumber(it->second, out.decimals, o.lang) + (unit.empty() ? "" : " " + unit);
+            if (const auto alt = r.alt.find(out.id); alt != r.alt.end()) text += "  (" + alt->second.in(o.lang) + ")";
         }
         std::cout << "  " << std::left << std::setw(42) << out.label.in(o.lang) << text << '\n';
     }
@@ -187,7 +203,7 @@ int sheet(const Options& o, const std::string& id) {
     } else {
         rows.push_back(defaultRow(*l));
     }
-    std::cout << exportCsv(*l, rows, defaultSettings(*l), Context{o.norm}, o.lang, o.detail);
+    std::cout << exportCsv(*l, rows, defaultSettings(*l), context(o), o.lang, o.detail);
     return 0;
 }
 
@@ -274,6 +290,6 @@ int main(int argc, char** argv) {
     if (o.args[0] == "markdown") return markdown(o);
     std::cout << "ElektroRechner " << version()
               << "\nUsage: elcalc list | show <id> | run <id> [key=value ...] | table <id> | sheet <list> [file|-] [--detail]"
-                 " | markdown [--lang de|en] [--norm de|ch]\n";
+                 " | markdown [--lang de|en] [--norm de|ch] [--currency eur|chf] [--rate 0.92]\n";
     return 0;
 }

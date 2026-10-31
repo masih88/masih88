@@ -102,7 +102,47 @@ Calculator awg() {
 
 }  // namespace
 
+Calculator currency() {
+    Calculator c;
+    c.id = "conv_currency";
+    c.category = "converters";
+    c.title = {"Währung € ↔ CHF", "Currency € ↔ CHF"};
+    c.summary = {"Euro und Schweizer Franken umrechnen", "Convert euro and Swiss franc"};
+    c.description = {
+        "CHF = € · Kurs    € = CHF / Kurs    (Kurs = Franken für 1 Euro)\n"
+        "Ohne Eingabe gilt der Kurs aus den Einstellungen (dort für alle Kostenrechnungen verwendet). Stand Oktober 2026 "
+        "etwa 0,92 CHF/€ – Tageskurs der Bank verwenden.",
+        "CHF = € · rate    € = CHF / rate    (rate = francs per euro)\n"
+        "Left empty, the rate from the settings is used (also for all cost results). October 2026 about 0.92 CHF/€ – "
+        "use your bank's daily rate."};
+    c.inputs = {
+        Num::number("amount", {"Betrag", "Amount"}, "", 1000).nonNegative(),
+        Num::choice("from", {"Von", "From"}, {{"EUR", {"Euro (€) → CHF", "Euro (€) → CHF"}}, {"CHF", {"Franken (CHF) → €", "Franc (CHF) → €"}}},
+                    "EUR"),
+        Num::number("rate", {"Kurs 1 € in CHF", "Rate 1 € in CHF"}, "CHF", kNaN).opt().positive()
+            .withHint({"leer = Kurs aus den Einstellungen", "empty = rate from the settings"}),
+    };
+    c.outputs = {Out::number("out", {"Ergebnis", "Result"}, "", 2).primary(),
+                 Out::number("rateUsed", {"Verwendeter Kurs 1 € =", "Rate used 1 € ="}, "CHF", 4),
+                 Out::number("inv", {"Umkehrkurs 1 CHF =", "Inverse rate 1 CHF ="}, "€", 4)};
+    c.keywords = {"währung", "euro", "franken", "chf", "eur", "wechselkurs", "currency", "exchange"};
+    c.compute = [](const Inputs& in, const Context& ctx) {
+        Result r;
+        const auto given = in.maybe("rate");
+        const double rate = given ? *given : ctx.chfPerEur;
+        if (!(rate > 0)) throw CalcError({"Kein gültiger Wechselkurs.", "No valid exchange rate."});
+        const bool fromEur = in.choice("from") == "EUR";
+        r.set("out", fromEur ? in.num("amount") * rate : in.num("amount") / rate, fromEur ? "CHF" : "€");
+        r.set("rateUsed", rate);
+        r.set("inv", 1.0 / rate);
+        if (!given) r.info({"Kurs aus den Einstellungen.", "Rate from the settings."});
+        return r;
+    };
+    return c;
+}
+
 void addConverters(std::vector<Calculator>& out) {
+    out.push_back(currency());
     out.push_back(tableConverter("conv_power", {"Leistung", "Power"}, {"W, kW, PS, hp, BTU/h, kcal/h, TR", "W, kW, PS, hp, BTU/h, kcal/h, TR"},
                                  units::powerUnits(), "kW", 1, {"leistung", "ps", "hp", "btu", "kälteleistung", "power"}));
     out.push_back(tableConverter("conv_energy", {"Energie", "Energy"}, {"J, Wh, kWh, kcal, BTU", "J, Wh, kWh, kcal, BTU"},

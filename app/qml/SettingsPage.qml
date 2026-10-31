@@ -65,6 +65,51 @@ Page {
             }
 
             Card {
+                SectionTitle { text: Calc.ui.currency.toUpperCase() }
+                RadioButton {
+                    text: Calc.ui.euro
+                    checked: Calc.currency === "EUR"
+                    onClicked: Calc.currency = "EUR"
+                }
+                RadioButton {
+                    text: Calc.ui.franc
+                    checked: Calc.currency === "CHF"
+                    onClicked: Calc.currency = "CHF"
+                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 8
+                    Label {
+                        Layout.fillWidth: true
+                        text: Calc.ui.rate
+                        wrapMode: Text.Wrap
+                    }
+                    TextField {
+                        id: rateField
+                        Layout.preferredWidth: 100
+                        horizontalAlignment: TextInput.AlignRight
+                        inputMethodHints: Qt.ImhFormattedNumbersOnly
+                        selectByMouse: true
+                        text: Calc.formatNumber(Calc.chfPerEur, 4)
+                        onEditingFinished: {
+                            const v = Calc.parseNumber(text)
+                            if (v > 0)
+                                Calc.chfPerEur = v
+                            text = Calc.formatNumber(Calc.chfPerEur, 4)
+                        }
+                    }
+                    Label { text: "CHF" }
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: Calc.ui.rateHint
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 12
+                    opacity: 0.65
+                }
+            }
+
+            Card {
                 SectionTitle { text: Calc.ui.appearance.toUpperCase() }
                 Switch {
                     text: Calc.ui.darkTheme

@@ -13,11 +13,11 @@ Page {
     readonly property bool wide: width >= 760
     background: null
 
-    property var def: loadDefinition(Calc.language)
+    property var def: loadDefinition(Calc.language, Calc.currency)
     title: def.title || ""
 
     property var values: ({})
-    property var result: run(values, Calc.norm, Calc.language)
+    property var result: run(values, Calc.norm, Calc.language, Calc.currency, Calc.chfPerEur)
 
     // worst message severity drives the status colour
     readonly property string status: Status.worst(result.messages)
@@ -30,7 +30,7 @@ Page {
     readonly property color sectionColor: Calc.darkTheme ? "#9FB3CC" : "#4A5B72"
 
     readonly property bool hasChart: def.hasChart === true
-    property var chartData: hasChart ? loadChart(values, Calc.norm, Calc.language) : ({})
+    property var chartData: hasChart ? loadChart(values, Calc.norm, Calc.language, Calc.currency, Calc.chfPerEur) : ({})
 
     function loadDefinition(lang) {
         return Calc.calculator(calcId)

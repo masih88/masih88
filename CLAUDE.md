@@ -20,7 +20,10 @@ cmake --build build && ./build/tests/elc_tests
 - Projektlisten (`ListDef`) in `core/src/lists/`; Excel-Spaltennamen als `alias()`; Beispielprojekt in `example`.
 - PDFs/Office-Dateien vor dem Lesen mit `doc2md` (Ordner `Tools/doc2md`) in Markdown umwandeln und gezielt greppen.
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.
-- QML: wachsende Listen (`Repeater`) in `Column` statt `ColumnLayout` (Qt-6.4-Layoutfehler, siehe ARCHITEKTUR.md).
+- QML: wachsende Listen (`Repeater`) in `Column` statt `ColumnLayout`, umbrechende Texte mit Ankern statt GridLayout
+  (Qt-6.4-Layoutfehler, siehe ARCHITEKTUR.md).
+- Kosten-Ausgaben mit Einheit „€“ deklarieren und `currencySymbol(ctx)` verwenden; Preiseingaben mit Einheit `"€ / CHF"`.
+- Sensoren/Wächter für den Kennbuchstaben-Finder in `core/src/instruments/instruments.cpp` ergänzen (Suchwörter in ae/oe/ue).
 - Jeder Text als `Text{de, en}`; deutsche Texte mit korrekten Umlauten. Einheiten als SI-Symbole.
 - Keine locale-abhängigen Funktionen (`printf`, `strtod`, `stod`) – `elc::formatNumber` / `elc::parseNumber` nutzen.
 - Normwerte immer mit Quelle in `description` und „gegen gültige Ausgabe prüfen“; keine Werte raten.

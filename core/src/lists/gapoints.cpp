@@ -245,7 +245,7 @@ Result summarizePoints(const std::vector<Inputs>& rows, const std::vector<Result
     for (std::size_t i = 0; i < 4; ++i) {
         t.set(modId[i], std::ceil(sum[i] * reserve / cfg.num(chId[i]) - 1e-9));
     }
-    const std::string cur = ctx.norm == NormProfile::CH ? "CHF" : "€";
+    const std::string cur = currencySymbol(ctx);
     if (cfg.num("price") > 0 || cfg.num("priceCom") > 0) {
         t.set("cost", phys * cfg.num("price") + sum[4] * cfg.num("priceCom"), cur);
     }

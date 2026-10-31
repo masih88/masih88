@@ -100,7 +100,7 @@ TEST_CASE("Calculator definitions are complete and compute with defaults") {
                 CHECK(complete(t));
             }
             // defaults must produce a result (an error may only come from a limit check, never from missing data)
-            CHECK_FALSE(r.values.empty());
+            CHECK_FALSE((r.values.empty() && r.texts.empty()));
         }
     }
 }

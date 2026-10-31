@@ -4,11 +4,16 @@ import QtQuick.Layouts
 
 // Renders input definitions from the core (number, choice, text). Used by calculators,
 // project list settings and the row editor. Values are kept as text, keyed by input id.
-ColumnLayout {
+// Built with positioners and anchors (no layouts inside): wrapped labels and hints always
+// get their real height (Qt 6.4 layouts sometimes kept a stale one, so texts overlapped).
+Column {
     id: form
     property var inputs: []
     property var values: ({})
     signal edited(string id, string text)
+
+    readonly property real fieldWidth: 116
+    readonly property real unitWidth: 58
 
     Layout.fillWidth: true
     spacing: 10
@@ -34,65 +39,80 @@ ColumnLayout {
         id: rep
         model: form.inputs
 
-        delegate: GridLayout {
+        delegate: Column {
             id: field
             required property var modelData
             readonly property bool isChoice: modelData.kind === "choice"
             readonly property bool isText: modelData.kind === "text"
             readonly property bool stacked: isChoice || isText
-            Layout.fillWidth: true
+            readonly property string caption: modelData.label + (modelData.optional ? " · " + Calc.ui.optional : "")
+            width: form.width
             visible: form.inputVisible(modelData, form.values)
-            columns: stacked ? 1 : 3
-            columnSpacing: 8
-            rowSpacing: stacked ? 2 : 0
+            spacing: 2
 
+            // group heading (e.g. "Leitung & Verlegung")
             Label {
-                // group heading (e.g. "Leitung & Verlegung")
                 visible: (field.modelData.section || "") !== ""
-                Layout.columnSpan: field.columns
-                Layout.fillWidth: true
-                Layout.topMargin: 8
-                Layout.bottomMargin: 2
+                width: field.width
+                topPadding: 8
+                bottomPadding: 2
                 text: field.modelData.section || ""
+                wrapMode: Text.Wrap
                 font.pixelSize: 13
                 font.weight: Font.DemiBold
                 color: Calc.darkTheme ? "#F2C14E" : "#1F6F5C"
             }
+
+            // number: label · field · unit in one row
+            Item {
+                visible: !field.stacked
+                width: field.width
+                height: Math.max(numLabel.height, numInput.height)
+                Label {
+                    id: numLabel
+                    width: Math.max(60, field.width - form.fieldWidth - form.unitWidth - 16)
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: field.caption
+                    font.pixelSize: 14
+                    wrapMode: Text.Wrap
+                    opacity: 0.85
+                }
+                TextField {
+                    id: numInput
+                    x: field.width - form.unitWidth - 8 - width
+                    width: form.fieldWidth
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: form.values[field.modelData.id] || ""
+                    placeholderText: field.modelData.optional ? "–" : ""
+                    horizontalAlignment: TextInput.AlignRight
+                    inputMethodHints: Qt.ImhFormattedNumbersOnly
+                    selectByMouse: true
+                    font.pixelSize: 16
+                    onTextEdited: form.edited(field.modelData.id, text)
+                }
+                Label {
+                    x: field.width - form.unitWidth
+                    width: form.unitWidth
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: field.modelData.unit
+                    font.pixelSize: 13
+                    opacity: 0.7
+                    elide: Text.ElideRight
+                }
+            }
+
+            // choice / text: label above the control
             Label {
-                // explicit width from the parent avoids the wrap/implicit-size layout loop
-                Layout.fillWidth: true
-                Layout.preferredWidth: field.stacked ? field.width
-                                                     : Math.max(60, field.width - 116 - 58 - 2 * field.columnSpacing)
-                Layout.alignment: Qt.AlignVCenter
-                text: field.modelData.label + (field.modelData.optional ? " · " + Calc.ui.optional : "")
+                visible: field.stacked
+                width: field.width
+                text: field.caption
                 font.pixelSize: field.isText ? 12 : 14
                 wrapMode: Text.Wrap
                 opacity: field.isText ? 0.7 : 0.85
             }
             TextField {
-                visible: !field.stacked
-                Layout.preferredWidth: 116
-                Layout.alignment: Qt.AlignVCenter
-                text: form.values[field.modelData.id] || ""
-                placeholderText: field.modelData.optional ? "–" : ""
-                horizontalAlignment: TextInput.AlignRight
-                inputMethodHints: Qt.ImhFormattedNumbersOnly
-                selectByMouse: true
-                font.pixelSize: 16
-                onTextEdited: form.edited(field.modelData.id, text)
-            }
-            Label {
-                visible: !field.stacked
-                Layout.preferredWidth: 58
-                Layout.alignment: Qt.AlignVCenter
-                text: field.modelData.unit
-                font.pixelSize: 13
-                opacity: 0.7
-                elide: Text.ElideRight
-            }
-            TextField {
                 visible: field.isText
-                Layout.fillWidth: true
+                width: field.width
                 text: form.values[field.modelData.id] || ""
                 selectByMouse: true
                 font.pixelSize: 15
@@ -101,7 +121,7 @@ ColumnLayout {
             ComboBox {
                 id: combo
                 visible: field.isChoice
-                Layout.fillWidth: true
+                width: field.width
                 model: field.isChoice ? field.modelData.options : []
                 textRole: "label"
                 valueRole: "value"
@@ -119,11 +139,10 @@ ColumnLayout {
                     }
                 }
             }
+
             Label {
                 visible: (field.modelData.hint || "") !== ""
-                Layout.columnSpan: field.columns
-                Layout.fillWidth: true
-                Layout.preferredWidth: field.width
+                width: field.width
                 text: field.modelData.hint || ""
                 font.pixelSize: 11
                 opacity: 0.6

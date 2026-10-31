@@ -29,6 +29,10 @@ void addTables(std::vector<Table>& out);
 void addCleanroomTables(std::vector<Table>& out);
 void addDatacenterTables(std::vector<Table>& out);
 void addVdiTables(std::vector<Table>& out);
+void addProcess(std::vector<Calculator>& out);
+void addProcessTables(std::vector<Table>& out);
+void addPid(std::vector<Calculator>& out);
+void addPidTables(std::vector<Table>& out);
 ListDef consumerList();
 ListDef dataPointList();
 

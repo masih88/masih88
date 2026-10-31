@@ -32,8 +32,16 @@ constexpr Entry kStrings[] = {
     {"norm", "Normenprofil", "Norm profile"},
     {"normDe", "Deutschland (DIN VDE)", "Germany (DIN VDE)"},
     {"normCh", "Schweiz (NIN / SN 411000)", "Switzerland (NIN / SN 411000)"},
-    {"normHint", "Beeinflusst Grenzwerte (z. B. Spannungsfall 3 % / 4 %) und Währung.",
-     "Affects limits (e.g. voltage drop 3 % / 4 %) and currency."},
+    {"normHint", "Beeinflusst Grenzwerte (z. B. Spannungsfall 3 % / 4 %) und die EnEfG-Hinweise.",
+     "Affects limits (e.g. voltage drop 3 % / 4 %) and the EnEfG notes."},
+    {"currency", "Währung", "Currency"},
+    {"euro", "Euro (€)", "Euro (€)"},
+    {"franc", "Schweizer Franken (CHF)", "Swiss franc (CHF)"},
+    {"rate", "Wechselkurs: 1 € =", "Exchange rate: 1 € ="},
+    {"rateHint", "Preise werden in der gewählten Währung eingegeben; Kosten erscheinen zusätzlich in der anderen Währung. "
+                 "Stand 31.10.2026 etwa 0,92 CHF – Tageskurs der Bank eintragen.",
+     "Prices are entered in the chosen currency; costs are also shown in the other currency. About 0.92 CHF on "
+     "31 Oct 2026 – enter your bank's daily rate."},
     {"appearance", "Darstellung", "Appearance"},
     {"darkTheme", "Dunkles Design", "Dark theme"},
     {"about", "Über die App", "About"},

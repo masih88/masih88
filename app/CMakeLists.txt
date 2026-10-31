@@ -46,7 +46,7 @@ set_target_properties(ElektroRechner PROPERTIES
     OUTPUT_NAME ElektroRechner
     # Android (Qt 6.5+ reads these; older versions ignore them)
     QT_ANDROID_VERSION_NAME ${PROJECT_VERSION}
-    QT_ANDROID_VERSION_CODE 4
+    QT_ANDROID_VERSION_CODE 5
 )
 
 include(GNUInstallDirs)

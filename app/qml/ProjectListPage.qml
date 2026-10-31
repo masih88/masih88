@@ -13,13 +13,13 @@ Page {
     readonly property bool wide: width >= 760
     background: null
 
-    property var def: loadDefinition(Calc.language)
+    property var def: loadDefinition(Calc.language, Calc.currency)
     title: def.title || ""
 
     property var rows: []
     property var settings: ({})
     property bool showSettings: Calc.startPage.indexOf("!settings") > 0
-    property var result: compute(rows, settings, Calc.norm, Calc.language)
+    property var result: compute(rows, settings, Calc.norm, Calc.language, Calc.currency, Calc.chfPerEur)
 
     readonly property var keyTotals: (result.totals || []).filter(o => o.key)
     readonly property var otherTotals: (result.totals || []).filter(o => !o.key)

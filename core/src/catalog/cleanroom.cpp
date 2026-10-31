@@ -216,7 +216,7 @@ Calculator ffuCeiling() {
         r.set("ach", Q / (in.num("A") * in.num("H")));
         r.set("Pel", Pel);
         r.set("E", Pel * in.num("h") / 1000.0);
-        r.set("cost", Pel * in.num("h") * in.num("price"), ctx.norm == NormProfile::CH ? "CHF" : "€");
+        r.set("cost", Pel * in.num("h") * in.num("price"), currencySymbol(ctx));
         if (in.num("v") < 0.36 || in.num("v") > 0.54) {
             r.info({"Geschwindigkeit außerhalb 0,36–0,54 m/s – für Verdrängungsströmung begründen.",
                     "Velocity outside 0.36–0.54 m/s – justify for unidirectional flow."});

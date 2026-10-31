@@ -137,7 +137,7 @@ Calculator pue() {
         r.set("dcie", 100.0 / p);
         r.set("over", tot - it);
         r.set("Eyear", tot * 8760.0 / 1000.0);
-        r.set("Cover", (tot - it) * 8760.0 * in.num("price"), ctx.norm == NormProfile::CH ? "CHF" : "€");
+        r.set("Cover", (tot - it) * 8760.0 * in.num("price"), currencySymbol(ctx));
         r.set("save", std::max(0.0, (p - 1.3) * it * 8760.0 / 1000.0));
         rateEfficiency(r, p);
         if (!energy) {
@@ -228,7 +228,7 @@ Calculator pueBalance() {
         pi.freeCooling = in.num("free") / 100.0;
         pi.auxShare = in.num("aux") / 100.0;
         const auto b = datacenter::pueBalance(pi);
-        const std::string cur = ctx.norm == NormProfile::CH ? "CHF" : "€";
+        const std::string cur = currencySymbol(ctx);
         const double hours = 8760.0;
         r.set("pue", b.pue);
         r.set("Ptot", b.total);

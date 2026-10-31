@@ -18,6 +18,8 @@ class CalcBridge : public QObject {
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     Q_PROPERTY(QString norm READ norm WRITE setNorm NOTIFY normChanged)
     Q_PROPERTY(bool darkTheme READ darkTheme WRITE setDarkTheme NOTIFY darkThemeChanged)
+    Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
+    Q_PROPERTY(double chfPerEur READ chfPerEur WRITE setChfPerEur NOTIFY currencyChanged)
     Q_PROPERTY(QVariantMap ui READ ui NOTIFY languageChanged)
     Q_PROPERTY(QVariantList categories READ categories NOTIFY languageChanged)
     Q_PROPERTY(QStringList favorites READ favorites NOTIFY favoritesChanged)
@@ -33,6 +35,13 @@ public:
     void setNorm(const QString& norm);
     [[nodiscard]] bool darkTheme() const { return dark_; }
     void setDarkTheme(bool dark);
+    [[nodiscard]] QString currency() const { return currency_ == elc::Currency::CHF ? "CHF" : "EUR"; }
+    void setCurrency(const QString& currency);
+    [[nodiscard]] double chfPerEur() const { return chfPerEur_; }
+    void setChfPerEur(double rate);
+    /// Text in the current language with decimal comma for German (for the settings field)
+    Q_INVOKABLE QString formatNumber(double v, int decimals) const;
+    Q_INVOKABLE double parseNumber(const QString& text) const;
     [[nodiscard]] QVariantMap ui() const;
     [[nodiscard]] QVariantList categories() const;
     [[nodiscard]] QStringList favorites() const { return favorites_; }
@@ -88,10 +97,12 @@ signals:
     void languageChanged();
     void normChanged();
     void darkThemeChanged();
+    void currencyChanged();
     void favoritesChanged();
 
 private:
     [[nodiscard]] QString txt(const elc::Text& t) const;
+    [[nodiscard]] elc::Context context() const;
     [[nodiscard]] QVariantMap itemFor(const QString& id) const;
     [[nodiscard]] QVariantList inputList(const std::vector<elc::InputDef>& defs) const;
     [[nodiscard]] QVariantMap textValues(const std::vector<elc::InputDef>& defs, const elc::Inputs& in) const;
@@ -103,6 +114,8 @@ private:
     elc::Lang lang_ = elc::Lang::De;
     elc::NormProfile norm_ = elc::NormProfile::DE;
     bool dark_ = false;
+    elc::Currency currency_ = elc::Currency::EUR;
+    double chfPerEur_ = 0.92;
     QStringList favorites_;
     QString startPage_;
 };

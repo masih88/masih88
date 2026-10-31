@@ -13,12 +13,12 @@ Page {
     readonly property bool wide: width >= 760
     background: null
 
-    property var def: loadDefinition(Calc.language)
+    property var def: loadDefinition(Calc.language, Calc.currency)
     property var values: owner && rowIndex < owner.rows.length ? owner.rows[rowIndex] : ({})
     readonly property string rowName: values[def.titleInput] || ""
     title: rowName !== "" ? rowName : Calc.ui.row + " " + (rowIndex + 1)
 
-    property var result: run(values, owner ? owner.settings : ({}), Calc.norm, Calc.language)
+    property var result: run(values, owner ? owner.settings : ({}), Calc.norm, Calc.language, Calc.currency, Calc.chfPerEur)
     readonly property string status: Status.worst(result.messages)
     readonly property var keyOutputs: (result.outputs || []).filter(o => o.key).slice(0, 3)
 

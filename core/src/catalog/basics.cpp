@@ -207,8 +207,10 @@ Calculator energyCost() {
     c.category = "basics";
     c.title = {"Energieverbrauch & Kosten", "Energy consumption & cost"};
     c.summary = {"kWh und Kosten pro Tag/Jahr", "kWh and cost per day/year"};
-    c.description = {"E = P · t    Kosten = E · Preis\nDie Währung ergibt sich aus dem eingegebenen Preis (€ oder CHF).",
-                     "E = P · t    Cost = E · price\nThe currency follows the entered price (€ or CHF)."};
+    c.description = {"E = P · t    Kosten = E · Preis\nWährung (€ oder CHF) und Wechselkurs in den Einstellungen; der Betrag "
+                     "wird zusätzlich in der anderen Währung angezeigt.",
+                     "E = P · t    Cost = E · price\nCurrency (€ or CHF) and exchange rate in the settings; the amount is "
+                     "also shown in the other currency."};
     c.inputs = {
         Num::number("P", {"Leistung P", "Power P"}, "W", 2000).nonNegative(),
         Num::number("h", {"Betriebsstunden pro Tag", "Operating hours per day"}, "h", 8).range(0, 24),
@@ -222,7 +224,7 @@ Calculator energyCost() {
     c.keywords = {"kosten", "kwh", "energie", "cost", "energy"};
     c.compute = [](const Inputs& in, const Context& ctx) {
         Result r;
-        const std::string currency = ctx.norm == NormProfile::CH ? "CHF" : "€";
+        const std::string currency = currencySymbol(ctx);
         const double eDay = in.num("P") * in.num("h") / 1e3;
         const double eYear = eDay * in.num("d");
         r.set("Eday", eDay);

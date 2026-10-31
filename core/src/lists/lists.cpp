@@ -201,7 +201,9 @@ Result evaluateRow(const ListDef& def, const Inputs& row, const Inputs& settings
     const Result cfgValidation = normalizeAndValidate(def.settingsInputs, cfg);
     for (const auto& m : cfgValidation.messages) validation.messages.push_back(m);
     if (validation.hasError()) return validation;
-    return guardedCompute([&] { return def.computeRow(in, cfg, ctx); });
+    Result r = guardedCompute([&] { return def.computeRow(in, cfg, ctx); });
+    applyCurrency(def.rowOutputs, r, ctx);
+    return r;
 }
 
 ListResult evaluateList(const ListDef& def, const std::vector<Inputs>& rows, const Inputs& settings, const Context& ctx) {
@@ -216,6 +218,7 @@ ListResult evaluateList(const ListDef& def, const std::vector<Inputs>& rows, con
         lr.rows.push_back(evaluateRow(def, row, settings, ctx));
     }
     lr.totals = guardedCompute([&] { return def.summarize(normalized, lr.rows, cfg, ctx); });
+    applyCurrency(def.totalOutputs, lr.totals, ctx);
     return lr;
 }
 

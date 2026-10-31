@@ -203,13 +203,33 @@ Result guardedCompute(const std::function<Result()>& fn) {
     }
 }
 
+std::string currencySymbol(const Context& ctx) { return ctx.currency == Currency::CHF ? "CHF" : "€"; }
+
+void applyCurrency(const std::vector<OutputDef>& outs, Result& r, const Context& ctx) {
+    for (const auto& o : outs) {
+        if (o.isText || o.unit != "€") continue;
+        const auto v = r.values.find(o.id);
+        if (v == r.values.end() || !std::isfinite(v->second)) continue;
+        auto& unit = r.units[o.id];
+        if (unit.empty()) unit = currencySymbol(ctx);
+        if (!(ctx.chfPerEur > 0) || !std::isfinite(ctx.chfPerEur)) continue;
+        const bool isChf = unit == "CHF";
+        const double other = isChf ? v->second / ctx.chfPerEur : v->second * ctx.chfPerEur;
+        const int dec = std::fabs(other) >= 100.0 ? 0 : 2;
+        const std::string sym = isChf ? "€" : "CHF";
+        r.alt[o.id] = Text{"≈ " + formatNumber(other, dec, Lang::De) + " " + sym, "≈ " + formatNumber(other, dec, Lang::En) + " " + sym};
+    }
+}
+
 Result evaluate(const Calculator& calc, const Inputs& raw, const Context& ctx) {
     Inputs in = raw;
     Result validation = normalizeAndValidate(calc.inputs, in);
     if (validation.hasError()) return validation;
 
     try {
-        return calc.compute(in, ctx);
+        Result r = calc.compute(in, ctx);
+        applyCurrency(calc.outputs, r, ctx);
+        return r;
     } catch (const CalcError& e) {
         Result r;
         r.error(e.text());

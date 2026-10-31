@@ -20,6 +20,10 @@
 namespace elc {
 
 enum class NormProfile { DE, CH };
+enum class Currency { EUR, CHF };
+
+/// Unit of price inputs; the UI shows the chosen currency instead
+inline constexpr const char* kCurrencyUnit = "€ / CHF";
 
 struct Option {
     std::string value;
@@ -119,6 +123,7 @@ struct Result {
     std::map<std::string, Text, std::less<>> texts;
     std::map<std::string, std::string, std::less<>> units;  // overrides OutputDef::unit
     std::vector<Message> messages;
+    std::map<std::string, Text, std::less<>> alt;  // secondary display, e.g. "≈ 920 CHF" for a € amount
 
     void set(std::string id, double v) { values[std::move(id)] = v; }
     void set(std::string id, double v, std::string unit) {
@@ -135,7 +140,14 @@ struct Result {
 
 struct Context {
     NormProfile norm = NormProfile::DE;
+    Currency currency = Currency::EUR;
+    double chfPerEur = 0.92;  // exchange rate: 1 € = chfPerEur CHF
 };
+
+/// "€" or "CHF"
+[[nodiscard]] std::string currencySymbol(const Context& ctx);
+/// For outputs declared with unit "€": sets the chosen currency and adds the amount in the other currency (Result::alt)
+void applyCurrency(const std::vector<OutputDef>& outs, Result& r, const Context& ctx);
 
 using ComputeFn = std::function<Result(const Inputs&, const Context&)>;
 

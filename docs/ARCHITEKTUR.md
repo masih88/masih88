@@ -1,6 +1,6 @@
 # Architektur & Entwurfsentscheidungen
 
-Stand: 31.10.2026 · Version 1.3.0
+Stand: 31.10.2026 · Version 1.4.0
 
 ## Ziel
 
@@ -41,7 +41,9 @@ erweiterbar sein.
 | Rechner-Definition | **Datengetrieben**: jeder Rechner ist Daten + eine `compute`-Funktion | Eine generische QML-Seite für alle Rechner; neue Rechner ohne QML-Änderung |
 | Übersetzung | `Text{de, en}` direkt in den Definitionen; UI-Texte in `UiStrings.cpp` | Sprache zur Laufzeit umschaltbar, kein `lrelease`-Schritt nötig |
 | Zahlen | Ein-/Ausgabe locale-unabhängig (`iostream` + `std::locale::classic`), Komma und Punkt erlaubt | Qt ruft `setlocale()` auf (Linux/Android) – `printf`/`strtod` würden sonst mit Dezimalkomma brechen |
-| Normprofil | `Context{NormProfile}` wird jedem `compute` übergeben | Grenzwerte (3 %/4 %), Währung; weitere länderabhängige Werte leicht ergänzbar |
+| Normprofil | `Context{NormProfile}` wird jedem `compute` übergeben | Grenzwerte (3 %/4 %); weitere länderabhängige Werte leicht ergänzbar |
+| Währung | `Context{currency, chfPerEur}`; Ausgaben mit Einheit „€“ bekommen in `applyCurrency()` die gewählte Währung und `Result::alt` mit dem umgerechneten Betrag; Preiseingaben mit Einheit `kCurrencyUnit` zeigen die gewählte Währung | Euro und Franken unabhängig vom Normprofil, Kurs einstellbar |
+| Kennbuchstaben | Datenbank `elc/instruments.hpp` (Name, Suchwörter, ISA-/EN-Buchstabe, VDI-Kürzel, IEC 81346), Codes per Regel aus Messgröße + Funktion | Ein Datensatz liefert Finder, Tabelle und Tests |
 | Fehler | `evaluate()` validiert Pflichtfelder/Bereiche; `CalcError` für physikalisch Unmögliches | Die UI zeigt verständliche Meldungen statt Abstürzen |
 | Sichtbarkeit | `InputDef::showIf(choiceId, {werte})` | Felder erscheinen nur, wenn relevant (z. B. cos φ nicht bei DC) |
 | Hervorhebung | `OutputDef::primary()`, `abbrev()` | Schlüsselergebnisse in der Ergebnisleiste (Handy) und auf den Zeilenkarten |
@@ -120,8 +122,9 @@ In Qt 6.4 positioniert ein `ColumnLayout` Kinder eines `Repeater`, die erst *nac
 neben einem Geschwister mit wechselnder Sichtbarkeit nicht mehr (Breite 0, alle bei y = 0) – und bringt dabei das
 ganze Seitenlayout durcheinander. Die Zeilenkarten stehen deshalb in einem `Column`-Positionierer mit
 `width: parent.width` (siehe `ProjectListPage.qml`). Für wechselnde Listen im Zweifel `Column` statt `ColumnLayout`.
-Die Ergebniszeilen (`ResultView.qml`) sind deshalb ebenfalls ohne Layouts aufgebaut (Anker, Grundlinien ausgerichtet):
-umbrechende Beschriftungen in `GridLayout`-Zeilen bekamen sonst gelegentlich eine falsche Höhe.
+Die Ergebniszeilen (`ResultView.qml`) und das Eingabeformular (`InputForm.qml`) sind deshalb ebenfalls ohne Layouts
+aufgebaut (Column + Anker): umbrechende Beschriftungen und Hinweise in `GridLayout`-Zeilen bekamen sonst gelegentlich
+eine falsche Höhe und überlappten.
 
 ## Bekannte Grenzen / Ideen für Version 2
 

@@ -22,6 +22,7 @@ QString q(const std::string& s) { return QString::fromStdString(s); }
 
 QString categoryColor(const std::string& id) {
     if (id == "projects") return QStringLiteral("#1F6F5C");
+    if (id == "process") return QStringLiteral("#7B5E3C");
     if (id == "basics") return QStringLiteral("#3D7EDB");
     if (id == "cables") return QStringLiteral("#E08A1E");
     if (id == "motors") return QStringLiteral("#2E9E6B");
@@ -104,10 +105,42 @@ CalcBridge::CalcBridge(QObject* parent) : QObject(parent) {
     norm_ = settings_.value("norm", "de").toString() == "ch" ? elc::NormProfile::CH : elc::NormProfile::DE;
     dark_ = qEnvironmentVariable("ELC_THEME", settings_.value("dark", false).toBool() ? "dark" : "light") == "dark";
     favorites_ = settings_.value("favorites").toStringList();
+    // currency: stored choice, otherwise from the norm profile; exchange rate editable in the settings
+    const QString cur = settings_.value("currency", norm_ == elc::NormProfile::CH ? "CHF" : "EUR").toString();
+    currency_ = cur == "CHF" ? elc::Currency::CHF : elc::Currency::EUR;
+    chfPerEur_ = settings_.value("chfPerEur", 0.92).toDouble();
+    if (!(chfPerEur_ > 0)) chfPerEur_ = 0.92;
     startPage_ = qEnvironmentVariable("ELC_OPEN");  // used for automated screenshots
 }
 
 QString CalcBridge::txt(const elc::Text& t) const { return q(t.in(lang_)); }
+
+elc::Context CalcBridge::context() const {
+    elc::Context c;
+    c.norm = norm_;
+    c.currency = currency_;
+    c.chfPerEur = chfPerEur_;
+    return c;
+}
+
+void CalcBridge::setCurrency(const QString& currency) {
+    const auto c = currency == "CHF" ? elc::Currency::CHF : elc::Currency::EUR;
+    if (c == currency_) return;
+    currency_ = c;
+    settings_.setValue("currency", this->currency());
+    emit currencyChanged();
+}
+
+void CalcBridge::setChfPerEur(double rate) {
+    if (!(rate > 0) || !std::isfinite(rate) || rate == chfPerEur_) return;
+    chfPerEur_ = rate;
+    settings_.setValue("chfPerEur", rate);
+    emit currencyChanged();
+}
+
+QString CalcBridge::formatNumber(double v, int decimals) const { return q(elc::formatNumber(v, decimals, lang_)); }
+
+double CalcBridge::parseNumber(const QString& text) const { return elc::parseNumber(text.toStdString()).value_or(elc::kNaN); }
 
 QString CalcBridge::language() const { return lang_ == elc::Lang::En ? "en" : "de"; }
 
@@ -265,9 +298,10 @@ QVariantList CalcBridge::inputList(const std::vector<elc::InputDef>& defs) const
     QVariantList inputs;
     for (const auto& in : defs) {
         const char* kind = in.kind == elc::InputDef::Kind::Choice ? "choice" : (in.kind == elc::InputDef::Kind::Text ? "text" : "number");
+        const QString unit = in.unit == elc::kCurrencyUnit ? q(elc::currencySymbol(context())) : q(in.unit);
         QVariantMap m{{"id", q(in.id)},
                       {"label", txt(in.label)},
-                      {"unit", q(in.unit)},
+                      {"unit", unit},
                       {"kind", kind},
                       {"optional", in.optional && in.kind == elc::InputDef::Kind::Number},
                       {"hint", txt(in.hint)},
@@ -315,8 +349,10 @@ QVariantList CalcBridge::outputList(const std::vector<elc::OutputDef>& defs, con
             value = q(elc::formatNumber(it->second, out.decimals, lang_));
             if (const auto u = r.units.find(out.id); u != r.units.end()) unit = q(u->second);
         }
+        const auto alt = r.alt.find(out.id);
         outputs.append(QVariantMap{{"id", q(out.id)},
                                    {"label", txt(out.label)},
+                                   {"alt", alt == r.alt.end() ? QString() : txt(alt->second)},
                                    {"short", txt(out.shortLabel.de.empty() ? out.label : out.shortLabel)},
                                    {"value", value},
                                    {"unit", unit},
@@ -349,7 +385,7 @@ QVariantMap CalcBridge::calculator(const QString& id) const {
 QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) const {
     const auto* c = elc::findCalculator(id.toStdString());
     if (!c) return {};
-    const auto ch = elc::evaluateChart(*c, toInputs(c->inputs, values), elc::Context{norm_});
+    const auto ch = elc::evaluateChart(*c, toInputs(c->inputs, values), context());
     if (!ch) return {};
     QVariantList series;
     for (const auto& s : ch->series) {
@@ -373,7 +409,7 @@ QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) cons
 QVariantMap CalcBridge::chartPick(const QString& id, const QVariantMap& values, double x, double y) const {
     const auto* c = elc::findCalculator(id.toStdString());
     if (!c) return {};
-    const auto picked = elc::pickChart(*c, toInputs(c->inputs, values), x, y, elc::Context{norm_});
+    const auto picked = elc::pickChart(*c, toInputs(c->inputs, values), x, y, context());
     if (picked.empty()) return {};
     QVariantMap out = values;
     for (const auto& v : picked) {
@@ -400,7 +436,7 @@ QVariantMap CalcBridge::compute(const QString& id, const QVariantMap& values) co
     const auto* c = elc::findCalculator(id.toStdString());
     if (!c) return {};
     const auto in = toInputs(c->inputs, values);
-    const auto r = elc::evaluate(*c, in, elc::Context{norm_});
+    const auto r = elc::evaluate(*c, in, context());
 
     QVariantList outputs;
     QString copy = txt(c->title) + '\n';
@@ -414,7 +450,8 @@ QVariantMap CalcBridge::compute(const QString& id, const QVariantMap& values) co
         } else if (value.isEmpty()) {
             continue;
         }
-        copy += QStringLiteral("  %1: %2 %3\n").arg(txt(def.label), value, q(def.unit));
+        const QString unit = def.unit == elc::kCurrencyUnit ? q(elc::currencySymbol(context())) : q(def.unit);
+        copy += "  " + QStringLiteral("%1: %2 %3").arg(txt(def.label), value, unit).trimmed() + '\n';
     }
     copy += QStringLiteral("→\n");
     for (const auto& out : c->outputs) {
@@ -430,8 +467,16 @@ QVariantMap CalcBridge::compute(const QString& id, const QVariantMap& values) co
             value = q(elc::formatNumber(it->second, out.decimals, lang_));
             if (const auto u = r.units.find(out.id); u != r.units.end()) unit = q(u->second);
         }
-        outputs.append(QVariantMap{{"id", q(out.id)}, {"label", txt(out.label)}, {"value", value}, {"unit", unit}, {"key", out.key}});
-        copy += QStringLiteral("  %1: %2 %3\n").arg(txt(out.label), value, unit);
+        const auto altIt = r.alt.find(out.id);
+        const QString alt = altIt == r.alt.end() ? QString() : txt(altIt->second);
+        outputs.append(QVariantMap{{"id", q(out.id)},
+                                   {"label", txt(out.label)},
+                                   {"value", value},
+                                   {"unit", unit},
+                                   {"alt", alt},
+                                   {"key", out.key},
+                                   {"short", txt(out.shortLabel.de.empty() ? out.label : out.shortLabel)}});
+        copy += QStringLiteral("  %1: %2 %3%4\n").arg(txt(out.label), value, unit, alt.isEmpty() ? QString() : "  (" + alt + ")");
     }
     QVariantList messages;
     for (const auto& m : r.messages) {
@@ -533,7 +578,7 @@ QVariantMap CalcBridge::computeList(const QString& id, const QVariantList& rows,
     if (!l) return {};
     const auto in = rowsFrom(*l, rows);
     const auto cfg = toInputs(l->settingsInputs, settings);
-    const auto res = elc::evaluateList(*l, in, cfg, elc::Context{norm_});
+    const auto res = elc::evaluateList(*l, in, cfg, context());
 
     // second line of a row card: the remaining text inputs (e.g. trade · panel · room) or the first key text output
     QVariantList outRows;
@@ -570,7 +615,7 @@ QVariantMap CalcBridge::computeList(const QString& id, const QVariantList& rows,
 QVariantMap CalcBridge::computeRow(const QString& id, const QVariantMap& row, const QVariantMap& settings) const {
     const auto* l = elc::findList(id.toStdString());
     if (!l) return {};
-    const auto r = elc::evaluateRow(*l, toInputs(l->rowInputs, row), toInputs(l->settingsInputs, settings), elc::Context{norm_});
+    const auto r = elc::evaluateRow(*l, toInputs(l->rowInputs, row), toInputs(l->settingsInputs, settings), context());
     return {{"outputs", outputList(l->rowOutputs, r)}, {"messages", messageList(r)}, {"hasError", r.hasError()}, {"status", statusOf(r)}};
 }
 
@@ -578,7 +623,7 @@ QString CalcBridge::exportList(const QString& id, const QVariantList& rows, cons
                                bool tabs) const {
     const auto* l = elc::findList(id.toStdString());
     if (!l) return {};
-    return q(elc::exportCsv(*l, rowsFrom(*l, rows), toInputs(l->settingsInputs, settings), elc::Context{norm_}, lang_, detail,
+    return q(elc::exportCsv(*l, rowsFrom(*l, rows), toInputs(l->settingsInputs, settings), context(), lang_, detail,
                             tabs ? '\t' : ';'));
 }
 

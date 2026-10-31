@@ -19,6 +19,7 @@ const std::vector<Category>& categories() {
         {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~"},
         {"industry", {"Industrie & Netze", "Industry & power"}, "kVA"},
         {"automation", {"Gebäudeautomation & MSR", "Building automation & I&C"}, "mA"},
+        {"process", {"R&I-Kennzeichnung & Ex-Schutz", "P&ID tags & Ex protection"}, "Ex"},
         {"cleanroom", {"Reinraum & Pharma", "Cleanroom & pharma"}, "ISO"},
         {"datacenter", {"Rechenzentrum", "Data centre"}, "IT"},
         {"pv", {"Photovoltaik & Speicher", "PV & storage"}, "PV"},
@@ -38,6 +39,8 @@ const std::vector<Calculator>& calculators() {
         catalog::addIndustry(v);
         catalog::addAutomation(v);
         catalog::addHvac(v);
+        catalog::addPid(v);
+        catalog::addProcess(v);
         catalog::addCleanroom(v);
         catalog::addDatacenter(v);
         catalog::addPv(v);
@@ -55,6 +58,8 @@ const std::vector<Table>& tables() {
         catalog::addCleanroomTables(v);
         catalog::addDatacenterTables(v);
         catalog::addVdiTables(v);
+        catalog::addPidTables(v);
+        catalog::addProcessTables(v);
         return v;
     }();
     return list;

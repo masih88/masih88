@@ -136,7 +136,7 @@ Calculator pvYield() {
     c.keywords = {"pv", "ertrag", "photovoltaik", "amortisation", "eigenverbrauch", "solar", "yield"};
     c.compute = [](const Inputs& in, const Context& ctx) {
         Result r;
-        const std::string cur = ctx.norm == NormProfile::CH ? "CHF" : "€";
+        const std::string cur = currencySymbol(ctx);
         const double E = in.num("kwp") * in.num("spec");
         const double esc = E * in.num("sc") / 100.0;
         const double save = esc * in.num("price");

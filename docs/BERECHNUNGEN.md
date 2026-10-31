@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.3.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.4.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -135,7 +135,7 @@ Leere Felder werden ignoriert.
 
 ```text
 E = P · t    Kosten = E · Preis
-Die Währung ergibt sich aus dem eingegebenen Preis (€ oder CHF).
+Währung (€ oder CHF) und Wechselkurs in den Einstellungen; der Betrag wird zusätzlich in der anderen Währung angezeigt.
 ```
 
 **Eingaben:** Leistung P [W], Betriebsstunden pro Tag [h], Betriebstage pro Jahr [d], Strompreis pro kWh [€ / CHF]
@@ -797,6 +797,268 @@ CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je
 *Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.
 Zusatz-Erläuterung möglich, z. B. SWH01_ECO, ABV01_WM_01_REP. Spalte „Typ. E/A“ = übliche Zuordnung aus der Planungspraxis, nicht Teil der Richtlinie.*
 
+## R&I-Kennzeichnung & Ex-Schutz
+
+### R&I-Kennbuchstaben-Finder
+
+*Name eingeben (z. B. Temperatur Zuluft, Gas Methan, Leckage) → ISA, EN 62424, VDI 3814* — `pid_tags`
+
+```text
+Erster Buchstabe = Messgröße (T Temperatur, P Druck, F Durchfluss, L Stand, M Feuchte, A/Q Analyse …), Folgebuchstaben = Funktion: E Element, T Transmitter, I Anzeige, C Regelung, S Schalter, A Alarm, H/L hoch/tief, Q Summe. Tag = Buchstaben + Kreisnummer, z. B. TT-101.
+Für die GA zusätzlich Bauteil-Kürzel und Benutzeradresse nach VDI 3814-4.1 (Kürzel + Nr. _ Funktion _ Nr.).
+Kennbuchstaben nach ANSI/ISA-5.1-2009 und DIN EN 62424 (Nachfolgerin von DIN 19227-1); GA-Kürzel nach VDI 3814 Blatt 4.1 Tab. 3/4 (Beispiele), Klassen nach IEC 81346-2 wie in VDI 3814-4.1. Projektspezifische Festlegungen haben Vorrang.
+```
+
+**Eingaben:** Messstelle / Gerät (Name), Funktion, Ort / Darstellung, Kreisnummer
+
+**Ergebnisse:** Erkannt, Kennbuchstaben ISA-5.1, Beispiel-Tag (ISA), Bedeutung, Kennbuchstaben EN 62424 / DIN 19227, GA-Kürzel VDI 3814-4.1, Benutzeradresse (Bauteil_Funktion), Klasse IEC 81346-2, Signal, PI-Symbol, Weitere Treffer
+
+### Explosionsschutz: Temperaturklasse & Kennzeichnung
+
+*Zone → Kategorie/EPL, Stoff → T-Klasse & Gruppe, Staub → T_max, Geräteprüfung* — `ex_selection`
+
+```text
+Gas/Dampf: Die maximale Oberflächentemperatur des Geräts muss unter der Zündtemperatur liegen.
+Temperaturklassen (IEC 60079-0): T1 450 °C · T2 300 °C · T3 200 °C · T4 135 °C · T5 100 °C · T6 85 °C.
+Explosionsgruppe (IEC 60079-20-1): IIA ⊂ IIB ⊂ IIC – ein IIC-Gerät darf auch für IIB/IIA eingesetzt werden.
+Staub (IEC 60079-14): T_max ≤ 2/3 · T_Wolke und T_max ≤ T_5mm − 75 K (Schicht bis 5 mm).
+Zone 0/1/2 → Kategorie 1G/2G/3G bzw. EPL Ga/Gb/Gc; Zone 20/21/22 → 1D/2D/3D bzw. Da/Db/Dc (ATEX 2014/34/EU, 1999/92/EG). Stoffwerte sind Richtwerte (Herstellerunterlagen Schmersal/Festo, GESTIS) – maßgeblich sind Sicherheitsdatenblatt, IEC 60079-20-1 und das Explosionsschutzdokument.
+```
+
+**Eingaben:** Zone, Stoff (Gas/Dampf), Zündtemperatur (eigener Stoff) [°C], Explosionsgruppe (eigener Stoff), Staubgruppe, Zündtemperatur Staubwolke [°C], Glimmtemperatur 5-mm-Schicht [°C], Staubschichtdicke [mm], Gerät: Temperaturklasse, Gerät: Explosionsgruppe, Gerät: max. Oberflächentemperatur [°C]
+
+**Ergebnisse:** Gerätekategorie (EPL), Auftreten explosionsfähiger Atmosphäre, Zündtemperatur [°C], Erforderliche Temperaturklasse, Zulässige Oberflächentemperatur [°C], Erforderliche Gruppe, Kennzeichnung (Beispiel), Geeignete Zündschutzarten
+
+### Sensoren & Wächter – Kennbuchstaben
+
+| Messstelle / Gerät | Bereich | ISA-5.1 | EN 62424 | VDI 3814 | IEC 81346 |
+|---|---|---|---|---|---|
+| Temperatur | MSR | TT | TI | TZU, TAB, TAU, TRU, TVL, TRL | BT |
+| Zulufttemperatur | HLKS | TT | TI | TZU | BT |
+| Ablufttemperatur | HLKS | TT | TI | TAB | BT |
+| Außentemperatur | HLKS | TT | TI | TAU | BT |
+| Raumtemperatur | HLKS | TT | TI | TRU | BT |
+| Fortlufttemperatur | HLKS | TT | TI | TFO | BT |
+| Mischlufttemperatur | HLKS | TT | TI | TMI | BT |
+| Vorlauftemperatur | HLKS | TT | TI | TVL | BT |
+| Rücklauftemperatur | HLKS | TT | TI | TRL | BT |
+| Warmwassertemperatur | HLKS | TT | TI | TWW | BT |
+| Speichertemperatur | HLKS | TT | TI | TSP | BT |
+| Abgastemperatur | HLKS | TT | TI | TAG | BT |
+| Temperatur nach Kühler | HLKS | TT | TI | TNK | BT |
+| Frostschutzwächter | HLKS | TSL | TSL | FSW | BT |
+| Sicherheitstemperaturbegrenzer (STB) | HLKS | TSHH | TZH | STB | BT |
+| Sicherheitstemperaturwächter (STW) | HLKS | TSHH | TZH | STW | BT |
+| Thermostat / Temperaturwächter | HLKS | TSH | TSH | THM | BT |
+| Taupunkttemperatur | HLKS | TT | TI | TTP | BT |
+| Taupunktwächter | HLKS | MSH | MSH | TPW | BT |
+| Kondensationswächter | HLKS | MSH | MSH | MKW | BM |
+| Feuchte (relativ) | HLKS | MT | MI | MZU, MAB, MAU, MRU | BM |
+| Zuluftfeuchte | HLKS | MT | MI | MZU | BM |
+| Abluftfeuchte | HLKS | MT | MI | MAB | BM |
+| Außenfeuchte | HLKS | MT | MI | MAU | BM |
+| Raumfeuchte | HLKS | MT | MI | MRU | BM |
+| Absolute Feuchte (Wassergehalt) | HLKS | MT | MI | XZU, XAB, XAU, XRU | BX |
+| Hygrostat / Feuchtewächter | HLKS | MSH | MSH | – | BM |
+| Druck | MSR | PT | PI | PZU, PAB, PVI | BP |
+| Differenzdruck | MSR | PDT | PDI | PDI | BP |
+| Raumdruck (Reinraum) | HLKS | PDT | PDI | PRU | BP |
+| Zuluftdruck (Kanaldruck) | HLKS | PT | PI | PZU | BP |
+| Wasserdruck / Anlagendruck | HLKS | PT | PI | PVI | BP |
+| Druckwächter / Pressostat | MSR | PSH | PSH | DRW | BP |
+| Sicherheitsdruckbegrenzer (SDB) | HLKS | PSHH | PZH | SDB | BP |
+| Filterüberwachung (Differenzdruckwächter) | HLKS | PDSH | PDSH | LFI | BP |
+| Volumenstrom Luft | HLKS | FT | FI | FZU, FAB, FAU, FFO | BS |
+| Durchfluss Wasser | MSR | FT | FI | FKW, FWW | BS |
+| Strömungswächter (Luft) | HLKS | FSL | FSL | SSW | BS |
+| Wasserströmungswächter | HLKS | FSL | FSL | WSW | BL |
+| Wasserzähler | HLKS | FQI | FQI | WAZ | BG |
+| Gaszähler | HLKS | FQI | FQI | EGZ | BF |
+| Wärmemengenzähler | HLKS | JQI | – | WMZ | BG |
+| Kältemengenzähler | HLKS | JQI | – | KMZ | BG |
+| Elektrozähler | Elektro | JQI | EQI | ELZ | BC |
+| Füllstand | MSR | LT | LI | LSP | BL |
+| Niveauschalter max (Überlauf) | MSR | LSH | LSH | UBL | BL |
+| Niveauschalter min (Trockenlauf) | MSR | LSL | LSL | – | BL |
+| Wassermangelsicherung | HLKS | LSL | LSL | WMS | BL |
+| Leckageüberwachung | HLKS | LSH | LSH | LCK | BM |
+| CO₂ (Luftqualität) | HLKS | AT (CO₂) | QI | COM | BQ |
+| Luftqualität (VOC/Mischgas) | HLKS | AT (VOC) | QI | LQF | BQ |
+| Gaswarnung Methan (Erdgas) | Prozess | AT (CH₄) | QI | – | BQ |
+| Gaswarnung Wasserstoff | Prozess | AT (H₂) | QI | – | BQ |
+| Gaswarnung Kohlenmonoxid | HLKS | AT (CO) | QI | – | BQ |
+| Gaswarnung Ammoniak | Prozess | AT (NH₃) | QI | – | BQ |
+| Kältemittelwarnung | HLKS | AT (Rxxx) | QI | – | BQ |
+| Sauerstoffüberwachung (O₂-Mangel) | Prozess | AT (O₂) | QI | – | BQ |
+| Gaswarnanlage (allgemein) | Prozess | AT (Gas) | QI | – | BQ |
+| Rauchmelder (Kanal) | HLKS | ASH (Rauch) | QSH | RME | BR |
+| Flammenwächter | Prozess | BSL | – | – | – |
+| pH-Wert | Prozess | AT (pH) | QI | – | BQ |
+| Leitfähigkeit | Prozess | AT (µS/cm) | QI | – | BQ |
+| Drehzahl | MSR | ST | SI | SZU, SAB, SPP | BS |
+| Schwingung / Vibration | Prozess | VT | GI | – | – |
+| Stellungsrückmeldung (Ventil/Klappe) | MSR | ZT | GI | – | BG |
+| Endlagenschalter (AUF/ZU) | MSR | ZSO / ZSC | GSH / GSL | – | BG |
+| Gewicht / Wägezelle | Prozess | WT | WI | – | – |
+| Strom (elektrisch) | Elektro | IT | EI | – | – |
+| Spannung | Elektro | ET | EI | – | – |
+| Wirkleistung (elektrisch) | Elektro | JT | EI | – | – |
+| Beleuchtungsstärke / Helligkeit | HLKS | RT | RI | EAU, ERU | – |
+| Windgeschwindigkeit | HLKS | ST (Wind) | SI | WDG | BF |
+| Regenmelder | HLKS | MSH | MSH | RGM | BM |
+| Sonneneinstrahlung (Globalstrahlung) | HLKS | RT | RI | SES | BR |
+| Präsenzmelder / Bewegungsmelder | HLKS | YS | XS | – | – |
+| Not-Aus-Taster | MSR | HS | HS | NOT | SF |
+| Anlagenschalter (Hand-0-Auto) | HLKS | HS | HS | ANL | SF |
+| Reparaturschalter | HLKS | HS | HS | – | SF |
+
+*Typische Funktion je Gerät; andere Funktion (Fühler, Anzeige, Regler, Max/Min) im Kennbuchstaben-Finder wählen.
+Kennbuchstaben nach ANSI/ISA-5.1-2009 und DIN EN 62424 (Nachfolgerin von DIN 19227-1); GA-Kürzel nach VDI 3814 Blatt 4.1 Tab. 3/4 (Beispiele), Klassen nach IEC 81346-2 wie in VDI 3814-4.1. Projektspezifische Festlegungen haben Vorrang.*
+
+### Kennbuchstaben ISA-5.1
+
+| Buchstabe | Messgröße (1. Buchstabe) | Ergänzung | Anzeige-/passive Funktion | Ausgabefunktion | Funktionszusatz |
+|---|---|---|---|---|---|
+| A | Analyse | – | Alarm | – | – |
+| B | Brenner, Verbrennung | – | frei | frei | frei |
+| C | frei (oft Leitfähigkeit) | – | – | Regelung | Schließen |
+| D | frei (oft Dichte) | Differenz | – | – | Abweichung |
+| E | Spannung | – | Messelement, Sensor | – | – |
+| F | Durchfluss | Verhältnis | – | – | – |
+| G | frei | – | Schauglas, Anzeiger | – | – |
+| H | Hand | – | – | – | Hoch |
+| I | Strom | – | Anzeige | – | – |
+| J | Leistung | – | Abfrage | – | – |
+| K | Zeit, Zeitplan | Änderungsgeschwindigkeit | – | Bedienstation | – |
+| L | Stand, Niveau | – | Leuchte | – | Tief |
+| M | frei (oft Feuchte) | – | – | – | Mittel |
+| N | frei | – | frei | frei | frei |
+| O | frei | – | Blende, Drossel | – | Öffnen |
+| P | Druck | – | Messanschluss | – | – |
+| Q | Menge | Integral, Summe | Integral, Summe | – | – |
+| R | Strahlung | – | Registrierung | – | Lauf |
+| S | Drehzahl, Frequenz | Sicherheit | – | Schalter | Stopp |
+| T | Temperatur | – | – | Transmitter | – |
+| U | Mehrere Größen | – | Mehrfachfunktion | Mehrfachfunktion | – |
+| V | Schwingung | – | – | Ventil, Klappe | – |
+| W | Gewicht, Kraft | – | Tauchhülse, Sonde | – | – |
+| X | nicht klassifiziert | X-Achse | nicht klassifiziert | nicht klassifiziert | – |
+| Y | Ereignis, Zustand, Anwesenheit | Y-Achse | – | Hilfsgerät (Relais, Umformer) | – |
+| Z | Position, Abmessung | Z-Achse | – | Antrieb, Stellglied | – |
+
+*ANSI/ISA-5.1-2009 Tab. 4.1 (sinngemäß). „frei“ = vom Anwender festzulegen. Beispiel: TIC-101 = Temperatur, Anzeige, Regelung, Kreis 101.*
+
+### Kennbuchstaben EN 62424 / DIN 19227
+
+| Buchstabe | Als Erstbuchstabe | Als Ergänzung/Folgebuchstabe |
+|---|---|---|
+| A | – | Störungsmeldung (Alarm) |
+| C | – | selbsttätige Regelung |
+| D | Dichte | Differenz |
+| E | elektrische Größen | – |
+| F | Durchfluss | Verhältnis |
+| G | Abstand, Länge, Stellung, Amplitude | – |
+| H | Handeingabe | oberer Grenzwert |
+| I | – | Anzeige |
+| K | Zeit | – |
+| L | Stand (auch Trennschicht) | unterer Grenzwert |
+| M | Feuchte | – |
+| O | – | Sichtzeichen, Ja/Nein-Anzeige |
+| P | Druck | – |
+| Q | Stoffeigenschaft, Analyse | Integral, Summe |
+| R | Strahlungsgrößen | Registrierung |
+| S | Geschwindigkeit, Drehzahl, Frequenz | Schaltung, Ablaufsteuerung |
+| T | Temperatur | Messumformer (Gerätebuchstabe) |
+| U | zusammengesetzte Größen | zusammengefasste Antriebsfunktionen |
+| V | Viskosität | Stellgerät (Gerätebuchstabe) |
+| W | Gewichtskraft, Masse | – |
+| X | sonstige Größen | – |
+| Y | – | Rechenfunktion (Gerätebuchstabe) |
+| Z | – | Noteingriff, Schutz durch Auslösung |
+
+*Erstbuchstabe = Messgröße, Ergänzung D/F/Q, Folgebuchstaben in der Reihenfolge I R C S Z A O, Grenzwerte H/L (früher +/−). Beispiel: TIC = Temperatur, Anzeige, Regelung; PSZ = Druck, Schaltung, Schutzauslösung. DIN 19227-1 / DIN EN 62424, gegen gültige Ausgabe prüfen.*
+
+### Ex-Temperaturklassen T1–T6
+
+| Klasse | Max. Oberflächentemperatur | Zündtemperatur des Stoffs | Beispiele |
+|---|---|---|---|
+| T1 | 450 °C | > 450 °C | Methan, Wasserstoff, Ammoniak, Propan, Aceton |
+| T2 | 300 °C | > 300 … 450 °C | Ethylen, Ethanol, Methanol, n-Butan, Acetylen |
+| T3 | 200 °C | > 200 … 300 °C | Diesel, Cyclohexan, Schwefelwasserstoff |
+| T4 | 135 °C | > 135 … 200 °C | Diethylether, Acetaldehyd |
+| T5 | 100 °C | > 100 … 135 °C | (selten) |
+| T6 | 85 °C | > 85 … 100 °C | Schwefelkohlenstoff |
+
+*Quellen: IEC/EN 60079-0, -14, -20-1, ATEX 2014/34/EU und 1999/92/EG, Herstellerunterlagen (Schmersal, Festo). Gegen gültige Ausgabe und Explosionsschutzdokument prüfen.*
+
+### Ex-Gruppen (Gas und Staub)
+
+| Gruppe | Bereich | MESG (Grenzspaltweite) | MIC-Verhältnis | Beispiel |
+|---|---|---|---|---|
+| I | Bergbau (Grubengas) | – | – | Methan |
+| IIA | Gas – übrige Bereiche | > 0,9 mm | > 0,8 | Propan |
+| IIB | Gas | 0,5 … 0,9 mm | 0,45 … 0,8 | Ethylen |
+| IIC | Gas | < 0,5 mm | < 0,45 | Wasserstoff, Acetylen |
+| IIIA | Staub | – | – | brennbare Flusen |
+| IIIB | Staub | – | – | nicht leitfähiger Staub (Holz, Mehl) |
+| IIIC | Staub | – | – | leitfähiger Staub (Metall, Kohlenstoff) |
+
+*Quellen: IEC/EN 60079-0, -14, -20-1, ATEX 2014/34/EU und 1999/92/EG, Herstellerunterlagen (Schmersal, Festo). Gegen gültige Ausgabe und Explosionsschutzdokument prüfen.*
+
+### Ex-Zonen, Kategorien, EPL
+
+| Zone | Atmosphäre | Auftreten | Kategorie | EPL | Zündschutzarten |
+|---|---|---|---|---|---|
+| Zone 0 | Gas/Dampf | ständig, über lange Zeiträume oder häufig | 1G | Ga | ia, ma (oder zwei unabhängige Gb-Zündschutzarten) |
+| Zone 1 | Gas/Dampf | gelegentlich im Normalbetrieb | 2G | Gb | db, eb, ib, mb, pxb, pyb, ob, qb – und alle Ga-Geräte |
+| Zone 2 | Gas/Dampf | im Normalbetrieb nicht, wenn doch nur kurzzeitig | 3G | Gc | ec (früher nA), ic, mc, pzc, oc, nR – und alle Ga/Gb-Geräte |
+| Zone 20 | Staub | Staubwolke ständig, langzeitig oder häufig | 1D | Da | ta, ia, ma |
+| Zone 21 | Staub | Staubwolke gelegentlich im Normalbetrieb | 2D | Db | tb, ib, mb, pb – und alle Da-Geräte |
+| Zone 22 | Staub | Staubwolke normal nicht, wenn doch nur kurzzeitig | 3D | Dc | tc, ic, mc, pc – und alle Da/Db-Geräte |
+
+*Quellen: IEC/EN 60079-0, -14, -20-1, ATEX 2014/34/EU und 1999/92/EG, Herstellerunterlagen (Schmersal, Festo). Gegen gültige Ausgabe und Explosionsschutzdokument prüfen.*
+
+### Zündschutzarten
+
+| Kürzel | Zündschutzart | Prinzip | Schutzniveau → Zone | Norm |
+|---|---|---|---|---|
+| d | Druckfeste Kapselung | Explosion bleibt im Gehäuse | db → 1, dc → 2 | IEC 60079-1 |
+| e | Erhöhte Sicherheit | keine Funken/heißen Stellen | eb → 1, ec → 2 | IEC 60079-7 |
+| i | Eigensicherheit | Energie begrenzt | ia → 0, ib → 1, ic → 2 | IEC 60079-11 |
+| p | Überdruckkapselung | Schutzgas mit Überdruck | pxb/pyb → 1, pzc → 2 | IEC 60079-2 |
+| m | Vergusskapselung | in Masse eingegossen | ma → 0, mb → 1, mc → 2 | IEC 60079-18 |
+| o | Flüssigkeitskapselung | unter Schutzflüssigkeit | ob → 1, oc → 2 | IEC 60079-6 |
+| q | Sandkapselung | mit Sand gefüllt | qb → 1 | IEC 60079-5 |
+| nR | Schwadenhemmendes Gehäuse | dichtes Gehäuse | nR → 2 | IEC 60079-15 |
+| t | Schutz durch Gehäuse (Staub) | staubdicht, Temperatur begrenzt | ta → 20, tb → 21, tc → 22 | IEC 60079-31 |
+| op | Optische Strahlung | is/pr/sh | Ga/Gb/Gc | IEC 60079-28 |
+
+*Quellen: IEC/EN 60079-0, -14, -20-1, ATEX 2014/34/EU und 1999/92/EG, Herstellerunterlagen (Schmersal, Festo). Gegen gültige Ausgabe und Explosionsschutzdokument prüfen.*
+
+### Zündtemperaturen von Gasen und Dämpfen
+
+| Stoff | Zündtemperatur | Temperaturklasse | Explosionsgruppe |
+|---|---|---|---|
+| Methan (Erdgas) | 595 °C | T1 | IIA |
+| Wasserstoff | 560 °C | T1 | IIC |
+| Ammoniak | 630 °C | T1 | IIA |
+| Propan | 470 °C | T1 | IIA |
+| Aceton | 535 °C | T1 | IIA |
+| Ethylen | 425 °C | T2 | IIB |
+| Methanol | 440 °C | T2 | IIA |
+| Ethanol | 400 °C | T2 | IIB |
+| 2-Propanol (Isopropanol) | 425 °C | T2 | IIA |
+| n-Butan | 365 °C | T2 | IIA |
+| Acetylen | 305 °C | T2 | IIC |
+| Cyclohexan | 259 °C | T3 | IIA |
+| Dieselkraftstoff | ≥ 220 °C | T3 | IIA |
+| Schwefelwasserstoff | 270 °C | T3 | IIB |
+| Diethylether | 170 °C | T4 | IIB |
+| Acetaldehyd | 155 °C | T4 | IIA |
+| Schwefelkohlenstoff | 95 °C | T6 | IIC |
+
+*Richtwerte (Schmersal-Ex-Poster, Festo-Handout Explosionsschutz, GESTIS); je nach Quelle abweichend. Maßgeblich sind Sicherheitsdatenblatt und IEC 60079-20-1.*
+
 ## Reinraum & Pharma
 
 ### Reinraumklasse ISO 14644-1
@@ -1167,6 +1429,19 @@ Vereinfachung ohne Peukert-Effekt und Alterung – Herstellerkurven beachten.
 **Ergebnisse:** Nutzbare Energie [Wh], Batteriestrom [A], Laufzeit [h], Laufzeit [min]
 
 ## Umrechner
+
+### Währung € ↔ CHF
+
+*Euro und Schweizer Franken umrechnen* — `conv_currency`
+
+```text
+CHF = € · Kurs    € = CHF / Kurs    (Kurs = Franken für 1 Euro)
+Ohne Eingabe gilt der Kurs aus den Einstellungen (dort für alle Kostenrechnungen verwendet). Stand Oktober 2026 etwa 0,92 CHF/€ – Tageskurs der Bank verwenden.
+```
+
+**Eingaben:** Betrag, Von, Kurs 1 € in CHF [CHF]
+
+**Ergebnisse:** Ergebnis, Verwendeter Kurs 1 € = [CHF], Umkehrkurs 1 CHF = [€]
 
 ### Leistung
 

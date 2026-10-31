@@ -20,7 +20,13 @@ void addIndustry(std::vector<Calculator>& out);
 void addAutomation(std::vector<Calculator>& out);
 void addElectronics(std::vector<Calculator>& out);
 void addConverters(std::vector<Calculator>& out);
+void addHvac(std::vector<Calculator>& out);
+void addCleanroom(std::vector<Calculator>& out);
+void addDatacenter(std::vector<Calculator>& out);
+void addPv(std::vector<Calculator>& out);
 void addTables(std::vector<Table>& out);
+void addCleanroomTables(std::vector<Table>& out);
+void addDatacenterTables(std::vector<Table>& out);
 
 inline std::vector<Option> systemOptions(bool withDc = true) {
     std::vector<Option> o;

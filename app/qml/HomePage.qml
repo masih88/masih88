@@ -151,7 +151,7 @@ Page {
                         required property var modelData
                         Layout.fillWidth: true
                         Layout.preferredWidth: 100
-                        implicitHeight: 118
+                        implicitHeight: 128
                         radius: 16
                         color: tap.pressed ? Qt.darker(baseColor, Calc.darkTheme ? 0.8 : 1.06) : baseColor
                         border.color: Calc.darkTheme ? "#2A3445" : "#E2E6EC"

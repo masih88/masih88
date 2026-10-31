@@ -241,7 +241,7 @@ Calculator voltageDivider() {
         Num::number("Uin", {"Eingangsspannung U_ein", "Input voltage U_in"}, "V", 24).nonNegative(),
         Num::number("R1", {"R1", "R1"}, "kΩ", 10).positive(),
         Num::number("R2", {"R2", "R2"}, "kΩ", 4.7).positive(),
-        Num::number("RL", {"Lastwiderstand R_L (optional)", "Load R_L (optional)"}, "kΩ", kNaN).opt().positive(),
+        Num::number("RL", {"Lastwiderstand R_L", "Load R_L"}, "kΩ", kNaN).opt().positive(),
     };
     c.outputs = {Out::number("U0", {"U_aus unbelastet", "U_out unloaded"}, "V", 4).primary(),
                  Out::number("UL", {"U_aus belastet", "U_out loaded"}, "V", 4),
@@ -276,7 +276,7 @@ Calculator rcCircuit() {
         Num::number("R", {"Widerstand R", "Resistance R"}, "kΩ", 10).positive(),
         Num::number("C", {"Kapazität C", "Capacitance C"}, "µF", 10).positive(),
         Num::number("U", {"Ladespannung U_0", "Charging voltage U_0"}, "V", 24).nonNegative(),
-        Num::number("t", {"Zeit t (optional)", "Time t (optional)"}, "ms", kNaN).opt().nonNegative(),
+        Num::number("t", {"Zeit t", "Time t"}, "ms", kNaN).opt().nonNegative(),
     };
     c.outputs = {Out::number("tau", {"Zeitkonstante τ", "Time constant τ"}, "ms", 3).primary(),
                  Out::number("t5", {"5 τ", "5 τ"}, "ms", 2),

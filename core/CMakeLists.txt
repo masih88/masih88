@@ -7,7 +7,14 @@ add_library(elc_core STATIC
     src/formulas/automation.cpp
     src/formulas/electronics.cpp
     src/formulas/units.cpp
+    src/formulas/cleanroom.cpp
+    src/formulas/pv.cpp
+    src/formulas/air.cpp
     src/catalog/basics.cpp
+    src/catalog/hvac.cpp
+    src/catalog/cleanroom.cpp
+    src/catalog/datacenter.cpp
+    src/catalog/pv.cpp
     src/catalog/cables.cpp
     src/catalog/motors.cpp
     src/catalog/industry.cpp

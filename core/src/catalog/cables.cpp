@@ -428,7 +428,7 @@ Calculator disconnection() {
         Num::number("Sph", {"Querschnitt Außenleiter S_ph", "Phase cross-section S_ph"}, "mm²", 2.5).positive(),
         Num::number("Spe", {"Querschnitt Schutzleiter S_PE", "PE cross-section S_PE"}, "mm²", 2.5).positive(),
         Num::choice("mat", {"Leitermaterial", "Conductor material"}, materialOptions(), "cu"),
-        Num::number("L", {"Geplante Länge (optional)", "Planned length (optional)"}, "m", kNaN).opt().positive(),
+        Num::number("L", {"Geplante Länge", "Planned length"}, "m", kNaN).opt().positive(),
     };
     c.outputs = {Out::number("Ia", {"Abschaltstrom I_a", "Disconnection current I_a"}, "A", 0),
                  Out::number("Zs", {"Max. Schleifenimpedanz Z_s", "Max. loop impedance Z_s"}, "Ω", 3),

@@ -95,7 +95,7 @@ Calculator motorSpeed() {
     c.inputs = {
         Num::number("f", {"Frequenz f", "Frequency f"}, "Hz", 50).positive(),
         Num::choice("poles", {"Polzahl", "Number of poles"}, poles, "4"),
-        Num::number("n", {"Bemessungsdrehzahl n (optional)", "Rated speed n (optional)"}, "1/min", 1450).opt().nonNegative(),
+        Num::number("n", {"Bemessungsdrehzahl n", "Rated speed n"}, "1/min", 1450).opt().nonNegative(),
     };
     c.outputs = {Out::number("ns", {"Synchrondrehzahl n_s", "Synchronous speed n_s"}, "1/min", 0).primary(),
                  Out::number("s", {"Schlupf s", "Slip s"}, "%", 2),
@@ -167,7 +167,7 @@ Calculator starDelta() {
         Num::number("In", {"Bemessungsstrom I_N", "Rated current I_N"}, "A", 15).positive(),
         Num::number("IaIn", {"Anlaufstromverhältnis I_A/I_N", "Starting current ratio I_A/I_N"}, "", 6.5).positive(),
         Num::number("MaMn", {"Anzugsmomentverhältnis M_A/M_N", "Starting torque ratio M_A/M_N"}, "", 2.2).positive(),
-        Num::number("ML", {"Lastmoment beim Anlauf M_L/M_N (optional)", "Load torque at start M_L/M_N (optional)"}, "", kNaN)
+        Num::number("ML", {"Lastmoment beim Anlauf M_L/M_N", "Load torque at start M_L/M_N"}, "", kNaN)
             .opt()
             .nonNegative(),
     };

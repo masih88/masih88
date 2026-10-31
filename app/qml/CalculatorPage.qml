@@ -136,7 +136,7 @@ Page {
                 Card {
                     Layout.alignment: Qt.AlignTop
                     Layout.preferredWidth: 1
-                    spacing: 6
+                    spacing: 10
                     SectionTitle { text: Calc.ui.inputs.toUpperCase() }
 
                     Repeater {

@@ -8,6 +8,10 @@ Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schw
 |---|---|---|---|
 | ![Start](docs/screenshots/start.png) | ![Spannungsfall](docs/screenshots/spannungsfall.png) | ![Leitungsdimensionierung](docs/screenshots/leitungsdimensionierung-dunkel.png) | ![RJ45](docs/screenshots/tabelle-rj45.png) |
 
+| Reinraum: FFU-Decke | Rechenzentrum: USV (dunkel) |
+|---|---|
+| ![FFU](docs/screenshots/reinraum-ffu.png) | ![USV](docs/screenshots/rechenzentrum-usv-dunkel.png) |
+
 Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinander:
 
 ![Desktop](docs/screenshots/desktop-zweispaltig.png)
@@ -17,9 +21,9 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.0)
+## Funktionsumfang (Version 1.1)
 
-**48 Rechner und 30 Tabellen** in 8 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
+**63 Rechner und 35 Tabellen** in 11 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
 [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Kategorie | Inhalt |
@@ -28,7 +32,10 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 | **Leitungen & Schutz** | Leitungsdimensionierung (Belastbarkeit + Spannungsfall + Schutzorgan in einem Schritt), Spannungsfall mit Grenzwert DE/CH, Strombelastbarkeit I_z (Verlegearten A1–E, PVC/VPE, Temperatur, Häufung), Überlastschutz I_B ≤ I_n ≤ I_z, Abschaltbedingung/L_max (TN), max. Länge für 24-V-Kreise, Kurzschlussfestigkeit I²t, Rohrfüllung |
 | **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung |
 | **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
-| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität, Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung |
+| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität, Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **feuchte Luft (Taupunkt, x, h)**, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)** |
+| **Reinraum & Pharma** *(neu)* | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
+| **Rechenzentrum** *(neu)* | PUE/DCiE mit EnEfG-Grenzwerten, Rack-Kühlung & Kühlgeräte mit Redundanz (N+1/N+2/2N), USV-Module & Batterie-Autonomie, Verfügbarkeit/Ausfallzeit; Tabellen ASHRAE TC 9.9, EN 50600/Tier |
+| **Photovoltaik & Speicher** *(neu)* | String-Auslegung mit Temperaturkorrektur (U_oc bei Kälte, U_mpp bei Hitze, MPP-Bereich, Strangsicherung), Ertrag & Amortisation (€/CHF), DC-Leitungsverluste, Speichergröße mit Faustformeln |
 | **Elektronik** | Farbcode 4/5 Ringe, E-Reihen E6–E96, LED-Vorwiderstand, Spannungsteiler, RC-Glied, LC-Schwingkreis, Impedanz RLC, Akku-/USV-Laufzeit |
 | **Umrechner** | Leistung (W, PS, hp, BTU/h, kcal/h, TR), Energie, Temperatur, Druck (bar, psi, mWS), Volumenstrom (m³/h, l/s, CFM), AWG ↔ mm² |
 | **Tabellen & Pinouts** | IP-Schutzarten, Schutzklassen, Netzsysteme, Aderfarben, Spannungsfall-Grenzwerte DE/CH, Strombelastbarkeit (4 Tabellen), Temperatur- und Häufungsfaktoren, LS-Charakteristiken, D-Sicherungen, Kabeltypen, **Feldbusse** (BACnet MS/TP, Modbus, KNX, DALI, LON, PROFIBUS, CAN, IO-Link, Ethernet), Isolierstoffklassen, Betriebsarten, IE-Klassen, Klemmbrett Y/Δ, Bauformen, Pinouts RJ45/PoE, RS-485, M12, KNX, RS-232, USB, HDMI, Farbcode, SI-Vorsätze |
@@ -71,7 +78,7 @@ Ergebnis kopieren (für Berichte/E-Mails), dunkles Design, Dezimalkomma oder -pu
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DELC_BUILD_APP=OFF
 cmake --build build
-ctest --test-dir build --output-on-failure        # 52 Testfälle, > 5000 Prüfungen
+ctest --test-dir build --output-on-failure        # 62 Testfälle, > 6000 Prüfungen
 
 # mit AddressSanitizer + UBSan (Linux/macOS)
 cmake -S . -B build-asan -G Ninja -DCMAKE_BUILD_TYPE=Debug -DELC_SANITIZE=ON -DELC_BUILD_APP=OFF
@@ -120,7 +127,15 @@ eine Funktion in `core/src/catalog/*.cpp`, die Oberfläche entsteht automatisch.
 IEC 60364-5-52 / DIN VDE 0298-4 / NIN 5.2.3 (Strombelastbarkeit), DIN VDE 0100-520 Anh. G, DIN 18015-1, NIN
 (Spannungsfall), IEC 60364-4-41/-43 (Schutz), IEC 60898-1, IEC 60269-1, IEC 60909-0, IEC/TR 60890, IEC 60751,
 DIN 43760, IEC 62386 (DALI), IEC 60529, IEC 61140, IEC 60445, IEC 60204-1, IEC 60034-1/-7/-8/-30-1, IEC 60062,
-IEC 60063, TIA-568, Modbus over Serial Line V1.02, NAMUR NE 43.
+IEC 60063, TIA-568, Modbus over Serial Line V1.02, NAMUR NE 43, ISO 14644-1/-3, EU-GMP Annex 1 (2022),
+EN 16798-1, ISO/IEC 30134-2, EnEfG, EN 50600, ASHRAE TC 9.9, IEC 62548 / DIN VDE 0100-712.
+
+## Ausbauplan
+
+- **Stufe 2 (mit VDI 3814 / AMEV):** GA-Funktionsliste und Datenpunkt-Rechner mit Anlagenvorlagen (RLT, Heizkreis,
+  Kälte …) → Anzahl der Ein- und Ausgänge, Module, Kostenschätzung; AMEV-Anlagenkennzeichnung; AMEV-BACnet-Profile;
+  GA-Effizienzklassen EN ISO 52120-1.
+- **Stufe 3:** Projekte speichern, PDF-Bericht, Spannungsfall über mehrere Abschnitte, Selektivität, Elektro-Symbole.
 
 ## Lizenz
 

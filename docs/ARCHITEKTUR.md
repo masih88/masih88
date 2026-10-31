@@ -1,6 +1,6 @@
 # Architektur & Entwurfsentscheidungen
 
-Stand: 31.10.2026 · Version 1.0.0
+Stand: 31.10.2026 · Version 1.1.0
 
 ## Ziel
 
@@ -34,7 +34,7 @@ erweiterbar sein.
 |---|---|---|
 | Plattform | Qt 6 Quick (QML) + Material-Stil | Ein C++-Code für Windows und Android, touch-tauglich |
 | Rechenkern | Eigenständige C++20-Bibliothek ohne Qt | Testbar, wiederverwendbar (CLI, spätere Oberflächen), schnelle Tests |
-| Rechner-Definition | **Datengetrieben**: jeder Rechner ist Daten + eine `compute`-Funktion | Eine generische QML-Seite für alle 48 Rechner; neue Rechner ohne QML-Änderung |
+| Rechner-Definition | **Datengetrieben**: jeder Rechner ist Daten + eine `compute`-Funktion | Eine generische QML-Seite für alle Rechner; neue Rechner ohne QML-Änderung |
 | Übersetzung | `Text{de, en}` direkt in den Definitionen; UI-Texte in `UiStrings.cpp` | Sprache zur Laufzeit umschaltbar, kein `lrelease`-Schritt nötig |
 | Zahlen | Ein-/Ausgabe locale-unabhängig (`iostream` + `std::locale::classic`), Komma und Punkt erlaubt | Qt ruft `setlocale()` auf (Linux/Android) – `printf`/`strtod` würden sonst mit Dezimalkomma brechen |
 | Normprofil | `Context{NormProfile}` wird jedem `compute` übergeben | Grenzwerte (3 %/4 %), Währung; weitere länderabhängige Werte leicht ergänzbar |
@@ -63,7 +63,7 @@ erweiterbar sein.
 Calculator myCalculator() {
     Calculator c;
     c.id = "my_calc";                       // eindeutig, wird für Favoriten gespeichert
-    c.category = "automation";              // basics, cables, motors, industry, automation, electronics, converters
+    c.category = "automation";              // basics, cables, motors, industry, automation, cleanroom, datacenter, pv, electronics, converters
     c.title = {"Mein Rechner", "My calculator"};
     c.summary = {"Kurzbeschreibung", "Short description"};
     c.description = {"Formel und Norm (DE)", "Formula and standard (EN)"};

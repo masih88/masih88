@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.0.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.1.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Grundlagen
@@ -172,7 +172,7 @@ I_a = Sofortauslösung LS: B 5 · I_n, C 10 · I_n, D 20 · I_n. Bei Sicherungen
 Ersetzt nicht die Messung der Schleifenimpedanz.
 ```
 
-**Eingaben:** Spannung gegen Erde U_0 [V], Schutzorgan, Bemessungsstrom I_n [A], Abschaltstrom I_a [A], Querschnitt Außenleiter S_ph [mm²], Querschnitt Schutzleiter S_PE [mm²], Leitermaterial, Geplante Länge (optional) [m]
+**Eingaben:** Spannung gegen Erde U_0 [V], Schutzorgan, Bemessungsstrom I_n [A], Abschaltstrom I_a [A], Querschnitt Außenleiter S_ph [mm²], Querschnitt Schutzleiter S_PE [mm²], Leitermaterial, Geplante Länge [m]
 
 **Ergebnisse:** Abschaltstrom I_a [A], Max. Schleifenimpedanz Z_s [Ω], Max. Leitungslänge L_max [m]
 
@@ -253,7 +253,7 @@ Genau zwei Werte eingeben.
 n_s = 120 · f / Polzahl = 60 · f / p    s = (n_s − n) / n_s    f_2 = s · f
 ```
 
-**Eingaben:** Frequenz f [Hz], Polzahl, Bemessungsdrehzahl n (optional) [1/min]
+**Eingaben:** Frequenz f [Hz], Polzahl, Bemessungsdrehzahl n [1/min]
 
 **Ergebnisse:** Synchrondrehzahl n_s [1/min], Schlupf s [%], Läuferfrequenz f_2 [Hz]
 
@@ -279,7 +279,7 @@ Motorschutzrelais im Motorstrang (nach dem Netzschütz): Einstellung I_N / √3 
 Voraussetzung: Motor für Dreieck an Netzspannung (z. B. 400 V Δ / 690 V Y).
 ```
 
-**Eingaben:** Bemessungsstrom I_N [A], Anlaufstromverhältnis I_A/I_N, Anzugsmomentverhältnis M_A/M_N, Lastmoment beim Anlauf M_L/M_N (optional)
+**Eingaben:** Bemessungsstrom I_N [A], Anlaufstromverhältnis I_A/I_N, Anzugsmomentverhältnis M_A/M_N, Lastmoment beim Anlauf M_L/M_N
 
 **Ergebnisse:** Anlaufstrom direkt (Δ) [A], Anlaufstrom Stern (Y) [A], Anzugsmoment Stern M_A,Y / M_N, Einstellung Motorschutzrelais [A]
 
@@ -485,6 +485,278 @@ Richtwerte: bis 100 m 0,5 mm², bis 150 m 0,75 mm², bis 300 m 1,5 mm².
 
 **Ergebnisse:** Min. Querschnitt [mm²], Empfohlener Querschnitt [mm²], Spannungsfall bei Empfehlung [V]
 
+### Feuchte Luft (h-x)
+
+*Taupunkt, absolute Feuchte, Enthalpie* — `humid_air`
+
+```text
+Sättigungsdampfdruck (Magnus, WMO, über Wasser, −45…60 °C): p_s = 6,112 · e^(17,62·t / (243,12 + t)) hPa
+p_D = φ · p_s    x = 0,622 · p_D / (p − p_D)    h = 1,006 · t + x · (2501 + 1,86 · t) kJ/kg
+Taupunkt: τ = 243,12 · γ / (17,62 − γ), γ = ln(φ) + 17,62 · t / (243,12 + t). Luftdruck nach Höhe anpassen (Basel ≈ 980 hPa).
+```
+
+**Eingaben:** Lufttemperatur t [°C], Gegeben, Relative Feuchte φ [%], Taupunkt τ [°C], Luftdruck [hPa]
+
+**Ergebnisse:** Taupunkt τ [°C], Relative Feuchte φ [%], Absolute Feuchte x [g/kg], Enthalpie h [kJ/kg], Dampfdruck p_D [hPa], Sättigungsdampfdruck p_s [hPa], Dichte [kg/m³]
+
+### Außenluftvolumenstrom
+
+*Nach EN 16798-1 (Personen + Fläche) oder CO₂-Bilanz* — `fresh_air`
+
+```text
+EN 16798-1 (Anhang B, Verfahren 1): q = n · q_P + A · q_B
+q_P je Person: Kat. I 10, II 7, III 4 l/s.   q_B je m² (schadstoffarmes Gebäude): I 1,0, II 0,7, III 0,4 l/(s·m²); sehr schadstoffarm: 0,5 / 0,35 / 0,2; nicht schadstoffarm: 2,0 / 1,4 / 0,8.
+CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je Person bei Büroarbeit.
+```
+
+**Eingaben:** Verfahren, Personen, Raumfläche [m²], Raumhöhe (für Luftwechsel) [m], Kategorie, Gebäude-Emission, CO₂-Abgabe je Person [l/h], CO₂-Sollwert [ppm], CO₂ außen [ppm]
+
+**Ergebnisse:** Außenluftvolumenstrom [m³/h], Außenluftvolumenstrom [l/s], Je Person [m³/h], Luftwechselrate [1/h], CO₂-Konzentration (stationär) [ppm]
+
+## Reinraum & Pharma
+
+### Reinraumklasse ISO 14644-1
+
+*Grenzwert je Klasse ↔ Klasse aus Messwert* — `iso14644_class`
+
+```text
+C_n = 10^N · (0,1 / D)^2,08   [Partikel/m³]   (ISO 14644-1:2015, Formel A.1)
+N = log₁₀(C_n) + 2,08 · log₁₀(D / 0,1)
+Tabellenwerte sind auf ganze Zahlen mit max. 3 signifikanten Stellen gerundet. Zwischenklassen in 0,1-Schritten zulässig. Für ≥ 5 µm bei ISO 5 und darunter gilt das Makropartikel-Verfahren (M-Deskriptor).
+```
+
+**Eingaben:** Gegeben, ISO-Klasse N, Gemessene Konzentration [1/m³], Partikelgröße
+
+**Ergebnisse:** Max. Konzentration (Tabelle) [1/m³], Max. Konzentration [1/ft³], Max. Konzentration [1/l], Klassenzahl (exakt), ISO-Klasse
+
+### Messstellen & Probenvolumen
+
+*Klassifizierungsmessung nach ISO 14644-1* — `iso14644_sampling`
+
+```text
+Mindestanzahl Messstellen N_L nach ISO 14644-1:2015 Tabelle A.1 (Fläche in m²), über 1000 m²: N_L = 27 · A / 1000.
+Mindest-Probenvolumen je Messstelle: V_s = 20 / C_n,m · 1000 [l], C_n,m = Grenzwert der größten betrachteten Partikelgröße. Mindestens 2 l und mindestens 1 min Messzeit.
+```
+
+**Eingaben:** Reinraumfläche [m²], ISO-Klasse, Größte betrachtete Partikelgröße, Volumenstrom Partikelzähler [l/min]
+
+**Ergebnisse:** Mindestanzahl Messstellen, Mindest-Probenvolumen je Stelle [l], Mindest-Messzeit je Stelle [min], Messzeit gesamt (ohne Umsetzen) [min]
+
+### Luftwechsel & Erholzeit
+
+*Luftwechselrate, Volumenstrom, 100:1-Erholzeit* — `air_change`
+
+```text
+n = V̇ / V_Raum [1/h]    Erholzeit bei idealer Mischung: t = ln(k) / n
+100:1 (Erholungstest ISO 14644-3): t = 4,61 / n [h] = 276 / n [min]. Reale Räume haben eine geringere Lüftungseffektivität ε – gemessene Werte sind meist länger. EU-GMP Annex 1: Erholzeit Klasse B/C „at rest“ in der Regel ≤ 15–20 min.
+```
+
+**Eingaben:** Raumfläche [m²], Raumhöhe [m], Gegeben, Zuluft-Volumenstrom [m³/h], Luftwechselrate [1/h], Lüftungseffektivität ε
+
+**Ergebnisse:** Luftwechselrate [1/h], Zuluft-Volumenstrom [m³/h], Raumvolumen [m³], Erholzeit 100:1 [min], Erholzeit 10:1 [min]
+
+### FFU-Decke (Filter-Fan-Units)
+
+*Anzahl FFU, Luftmenge, Leistung, Energiekosten* — `ffu_ceiling`
+
+```text
+n_FFU = ⌈A_Raum · Belegung / A_FFU⌉    V̇ = n_FFU · A_FFU · v · 3600
+Luftwechsel = V̇ / (A · H)    P_el = n_FFU · P_FFU (geht als Wärme in den Raum!)
+Richtwert turbulenzarme Verdrängungsströmung (Klasse A/ISO 5): v ≈ 0,36–0,54 m/s (früherer EU-GMP-Leitwert 0,45 m/s ± 20 %).
+```
+
+**Eingaben:** Reinraumfläche [m²], Raumhöhe [m], Deckenbelegung [%], FFU-Größe (Nennmaß), Austrittsgeschwindigkeit [m/s], Leistung je FFU [W], Betriebsstunden pro Jahr [h], Strompreis pro kWh [€ / CHF]
+
+**Ergebnisse:** Anzahl FFU, Luftvolumenstrom gesamt [m³/h], Luftwechselrate [1/h], Elektrische Leistung / Wärmelast [kW], Energie pro Jahr [MWh], Energiekosten pro Jahr [€]
+
+### Überströmung / Druckkaskade
+
+*Leckluft durch Türspalte bei Δp* — `pressure_cascade`
+
+```text
+Q = C_d · A · √(2 · Δp / ρ)    (Blendengleichung, C_d ≈ 0,61 für scharfkantige Spalte)
+A = Spaltlänge · Spaltbreite + weitere Öffnungen. Das Ergebnis ist die Überströmluft, die die Lüftung zusätzlich liefern muss, um Δp zu halten.
+EU-GMP Annex 1: Druckdifferenz zwischen angrenzenden Räumen unterschiedlicher Klassen typ. 10–15 Pa (Leitwert).
+```
+
+**Eingaben:** Spaltlänge gesamt (z. B. Türumfang) [m], Spaltbreite [mm], Weitere Öffnungen [cm²], Druckdifferenz Δp [Pa], Durchflussbeiwert C_d
+
+**Ergebnisse:** Leckfläche [cm²], Überströmluft [m³/h], Geschwindigkeit im Spalt [m/s]
+
+### ISO 14644-1: Klassengrenzwerte
+
+| Klasse | 0,1 µm | 0,2 µm | 0,3 µm | 0,5 µm | 1 µm | 5 µm |
+|---|---|---|---|---|---|---|
+| ISO 1 | 10 | 2 | – | – | – | – |
+| ISO 2 | 100 | 24 | 10 | 4 | – | – |
+| ISO 3 | 1 000 | 237 | 102 | 35 | 8 | – |
+| ISO 4 | 10 000 | 2 370 | 1 020 | 352 | 83 | – |
+| ISO 5 | 100 000 | 23 700 | 10 200 | 3 520 | 832 | – |
+| ISO 6 | 1 000 000 | 237 000 | 102 000 | 35 200 | 8 320 | 293 |
+| ISO 7 | – | – | – | 352 000 | 83 200 | 2 930 |
+| ISO 8 | – | – | – | 3 520 000 | 832 000 | 29 300 |
+| ISO 9 | – | – | – | 35 200 000 | 8 320 000 | 293 000 |
+
+*ISO 14644-1:2015 Tabelle 1, berechnet mit C_n = 10^N · (0,1/D)^2,08 und gerundet. „–“ = nicht anwendbar.*
+
+### EU-GMP Annex 1: Partikelgrenzwerte
+
+| Klasse | Ruhe ≥ 0,5 µm | Ruhe ≥ 5 µm | Betrieb ≥ 0,5 µm | Betrieb ≥ 5 µm |
+|---|---|---|---|---|
+| A | 3 520 | n. v. | 3 520 | 29 |
+| B | 3 520 | n. v. | 352 000 | 2 930 |
+| C | 352 000 | 2 930 | 3 520 000 | 29 300 |
+| D | 3 520 000 | 29 300 | n. v. | n. v. |
+
+*EU-GMP-Leitfaden Anhang 1 (2022), Tabelle 1/5 – max. zulässige Partikel/m³. n. v. = nicht vorgegeben (Klasse A/B: ≥ 5 µm im Ruhezustand nur über Trend). ISO-Entsprechung: A ≈ ISO 5, B ≈ ISO 5 (Ruhe) / ISO 7 (Betrieb), C ≈ ISO 7 / ISO 8, D ≈ ISO 8 (Ruhe). Gegen die gültige Fassung prüfen.*
+
+### EU-GMP Annex 1: Keimgrenzwerte
+
+| Klasse | Luft KBE/m³ | Sedimentation KBE/4 h | Kontakt KBE/Platte | Handschuh KBE/Hand |
+|---|---|---|---|---|
+| A | kein Wachstum | kein Wachstum | kein Wachstum | kein Wachstum |
+| B | 10 | 5 | 5 | 5 |
+| C | 100 | 50 | 25 | – |
+| D | 200 | 100 | 50 | – |
+
+*EU-GMP-Leitfaden Anhang 1 (2022), Tabelle 6 – Aktionsgrenzen im Betrieb. Klasse A: kein Wachstum erwartet.*
+
+## Rechenzentrum
+
+### PUE / Energieeffizienz
+
+*PUE, DCiE, Overhead, Jahresenergie, EnEfG* — `dc_pue`
+
+```text
+PUE = P_gesamt / P_IT (ISO/IEC 30134-2, Jahresmittel)    DCiE = 1 / PUE · 100 %
+Overhead = P_gesamt − P_IT (Kühlung, USV-Verluste, Licht …)
+DE – Energieeffizienzgesetz (EnEfG 2023) §11: RZ mit Betriebsbeginn ab 1.7.2026 PUE ≤ 1,2; bestehende RZ PUE ≤ 1,5 ab 1.7.2027 und ≤ 1,3 ab 1.7.2030. Gültige Fassung prüfen.
+```
+
+**Eingaben:** Gesamtleistung RZ [kW], IT-Leistung [kW], Strompreis pro kWh [€ / CHF]
+
+**Ergebnisse:** PUE, DCiE [%], Overhead-Leistung [kW], Energie pro Jahr gesamt [MWh], Kosten Overhead pro Jahr [€], Einsparung bei PUE 1,3 [MWh/a]
+
+### Rack-Kühlung & Redundanz
+
+*Luftmenge je Rack, Kühlgeräte N+1/2N* — `dc_rack_cooling`
+
+```text
+Die IT-Leistung wird vollständig zu Wärme.  V̇ = P / (ρ · c · ΔT)   (Luft: ρ = 1,2 kg/m³, c = 1,005 kJ/(kg·K))
+ΔT = Temperaturdifferenz Server-Ausblas − Ansaugung (typ. 10–15 K). Anzahl Umluftkühlgeräte: N = ⌈Last / Leistung je Gerät⌉, zuzüglich Redundanz. Empfohlene Zulufttemperatur nach ASHRAE TC 9.9: 18–27 °C.
+```
+
+**Eingaben:** Anzahl Racks, Leistung je Rack [kW], ΔT über Server [K], Kühlleistung je Gerät (CRAH/CRAC) [kW], Redundanz
+
+**Ergebnisse:** IT-Wärmelast gesamt [kW], Luftmenge je Rack [m³/h], Luftmenge je Rack [CFM], Luftmenge gesamt [m³/h], Kühlgeräte inkl. Redundanz, Installierte Kühlleistung [kW]
+
+### USV-Dimensionierung
+
+*Module mit Redundanz, Auslastung, Batterie-Autonomie* — `dc_ups`
+
+```text
+P_Auslegung = (P_IT + P_sonstige) · (1 + Reserve)    S = P / cos φ
+Module N = ⌈P / (P_Modul · max. Auslastung)⌉, dazu Redundanz (N+1, 2N = zwei getrennte Systeme).
+Batterie: E = P · t / η_WR    I_DC = P / (η_WR · U_DC). Für kurze Autonomien Batterien nach Leistungstabelle (W/Zelle) des Herstellers wählen – die Ah-Nennkapazität ist dann deutlich höher als E / U.
+```
+
+**Eingaben:** IT-Last [kW], Sonstige gesicherte Last [kW], Wachstumsreserve [%], Leistungsfaktor der Last, Modulleistung (Wirkleistung) [kW], Max. Auslastung je Modul [%], Redundanz, Autonomiezeit [min], Batterie-Nennspannung [V], Wirkungsgrad Wechselrichter [%]
+
+**Ergebnisse:** Auslegungsleistung [kW], Scheinleistung [kVA], Module ohne Redundanz (N), Module gesamt inkl. Redundanz, Auslastung je Modul (Normalbetrieb) [%], Batterieenergie (Entnahme) [kWh], Batterie-Entladestrom [A]
+
+### Verfügbarkeit & Ausfallzeit
+
+*Prozent ↔ Ausfallzeit pro Jahr, Tier-Vergleich* — `dc_availability`
+
+```text
+Ausfallzeit = (1 − A) · 8760 h    Serie: A = A1 · A2    Parallel (redundant): A = 1 − (1 − A1)·(1 − A2)
+Häufig zitierte Richtwerte: Tier I 99,671 %, Tier II 99,741 %, Tier III 99,982 %, Tier IV 99,995 % (keine offiziellen Uptime-Institute-Kriterien).
+```
+
+**Eingaben:** Verfügbarkeit einer Komponente/Strecke [%], Anzahl paralleler (redundanter) Strecken
+
+**Ergebnisse:** Gesamtverfügbarkeit [%], Ausfallzeit pro Jahr [h], Ausfallzeit pro Jahr [min], Ausfallzeit pro Monat [min]
+
+### ASHRAE TC 9.9: Klimaklassen IT
+
+| Bereich | Temperatur | Feuchte | Max. Taupunkt |
+|---|---|---|---|
+| Empfohlen (A1–A4) | 18–27 °C | TP −9 °C … 15 °C, ≤ 60 % r. F. | 15 °C |
+| Zulässig A1 | 15–32 °C | 8–80 % r. F. | 17 °C |
+| Zulässig A2 | 10–35 °C | 8–80 % r. F. | 21 °C |
+| Zulässig A3 | 5–40 °C | 8–85 % r. F. | 24 °C |
+| Zulässig A4 | 5–45 °C | 8–90 % r. F. | 24 °C |
+
+*ASHRAE Thermal Guidelines for Data Processing Environments (4./5. Auflage). Werte am Lufteintritt der IT-Geräte; gültige Ausgabe und Herstellerangaben prüfen.*
+
+### Verfügbarkeitsklassen EN 50600 / Tier
+
+| EN 50600 | Vergleich | Aufbau | Eigenschaft |
+|---|---|---|---|
+| Klasse 1 | Tier I | ein Versorgungspfad, keine Redundanz | geringe Verfügbarkeit |
+| Klasse 2 | Tier II | ein Pfad, redundante Komponenten (N+1) | mittlere Verfügbarkeit |
+| Klasse 3 | Tier III | mehrere Pfade, ein aktiver | Wartung im laufenden Betrieb |
+| Klasse 4 | Tier IV | mehrere aktive Pfade (2N) | fehlertolerant |
+
+*EN 50600-1 Verfügbarkeitsklassen 1–4; Tier I–IV nach Uptime Institute zum Vergleich (nicht identisch).*
+
+## Photovoltaik & Speicher
+
+### PV-String-Auslegung
+
+*Module pro String für den Wechselrichter, Strangsicherung* — `pv_string`
+
+```text
+X(T) = X_STC · (1 + β · (T − 25 °C))   für U_oc und U_mpp (β negativ, Datenblatt)
+n_max = min(⌊U_DC,max / U_oc(T_min)⌋, ⌊U_MPP,max / U_mpp(T_min)⌋)    n_min = ⌈U_MPP,min / U_mpp(T_max)⌉
+T_min = tiefste Zelltemperatur (DE typ. −10 °C, Höhenlagen/CH bis −20 °C), T_max = Zelltemperatur im Sommer (typ. 70 °C).
+Strangsicherung nötig, wenn (N_p − 1) · 1,25 · I_sc > Rückstrombelastbarkeit des Moduls (IEC 62548 / VDE 0100-712); Bemessung dann 1,5 · I_sc < I_n ≤ 2,4 · I_sc und ≤ Rückstromwert.
+```
+
+**Eingaben:** Modul U_oc (STC) [V], Modul U_mpp (STC) [V], Modul I_sc (STC) [A], Modulleistung [Wp], Temp.-Koeffizient U_oc [%/K], Temp.-Koeffizient U_mpp (≈ P_max) [%/K], Min. Zelltemperatur [°C], Max. Zelltemperatur [°C], WR max. DC-Eingangsspannung [V], WR MPP-Bereich min. [V], WR MPP-Bereich max. [V], WR max. I_SC je MPPT [A], Parallele Strings je MPPT, Rückstrombelastbarkeit Modul [A], Geplante Module pro String
+
+**Ergebnisse:** U_oc je Modul bei T_min [V], U_mpp je Modul bei T_max [V], Module pro String, String-U_oc bei T_min (geplant) [V], String-U_mpp bei T_max (geplant) [V], Leistung je String (geplant) [kWp], Strom je MPPT (1,25 · I_sc · N_p) [A], Strangsicherung
+
+### PV-Ertrag & Wirtschaftlichkeit
+
+*Jahresertrag, Eigenverbrauch, Ersparnis, Amortisation* — `pv_yield`
+
+```text
+E = P_peak · spez. Ertrag    Ersparnis = E · EV-Anteil · Strompreis    Einspeisung = E · (1 − EV-Anteil) · Vergütung
+Amortisation (statisch) = Investition / jährlicher Nutzen – ohne Zinsen, Degradation, Wartung.
+Spezifischer Ertrag z. B. aus PVGIS: DE typ. 850–1100 kWh/kWp, CH-Mittelland ca. 950–1100 kWh/kWp, Alpen höher.
+```
+
+**Eingaben:** Anlagenleistung [kWp], Spezifischer Ertrag [kWh/kWp], Eigenverbrauchsanteil [%], Strompreis Bezug [€ / CHF], Einspeisevergütung [€ / CHF], Investition [€ / CHF], CO₂-Faktor Netzstrom [g/kWh]
+
+**Ergebnisse:** Jahresertrag [kWh], Davon Eigenverbrauch [kWh], Ersparnis Eigenverbrauch [€], Einspeiseerlös [€], Nutzen pro Jahr [€], Amortisation (statisch) [a], CO₂-Einsparung pro Jahr [t]
+
+### PV-DC-Leitung: Verluste
+
+*Leistungsverlust und Mindestquerschnitt String-Leitung* — `pv_dc_cable`
+
+```text
+P_V = 2 · L · I² · ρ / A    Verlust % = P_V / (U_mpp · I) · 100    A_min = 2 · L · I · ρ / (v · U_mpp)
+Üblich: DC-Verlust ≤ 1 %. Leitertemperatur 70 °C (Dach). Belastbarkeit der Solarleitung (H1Z2Z2-K, EN 50618) nach Datenblatt prüfen.
+```
+
+**Eingaben:** String-Spannung U_mpp [V], String-Strom I_mpp [A], Leitungslänge (einfach) [m], Querschnitt, Zul. Verlust [%]
+
+**Ergebnisse:** Leistungsverlust [W], Verlust [%], Mindestquerschnitt für Zielwert [mm²], Energieverlust pro Jahr (≈ 1000 Vollaststunden) [kWh]
+
+### Batteriespeicher dimensionieren
+
+*Kapazität aus Nachtverbrauch und Faustformeln* — `pv_storage`
+
+```text
+C_nenn = E_Nacht / (DoD · η_Entladung)
+Faustformeln (z. B. HTW Berlin, Eigenheim): ca. 1,0–1,5 kWh Speicher je 1000 kWh Jahresverbrauch und nicht mehr als ca. 1,5 kWh je kWp. Größere Speicher erhöhen die Autarkie nur noch wenig.
+```
+
+**Eingaben:** Verbrauch abends/nachts [kWh/d], Nutzbare Entladetiefe (DoD) [%], Wirkungsgrad Entladung [%], Jahresverbrauch [kWh], PV-Leistung [kWp]
+
+**Ergebnisse:** Nennkapazität für Nachtbedarf [kWh], Faustformel Verbrauch, Obergrenze nach PV-Leistung [kWh]
+
 ## Elektronik
 
 ### Farbcode Widerstand / Spule
@@ -536,7 +808,7 @@ U_aus = U_ein · R2 / (R1 + R2)
 Belastet: R2 ∥ R_L statt R2.
 ```
 
-**Eingaben:** Eingangsspannung U_ein [V], R1 [kΩ], R2 [kΩ], Lastwiderstand R_L (optional) [kΩ]
+**Eingaben:** Eingangsspannung U_ein [V], R1 [kΩ], R2 [kΩ], Lastwiderstand R_L [kΩ]
 
 **Ergebnisse:** U_aus unbelastet [V], U_aus belastet [V], Querstrom [mA], Teilerverhältnis, Verlustleistung R1 [mW]
 
@@ -549,7 +821,7 @@ Belastet: R2 ∥ R_L statt R2.
 Nach 5τ ≈ 99,3 % geladen.    E = ½ · C · U²    Q = C · U
 ```
 
-**Eingaben:** Widerstand R [kΩ], Kapazität C [µF], Ladespannung U_0 [V], Zeit t (optional) [ms]
+**Eingaben:** Widerstand R [kΩ], Kapazität C [µF], Ladespannung U_0 [V], Zeit t [ms]
 
 **Ergebnisse:** Zeitkonstante τ [ms], 5 τ [ms], Grenzfrequenz f_g [Hz], Spannung u_C(t) [V], Gespeicherte Energie [mJ], Ladung Q [µC]
 

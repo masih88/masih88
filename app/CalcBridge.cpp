@@ -20,6 +20,9 @@ QString categoryColor(const std::string& id) {
     if (id == "automation") return QStringLiteral("#D9534F");
     if (id == "electronics") return QStringLiteral("#1BA3A6");
     if (id == "converters") return QStringLiteral("#6C7A89");
+    if (id == "cleanroom") return QStringLiteral("#2A8BBF");
+    if (id == "datacenter") return QStringLiteral("#4B5BA8");
+    if (id == "pv") return QStringLiteral("#D9A21B");
     return QStringLiteral("#B5873A");
 }
 

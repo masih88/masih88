@@ -87,7 +87,7 @@ std::string formatNumber(double v, int decimals, Lang lang) {
     os.imbue(std::locale::classic());
     const double av = std::fabs(v);
     std::string out;
-    if (av != 0.0 && (av >= 1e7 || av < 1e-3)) {
+    if (av != 0.0 && (av >= 1e10 || av < 1e-3)) {
         os << std::setprecision(4) << v;
         out = os.str();
     } else {

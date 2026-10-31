@@ -17,6 +17,9 @@ const std::vector<Category>& categories() {
         {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~"},
         {"industry", {"Industrie & Netze", "Industry & power"}, "kVA"},
         {"automation", {"Gebäudeautomation & MSR", "Building automation & I&C"}, "mA"},
+        {"cleanroom", {"Reinraum & Pharma", "Cleanroom & pharma"}, "ISO"},
+        {"datacenter", {"Rechenzentrum", "Data centre"}, "IT"},
+        {"pv", {"Photovoltaik & Speicher", "PV & storage"}, "PV"},
         {"electronics", {"Elektronik", "Electronics"}, "RC"},
         {"converters", {"Umrechner", "Converters"}, "⇄"},
         {"tables", {"Tabellen & Pinouts", "Tables & pinouts"}, "≡"},
@@ -32,6 +35,10 @@ const std::vector<Calculator>& calculators() {
         catalog::addMotors(v);
         catalog::addIndustry(v);
         catalog::addAutomation(v);
+        catalog::addHvac(v);
+        catalog::addCleanroom(v);
+        catalog::addDatacenter(v);
+        catalog::addPv(v);
         catalog::addElectronics(v);
         catalog::addConverters(v);
         return v;
@@ -43,6 +50,8 @@ const std::vector<Table>& tables() {
     static const std::vector<Table> list = [] {
         std::vector<Table> v;
         catalog::addTables(v);
+        catalog::addCleanroomTables(v);
+        catalog::addDatacenterTables(v);
         return v;
     }();
     return list;

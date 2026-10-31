@@ -29,6 +29,9 @@ Page {
 
     readonly property color sectionColor: Calc.darkTheme ? "#9FB3CC" : "#4A5B72"
 
+    readonly property bool hasChart: def.hasChart === true
+    property var chartData: hasChart ? loadChart(values, Calc.norm, Calc.language) : ({})
+
     function loadDefinition(lang) {
         return Calc.calculator(calcId)
     }
@@ -39,6 +42,17 @@ Page {
         const v = Object.assign({}, values)
         v[id] = text
         values = v
+    }
+    function loadChart(v, norm, lang) {
+        return Object.keys(v).length > 0 ? Calc.chart(calcId, v) : ({})
+    }
+    // tap into the chart: the core says which inputs change (e.g. t₁ and φ₁ in the h,x chart)
+    function pick(x, y) {
+        const v = Calc.chartPick(calcId, values, x, y)
+        if (Object.keys(v).length > 0) {
+            values = v
+            inputForm.rebuild()
+        }
     }
     function reset() {
         values = Calc.defaults(calcId)
@@ -52,6 +66,25 @@ Page {
         font.letterSpacing: 1.2
         font.weight: Font.DemiBold
         color: page.sectionColor
+    }
+
+    component ChartCard: Card {
+        SectionTitle { text: Calc.ui.chart.toUpperCase() }
+        ChartView {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(width * 0.95, 640)
+            chart: page.chartData
+            pickable: page.def.hasPick === true
+            onPicked: (x, y) => page.pick(x, y)
+        }
+        Label {
+            Layout.fillWidth: true
+            text: page.chartData.note || ""
+            visible: text !== ""
+            wrapMode: Text.Wrap
+            font.pixelSize: 11
+            opacity: 0.65
+        }
     }
 
     Flickable {
@@ -93,6 +126,11 @@ Page {
                     opacity: 0.7
                     elide: Text.ElideRight
                 }
+            }
+
+            // phones: the diagram first, it is what the page is about
+            ChartCard {
+                visible: page.hasChart && !page.wide
             }
 
             GridLayout {
@@ -157,6 +195,10 @@ Page {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
                     spacing: 14
+
+                    ChartCard {
+                        visible: page.hasChart && page.wide
+                    }
 
                     Card {
                         id: resultsCard

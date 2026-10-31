@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.2.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.3.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -530,6 +530,25 @@ Richtwerte: bis 100 m 0,5 mm², bis 150 m 0,75 mm², bis 300 m 1,5 mm².
 
 **Ergebnisse:** Min. Querschnitt [mm²], Empfohlener Querschnitt [mm²], Spannungsfall bei Empfehlung [V]
 
+### h,x-Diagramm (Mollier) & Zustandsänderungen
+
+*Taupunkt, Feuchte, Heizen/Kühlen/Befeuchten/Mischen im Diagramm* — `hx_diagram`
+
+```text
+Luftdruck nach Normatmosphäre: p = 1013,25 · (1 − 0,0065 · H / 288,15)^5,255 hPa
+p_s nach Magnus (WMO, über Wasser): p_s = 6,112 · e^(17,62·t / (243,12 + t)) hPa    p_D = φ · p_s
+x = 0,622 · p_D / (p − p_D)    h = 1,006 · t + x · (2501 + 1,86 · t) kJ/kg tr. L.
+Taupunkt τ aus p_D (Magnus umgekehrt); Kühlgrenze t_f: h + (x_s(t_f) − x) · 4,19 · t_f = h_s(t_f)
+Erwärmen/Kühlen: x = konst.; unter dem Taupunkt ideal gesättigt (x₂ = x_s(t₂), Kondensat ṁ · Δx)
+Dampfbefeuchtung: t ≈ konst.; Verdunstungsbefeuchtung: h = konst.; Mischen: x und h massengewichtet
+Leistung Q = ṁ · Δh, ṁ = V̇ · ρ₁ / 3600. Diagramm: schiefwinklige h,x-Koordinaten (0-°C-Isotherme waagrecht).
+Unter 0 °C mit Sättigung über Wasser gerechnet. Reale Kühler: Bypass-Faktor / Oberflächentemperatur beachten.
+```
+
+**Eingaben:** Höhe über Meer [m], Temperatur t₁ [°C], Relative Feuchte φ₁ [%], Art, Zieltemperatur t₂ [°C], Ziel-Feuchte φ₂ [%], Temperatur Zustand B [°C], Relative Feuchte Zustand B [%], Anteil B am Massenstrom [%], Volumenstrom V̇ (bei Zustand 1) [m³/h]
+
+**Ergebnisse:** Luftdruck p [hPa], Wassergehalt x₁ [g/kg], Taupunkt τ₁ [°C], Enthalpie h₁ [kJ/kg], Kühlgrenztemperatur t_f,1 [°C], Dichte ρ₁ [kg/m³], Temperatur t₂ [°C], Relative Feuchte φ₂ [%], Wassergehalt x₂ [g/kg], Enthalpie h₂ [kJ/kg], Taupunkt τ₂ [°C], Enthalpiedifferenz Δh [kJ/kg], Leistung Q (+ heizen / − kühlen) [kW], Wasser (+ Befeuchtung / − Kondensat) [kg/h]
+
 ### Feuchte Luft (h-x)
 
 *Taupunkt, absolute Feuchte, Enthalpie* — `humid_air`
@@ -890,17 +909,36 @@ EU-GMP Annex 1: Druckdifferenz zwischen angrenzenden Räumen unterschiedlicher K
 
 ### PUE / Energieeffizienz
 
-*PUE, DCiE, Overhead, Jahresenergie, EnEfG* — `dc_pue`
+*PUE aus Leistung oder Jahresverbrauch, DCiE, Kosten, EnEfG* — `dc_pue`
 
 ```text
-PUE = P_gesamt / P_IT (ISO/IEC 30134-2, Jahresmittel)    DCiE = 1 / PUE · 100 %
-Overhead = P_gesamt − P_IT (Kühlung, USV-Verluste, Licht …)
-DE – Energieeffizienzgesetz (EnEfG 2023) §11: RZ mit Betriebsbeginn ab 1.7.2026 PUE ≤ 1,2; bestehende RZ PUE ≤ 1,5 ab 1.7.2027 und ≤ 1,3 ab 1.7.2030. Gültige Fassung prüfen.
+PUE = E_gesamt / E_IT (ISO/IEC 30134-2: Jahresenergie, gemessen am Übergabepunkt bzw. am Ausgang USV/PDU)
+Aus Leistung (Momentanwert): PUE = P_gesamt / P_IT, Jahresenergie = P · 8760 h    DCiE = 1 / PUE · 100 %
+Overhead = Gesamt − IT (Kühlung, USV-Verluste, Licht …)
+EnEfG (2023) §11: Neubau mit Betriebsbeginn ab 1.7.2026 PUE ≤ 1,2; Bestand PUE ≤ 1,5 ab 1.7.2027 und ≤ 1,3 ab 1.7.2030; Neubau ERF ≥ 10 % (ab 1.7.2026), 15 % (2027), 20 % (2028). Kabinettsentwurf EnEfG-Novelle vom 24.6.2026: Bestand 1,6 / 1,4, Neubau 1,2 (4 Jahre Frist), Geltung ab 500 kW IT-Leistung – im Bundestag noch nicht verabschiedet (Stand Juli 2026). Gültige Fassung prüfen.
 ```
 
-**Eingaben:** Gesamtleistung RZ [kW], IT-Leistung [kW], Strompreis pro kWh [€ / CHF]
+**Eingaben:** Grundlage, Gesamtleistung RZ [kW], IT-Leistung [kW], Gesamtverbrauch RZ pro Jahr [MWh], IT-Verbrauch pro Jahr [MWh], Strompreis pro kWh [€ / CHF], Rechenzentrum, EnEfG-Fassung (nur DE)
 
-**Ergebnisse:** PUE, DCiE [%], Overhead-Leistung [kW], Energie pro Jahr gesamt [MWh], Kosten Overhead pro Jahr [€], Einsparung bei PUE 1,3 [MWh/a]
+**Ergebnisse:** PUE, DCiE [%], Overhead-Leistung (Mittel) [kW], Energie pro Jahr gesamt [MWh], Kosten Overhead pro Jahr [€], Einsparung bei PUE 1,3 [MWh/a]
+
+### PUE-Bilanz aus Verbrauchern
+
+*PUE, pPUE, Jahresverbrauch, Kosten, CO₂, Abwärme – aus IT, USV, Kühlung* — `dc_pue_balance`
+
+```text
+USV-Verlust = P_IT · (1/η_USV − 1)    Verteilverluste = (P_IT + USV-Verlust) · v (Trafo, Leitungen vor der USV)
+Kühllast Q = P_IT + USV-Verlust + Sonstiges    P_Kühlung = Q · (1 − Anteil freie Kühlung) / EER + Q · Hilfsenergie
+P_gesamt = P_IT + USV- + Verteilverluste + P_Kühlung + Sonstiges    PUE = P_gesamt / P_IT
+pPUE Kühlung = (P_IT + P_Kühlung) / P_IT    pPUE Strom = (P_IT + Verluste) / P_IT (ISO/IEC 30134-2 Anh.)
+ERF = genutzte Abwärme / Gesamtenergie (ISO/IEC 30134-6). Jahreswerte mit 8760 h und mittleren Leistungen.
+EER und Anteil freie Kühlung als Jahresmittel (Klima, Kaltwassertemperatur) beim Planer/Hersteller erfragen.
+EnEfG (2023) §11: Neubau mit Betriebsbeginn ab 1.7.2026 PUE ≤ 1,2; Bestand PUE ≤ 1,5 ab 1.7.2027 und ≤ 1,3 ab 1.7.2030; Neubau ERF ≥ 10 % (ab 1.7.2026), 15 % (2027), 20 % (2028). Kabinettsentwurf EnEfG-Novelle vom 24.6.2026: Bestand 1,6 / 1,4, Neubau 1,2 (4 Jahre Frist), Geltung ab 500 kW IT-Leistung – im Bundestag noch nicht verabschiedet (Stand Juli 2026). Gültige Fassung prüfen.
+```
+
+**Eingaben:** IT-Leistung (Jahresmittel) [kW], USV-Wirkungsgrad [%], Verluste Trafo/Verteilung [%], Beleuchtung, Sicherheit, Sonstiges [kW], EER Kälteerzeugung (Jahresmittel), Anteil freie Kühlung [%], Hilfsenergie Ventilatoren/Pumpen/Rückkühler (bezogen auf Kühllast) [%], Strompreis pro kWh [€ / CHF], CO₂-Emissionsfaktor Strom [kg/kWh], Genutzte Abwärme (Mittel) [kW], Rechenzentrum, EnEfG-Fassung (nur DE)
+
+**Ergebnisse:** PUE, Gesamtleistung RZ (Mittel) [kW], pPUE Kühlung, pPUE Stromversorgung, DCiE [%], USV-Verluste [kW], Verteilverluste [kW], Kühllast [kW], Leistung Kühlung [kW], Anteil Kühlung am Gesamtverbrauch [%], Jahresverbrauch gesamt [MWh], Jahresverbrauch IT [MWh], Stromkosten pro Jahr [€], davon Overhead (nicht IT) [€], CO₂ pro Jahr [t], Abwärme verfügbar (Kühllast) [MWh/a], ERF (Energiewiederverwendung) [%]
 
 ### Rack-Kühlung & Redundanz
 

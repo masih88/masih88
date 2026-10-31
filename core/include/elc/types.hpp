@@ -13,25 +13,13 @@
 #include <utility>
 #include <vector>
 
+#include "elc/chart.hpp"
 #include "elc/constants.hpp"
+#include "elc/text.hpp"
 
 namespace elc {
 
-enum class Lang { De, En };
 enum class NormProfile { DE, CH };
-
-/// Text in German and English. Constructing from one string uses it for both languages.
-struct Text {
-    std::string de;
-    std::string en;
-
-    Text() = default;
-    Text(const char* both) : de(both), en(both) {}  // NOLINT(google-explicit-constructor)
-    Text(std::string both) : de(both), en(std::move(both)) {}  // NOLINT(google-explicit-constructor)
-    Text(std::string german, std::string english) : de(std::move(german)), en(std::move(english)) {}
-
-    [[nodiscard]] const std::string& in(Lang lang) const noexcept { return lang == Lang::De ? de : en; }
-};
 
 struct Option {
     std::string value;
@@ -151,6 +139,11 @@ struct Context {
 
 using ComputeFn = std::function<Result(const Inputs&, const Context&)>;
 
+/// Optional diagram of a calculator, built from its (normalised) inputs and the computed result
+using ChartFn = std::function<Chart(const Inputs&, const Result&, const Context&)>;
+/// Optional: tapping at (x, y) in the chart changes these inputs (empty = nothing to set)
+using PickFn = std::function<std::vector<PickValue>(const Inputs&, double x, double y, const Context&)>;
+
 struct Calculator {
     std::string id;
     std::string category;
@@ -161,6 +154,8 @@ struct Calculator {
     std::vector<OutputDef> outputs;
     ComputeFn compute;
     std::vector<std::string> keywords;  // extra search terms
+    ChartFn chart;
+    PickFn pick;
 };
 
 struct Table {
@@ -198,6 +193,11 @@ private:
 /// Applies choice defaults, validates visible numeric inputs, runs compute and turns
 /// exceptions into error messages. Never throws for bad user input.
 [[nodiscard]] Result evaluate(const Calculator& calc, const Inputs& in, const Context& ctx);
+
+/// Chart of a calculator for the given inputs (nullopt if the calculator has none)
+[[nodiscard]] std::optional<Chart> evaluateChart(const Calculator& calc, const Inputs& in, const Context& ctx);
+/// Inputs to change when the user taps at (x, y) in the chart
+[[nodiscard]] std::vector<PickValue> pickChart(const Calculator& calc, const Inputs& in, double x, double y, const Context& ctx);
 
 /// Replaces unknown choice values by defaults and validates visible numeric inputs (error messages only).
 [[nodiscard]] Result normalizeAndValidate(const std::vector<InputDef>& defs, Inputs& in);

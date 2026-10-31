@@ -341,7 +341,45 @@ QVariantMap CalcBridge::calculator(const QString& id) const {
             {"description", txt(c->description)},
             {"color", categoryColor(c->category)},
             {"category", cat ? txt(cat->title) : QString()},
-            {"inputs", inputList(c->inputs)}};
+            {"inputs", inputList(c->inputs)},
+            {"hasChart", static_cast<bool>(c->chart)},
+            {"hasPick", static_cast<bool>(c->pick)}};
+}
+
+QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) const {
+    const auto* c = elc::findCalculator(id.toStdString());
+    if (!c) return {};
+    const auto ch = elc::evaluateChart(*c, toInputs(c->inputs, values), elc::Context{norm_});
+    if (!ch) return {};
+    QVariantList series;
+    for (const auto& s : ch->series) {
+        QVariantList pts;
+        pts.reserve(static_cast<qsizetype>(2 * s.pts.size()));
+        for (const auto& p : s.pts) {
+            pts.append(p[0]);
+            pts.append(p[1]);
+        }
+        series.append(QVariantMap{{"style", q(s.style)}, {"pts", pts}});
+    }
+    QVariantList labels;
+    for (const auto& l : ch->labels) labels.append(QVariantMap{{"x", l.x}, {"y", l.y}, {"text", txt(l.text)}, {"style", q(l.style)}});
+    QVariantList markers;
+    for (const auto& m : ch->markers) markers.append(QVariantMap{{"x", m.x}, {"y", m.y}, {"label", q(m.label)}, {"style", q(m.style)}});
+    return {{"xmin", ch->x.min},     {"xmax", ch->x.max},     {"xstep", ch->x.step},       {"xtitle", txt(ch->x.title)},
+            {"ymin", ch->y.min},     {"ymax", ch->y.max},     {"ystep", ch->y.step},       {"ytitle", txt(ch->y.title)},
+            {"note", txt(ch->note)}, {"series", series},      {"labels", labels},          {"markers", markers}};
+}
+
+QVariantMap CalcBridge::chartPick(const QString& id, const QVariantMap& values, double x, double y) const {
+    const auto* c = elc::findCalculator(id.toStdString());
+    if (!c) return {};
+    const auto picked = elc::pickChart(*c, toInputs(c->inputs, values), x, y, elc::Context{norm_});
+    if (picked.empty()) return {};
+    QVariantMap out = values;
+    for (const auto& v : picked) {
+        out.insert(q(v.id), v.choice.empty() ? q(elc::formatNumber(v.number, 6, lang_)) : q(v.choice));
+    }
+    return out;
 }
 
 QVariantMap CalcBridge::defaults(const QString& id) const {

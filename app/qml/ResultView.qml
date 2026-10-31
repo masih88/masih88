@@ -4,7 +4,8 @@ import QtQuick.Layouts
 import "Status.js" as Status
 
 // Result rows (label · value · unit) followed by the check messages.
-ColumnLayout {
+// Column positioner (not ColumnLayout): Qt 6.4 layouts mis-size Repeater rows created later.
+Column {
     id: view
     property var outputs: []
     property var messages: []
@@ -13,57 +14,71 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: 10
 
+    // rows with anchors only (no layouts): wrapped labels always get their final height
     Repeater {
         model: view.outputs
-        delegate: ColumnLayout {
+        delegate: Item {
+            id: row
             required property var modelData
             required property int index
-            Layout.fillWidth: true
-            spacing: 6
+            // long text results (e.g. "decisive") go below their label
+            readonly property bool stacked: modelData.value.length > 16
+            readonly property real gap: index > 0 ? 7 : 0
+            width: view.width
+            // first-line baselines of label and value are aligned
+            readonly property real labelShift: stacked ? 0 : Math.max(0, valueLbl.baselineOffset - label.baselineOffset)
+            readonly property real valueShift: Math.max(0, label.baselineOffset - valueLbl.baselineOffset)
+            height: gap + (stacked ? label.height + 2 + valueText.height
+                                   : Math.max(labelShift + label.height, valueShift + valueRow.height))
+
             Rectangle {
-                visible: index > 0
-                Layout.fillWidth: true
-                implicitHeight: 1
+                visible: row.index > 0
+                width: parent.width
+                height: 1
                 color: Calc.darkTheme ? "#2A3445" : "#EEF1F5"
             }
-            GridLayout {
-                id: resultRow
-                // long text results (e.g. "decisive") go below their label
-                readonly property bool stacked: modelData.value.length > 16
-                Layout.fillWidth: true
-                columns: stacked ? 1 : 3
-                columnSpacing: 10
-                rowSpacing: 2
+            Label {
+                id: label
+                y: row.gap + row.labelShift
+                width: row.stacked ? row.width : Math.max(80, row.width - valueRow.width - 10)
+                text: row.modelData.label
+                wrapMode: Text.Wrap
+                font.pixelSize: 14
+                opacity: 0.8
+            }
+            Row {
+                id: valueRow
+                visible: !row.stacked
+                anchors.right: parent.right
+                y: row.gap + row.valueShift
+                spacing: 6
                 Label {
-                    // width from the row (not from the wrapped text) – avoids layout loops
-                    Layout.fillWidth: true
-                    Layout.preferredWidth: resultRow.stacked
-                                           ? resultRow.width
-                                           : Math.max(80, resultRow.width - valueLabel.implicitWidth
-                                                      - (unitLabel.visible ? unitLabel.implicitWidth + resultRow.columnSpacing : 0)
-                                                      - resultRow.columnSpacing)
-                    text: modelData.label
-                    wrapMode: Text.Wrap
-                    font.pixelSize: 14
-                    opacity: 0.8
-                }
-                Label {
-                    id: valueLabel
-                    Layout.fillWidth: resultRow.stacked
-                    Layout.preferredWidth: resultRow.stacked ? resultRow.width : -1
-                    text: modelData.value + (resultRow.stacked && modelData.unit ? " " + modelData.unit : "")
-                    wrapMode: resultRow.stacked ? Text.Wrap : Text.NoWrap
-                    font.pixelSize: resultRow.stacked ? 15 : (modelData.key ? 20 : 17)
+                    id: valueLbl
+                    text: row.modelData.value
+                    font.pixelSize: row.modelData.key ? 20 : 17
                     font.weight: Font.Bold
-                    color: modelData.key ? view.accentText : (Calc.darkTheme ? "#E6EAF0" : "#1D2633")
+                    color: row.modelData.key ? view.accentText : (Calc.darkTheme ? "#E6EAF0" : "#1D2633")
                 }
                 Label {
-                    id: unitLabel
-                    visible: !resultRow.stacked && modelData.unit !== ""
-                    text: modelData.unit
+                    id: unit
+                    anchors.baseline: valueLbl.baseline
+                    visible: row.modelData.unit !== ""
+                    width: visible ? implicitWidth : 0
+                    text: row.modelData.unit
                     font.pixelSize: 13
                     opacity: 0.75
                 }
+            }
+            Label {
+                id: valueText
+                visible: row.stacked
+                y: row.gap + label.height + 2
+                width: row.width
+                text: row.modelData.value + (row.modelData.unit ? " " + row.modelData.unit : "")
+                wrapMode: Text.Wrap
+                font.pixelSize: 15
+                font.weight: Font.Bold
+                color: row.modelData.key ? view.accentText : (Calc.darkTheme ? "#E6EAF0" : "#1D2633")
             }
         }
     }
@@ -74,7 +89,7 @@ ColumnLayout {
             id: msg
             required property var modelData
             readonly property var colors: Status.colors(modelData.severity, Calc.darkTheme)
-            Layout.fillWidth: true
+            width: view.width
             implicitHeight: msgRow.implicitHeight + 18
             radius: 10
             color: colors[0]

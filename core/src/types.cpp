@@ -221,4 +221,27 @@ Result evaluate(const Calculator& calc, const Inputs& raw, const Context& ctx) {
     }
 }
 
+std::optional<Chart> evaluateChart(const Calculator& calc, const Inputs& raw, const Context& ctx) {
+    if (!calc.chart) return std::nullopt;
+    Inputs in = raw;
+    (void)normalizeAndValidate(calc.inputs, in);
+    const Result r = evaluate(calc, raw, ctx);
+    try {
+        return calc.chart(in, r, ctx);
+    } catch (const std::exception&) {
+        return std::nullopt;
+    }
+}
+
+std::vector<PickValue> pickChart(const Calculator& calc, const Inputs& raw, double x, double y, const Context& ctx) {
+    if (!calc.pick || !std::isfinite(x) || !std::isfinite(y)) return {};
+    Inputs in = raw;
+    (void)normalizeAndValidate(calc.inputs, in);
+    try {
+        return calc.pick(in, x, y, ctx);
+    } catch (const std::exception&) {
+        return {};
+    }
+}
+
 }  // namespace elc

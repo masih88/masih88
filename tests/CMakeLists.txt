@@ -17,6 +17,7 @@ add_executable(elc_tests
     test_catalog.cpp
     test_facilities.cpp
     test_lists.cpp
+    test_hx.cpp
 )
 target_link_libraries(elc_tests PRIVATE elc::core elc_warnings Catch2::Catch2WithMain)
 

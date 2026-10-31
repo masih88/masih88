@@ -1,6 +1,6 @@
 # Architektur & Entwurfsentscheidungen
 
-Stand: 31.10.2026 · Version 1.2.0
+Stand: 31.10.2026 · Version 1.3.0
 
 ## Ziel
 
@@ -95,6 +95,15 @@ Calculator myCalculator() {
 
 Tabellen: `make(...)` in `core/src/tables/tables.cpp`, in `addTables()` registrieren.
 
+## Diagramme
+
+Ein Rechner kann ein Diagramm liefern: `Calculator::chart` (`ChartFn`) baut aus Eingaben und Ergebnis ein `Chart`
+(`elc/chart.hpp`: Achsen, Linienzüge mit Stil, Beschriftungen, Markierungen) in Dateneinheiten; die App zeichnet es mit
+`ChartView.qml` (Canvas, Clipping, Achsen). Optional `Calculator::pick` (`PickFn`): Tippen ins Diagramm liefert neue
+Eingabewerte (h,x-Diagramm: t₁ und φ₁). Beispiel: `hxGrid()` in `core/src/catalog/hvac.cpp` – schiefwinklige
+h,x-Koordinaten mit y = t · (1,006 + 1,86·x) / 1,006 (Isothermen leicht steigend, Isenthalpen fallend).
+Tests: `tests/test_hx.cpp` (Gitter, Zustandspunkte, Rückrechnung beim Antippen).
+
 ## Neue Projektliste hinzufügen
 
 `ListDef` in `core/src/lists/<name>.cpp` (Vorbild `loadlist.cpp`), in `registry.cpp` → `lists()` eintragen:
@@ -111,6 +120,8 @@ In Qt 6.4 positioniert ein `ColumnLayout` Kinder eines `Repeater`, die erst *nac
 neben einem Geschwister mit wechselnder Sichtbarkeit nicht mehr (Breite 0, alle bei y = 0) – und bringt dabei das
 ganze Seitenlayout durcheinander. Die Zeilenkarten stehen deshalb in einem `Column`-Positionierer mit
 `width: parent.width` (siehe `ProjectListPage.qml`). Für wechselnde Listen im Zweifel `Column` statt `ColumnLayout`.
+Die Ergebniszeilen (`ResultView.qml`) sind deshalb ebenfalls ohne Layouts aufgebaut (Anker, Grundlinien ausgerichtet):
+umbrechende Beschriftungen in `GridLayout`-Zeilen bekamen sonst gelegentlich eine falsche Höhe.
 
 ## Bekannte Grenzen / Ideen für Version 2
 

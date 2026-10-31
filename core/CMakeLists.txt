@@ -10,6 +10,7 @@ add_library(elc_core STATIC
     src/formulas/cleanroom.cpp
     src/formulas/pv.cpp
     src/formulas/air.cpp
+    src/formulas/datacenter.cpp
     src/catalog/basics.cpp
     src/catalog/hvac.cpp
     src/catalog/cleanroom.cpp

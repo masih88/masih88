@@ -52,6 +52,11 @@ public:
     /// Default input values as text
     Q_INVOKABLE QVariantMap defaults(const QString& id) const;
     Q_INVOKABLE QVariantMap table(const QString& id) const;
+    /// Chart of a calculator: {xmin, xmax, xstep, ymin, ymax, ystep, xtitle, ytitle, note,
+    /// series: [{style, pts: [x0, y0, x1, y1, …]}], labels: [{x, y, text, style}], markers: [{x, y, label, style}]}
+    Q_INVOKABLE QVariantMap chart(const QString& id, const QVariantMap& values) const;
+    /// Values after tapping at (x, y) in the chart (data units); empty map if nothing changes
+    Q_INVOKABLE QVariantMap chartPick(const QString& id, const QVariantMap& values, double x, double y) const;
 
     // ---- Project lists (consumer list, data point list) ----
     /// {id, title, summary, description, color, category, settingsInputs, rowInputs, hasDetail, detailTitle}

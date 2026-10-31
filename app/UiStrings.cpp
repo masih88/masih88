@@ -83,6 +83,7 @@ constexpr Entry kStrings[] = {
     {"deleteRow", "Löschen", "Delete"},
     {"done", "Fertig", "Done"},
     {"more", "Mehr", "More"},
+    {"chart", "Diagramm", "Chart"},
 };
 
 }  // namespace

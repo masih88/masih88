@@ -1,7 +1,7 @@
 # Baut die fertigen Programme: Android-APK und Windows-EXE (ZIP mit allen Qt-Dateien).
 # Ergebnis: Artefakte im Actions-Lauf und zusätzlich im Branch "builds" (zum Herunterladen).
 #
-# Signatur der APK: android/debug.keystore ist ein Entwicklungsschlüssel nach Android-Konvention
+# Signatur der APK: android/debug-signing.p12 ist ein Entwicklungsschlüssel nach Android-Konvention
 # (Alias androiddebugkey, Passwort "android" – bewusst kein Geheimnis). Er reicht zum Installieren
 # und für Updates auf eigenen Geräten. Für den Play Store einen eigenen Schlüssel als Repository-Secret anlegen.
 name: Apps bauen
@@ -79,7 +79,7 @@ jobs:
           echo "Gebaute APK: $APK" | tee -a logs/android.log
           BT="$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS"
           "$BT/zipalign" -p -f 4 "$APK" aligned.apk
-          "$BT/apksigner" sign --ks android/debug.keystore --ks-key-alias androiddebugkey \
+          "$BT/apksigner" sign --ks android/debug-signing.p12 --ks-type PKCS12 --ks-key-alias androiddebugkey \
             --ks-pass pass:android --key-pass pass:android \
             --out "ElektroRechner-$VERSION.apk" aligned.apk
           "$BT/apksigner" verify --verbose "ElektroRechner-$VERSION.apk" 2>&1 | tee -a logs/android.log

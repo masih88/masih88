@@ -19,8 +19,14 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DELC_BUILD_APP=OFF
       - name: Build
         run: cmake --build build --config Release
+      # Test-Programm direkt starten: ctest reicht unter Windows Testnamen mit Sonderzeichen (φ, ², →)
+      # in der falschen Codepage an Catch2 weiter ("No test cases matched").
       - name: Test
-        run: ctest --test-dir build -C Release --output-on-failure
+        shell: bash
+        run: |
+          exe=build/tests/elc_tests
+          if [ -f build/tests/Release/elc_tests.exe ]; then exe=build/tests/Release/elc_tests.exe; fi
+          "$exe"
 
   sanitizers:
     name: ASan + UBSan

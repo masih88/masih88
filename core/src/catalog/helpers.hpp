@@ -37,6 +37,8 @@ void addBuilding(std::vector<Calculator>& out);
 void addBuildingTables(std::vector<Table>& out);
 void addControls(std::vector<Calculator>& out);
 void addControlTables(std::vector<Table>& out);
+void addHydraulics(std::vector<Calculator>& out);
+void addHydraulicTables(std::vector<Table>& out);
 ListDef consumerList();
 ListDef dataPointList();
 

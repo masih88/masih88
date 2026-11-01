@@ -14,6 +14,10 @@ Page {
         Calc.favorites
         return Calc.favoriteItems()
     }
+    property var visibleCategories: {
+        const hidden = Calc.hiddenCategories
+        return Calc.categories.filter(c => hidden.indexOf(c.id) < 0)
+    }
     property var results: {
         Calc.language
         return searching ? Calc.search(search.text) : []
@@ -128,14 +132,35 @@ Page {
                 }
             }
 
-            // Categories
-            Label {
+            // Categories (sections can be hidden via "Customize")
+            Item {
                 visible: !page.searching
-                text: Calc.ui.categories.toUpperCase()
-                font.pixelSize: 12
-                font.letterSpacing: 1.2
-                font.weight: Font.DemiBold
-                opacity: 0.6
+                Layout.fillWidth: true
+                implicitHeight: Math.max(catLabel.implicitHeight, customizeButton.implicitHeight)
+                Label {
+                    id: catLabel
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: Calc.ui.categories.toUpperCase()
+                    font.pixelSize: 12
+                    font.letterSpacing: 1.2
+                    font.weight: Font.DemiBold
+                    opacity: 0.6
+                }
+                ToolButton {
+                    id: customizeButton
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "✎ " + Calc.ui.customize
+                          + (Calc.hiddenCategories.length > 0 ? " (" + Calc.hiddenCategories.length + " " + Calc.ui.hiddenCount + ")" : "")
+                    font.pixelSize: 13
+                    onClicked: sectionsDialog.open()
+                }
+            }
+            Label {
+                visible: !page.searching && page.visibleCategories.length === 0
+                text: Calc.ui.allHidden
+                opacity: 0.7
             }
             GridLayout {
                 visible: !page.searching
@@ -145,7 +170,7 @@ Page {
                 rowSpacing: 12
 
                 Repeater {
-                    model: Calc.categories
+                    model: page.visibleCategories
                     delegate: Rectangle {
                         id: tile
                         required property var modelData
@@ -216,6 +241,57 @@ Page {
                 wrapMode: Text.Wrap
                 font.pixelSize: 11
                 opacity: 0.55
+            }
+        }
+    }
+
+    Dialog {
+        id: sectionsDialog
+        parent: Overlay.overlay
+        modal: true
+        title: Calc.ui.sectionsTitle
+        width: Math.min(parent ? parent.width - 32 : 400, 440)
+        height: Math.min(parent ? parent.height - 48 : 600, 720)
+        x: parent ? (parent.width - width) / 2 : 0
+        y: parent ? (parent.height - height) / 2 : 0
+        padding: 16
+        background: Rectangle {
+            radius: 12
+            color: Calc.darkTheme ? "#1C2330" : "#FFFFFF"
+            border.color: Calc.darkTheme ? "#2A3445" : "#E2E6EC"
+        }
+
+        contentItem: Flickable {
+            contentHeight: dialogColumn.height
+            clip: true
+            ScrollBar.vertical: ScrollBar {}
+            Column {
+                id: dialogColumn
+                width: parent.width
+                spacing: 8
+                Label {
+                    width: parent.width
+                    text: Calc.ui.sectionsHint
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 12
+                    opacity: 0.7
+                }
+                CategoryToggles {
+                    width: parent.width
+                }
+            }
+        }
+        footer: DialogButtonBox {
+            Button {
+                text: Calc.ui.showAll
+                flat: true
+                enabled: Calc.hiddenCategories.length > 0
+                onClicked: Calc.showAllCategories()
+            }
+            Button {
+                text: Calc.ui.close
+                flat: true
+                DialogButtonBox.buttonRole: DialogButtonBox.RejectRole
             }
         }
     }

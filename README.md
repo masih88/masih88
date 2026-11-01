@@ -4,6 +4,21 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.6:**
+- **Hydraulische Grundschaltungen (Regelgruppen)** als Anleitung in *Gebäudetechnik & Energie*: acht Schaltungen
+  (Drossel, Drossel mit PICV, Einspritz mit Durchgangsventil / PICV / Dreiwegventil, Beimisch, Beimisch mit fester
+  Vormischung, Umlenk) mit **Prinzipskizze**, Funktionsweise, Eigenschaften, Einsatzbereich und Ventilauslegung.
+  **Auswahlhilfe:** Verteiler, Einfriergefahr, Entfeuchtung, Rücklauf- und Vorlauftemperatur angeben → empfohlene
+  Schaltung mit Begründung und Alternative. Dazu die Tabelle **Auswahl hydraulischer Grundschaltungen**.
+  Quellen: Siemens „Einführung in die HLK- und Gebäudetechnik“ (08/2022) Kap. 5.4–5.5, Belimo-Auswahltabelle (03/2023);
+  die Skizzen sind eigene Zeichnungen.
+- **Bereiche ein- und ausblenden:** Auf der Startseite „Anpassen“ (oder in den Einstellungen) – ausgeblendete Bereiche
+  verschwinden von der Startseite, die Suche findet weiterhin alle Rechner. Die Auswahl bleibt gespeichert.
+
+| Beimischschaltung | Bereiche anpassen |
+|---|---|
+| ![Hydraulische Grundschaltungen](docs/screenshots/hydraulik.png) | ![Bereiche ein-/ausblenden](docs/screenshots/bereiche.png) |
+
 **1.5.1:** Kategorie-Kacheln auf der Startseite lassen sich wieder antippen (Fehler in 1.5.0).
 
 **Neu in 1.5 – aktualisiert auf Basis der Fachbücher** (Siemens-Grundlagenbücher, Haag, KNX, AMEV, TROX, BAuA u. a.;

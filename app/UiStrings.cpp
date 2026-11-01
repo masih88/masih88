@@ -92,6 +92,15 @@ constexpr Entry kStrings[] = {
     {"done", "Fertig", "Done"},
     {"more", "Mehr", "More"},
     {"chart", "Diagramm", "Chart"},
+    {"schematic", "Prinzipskizze", "Schematic"},
+    {"customize", "Anpassen", "Customize"},
+    {"sectionsTitle", "Bereiche ein- und ausblenden", "Show or hide sections"},
+    {"sectionsHint", "Ausgeblendete Bereiche erscheinen nicht auf der Startseite. Die Suche findet weiterhin alle Rechner.",
+     "Hidden sections do not appear on the home page. Search still finds every calculator."},
+    {"hiddenCount", "ausgeblendet", "hidden"},
+    {"showAll", "Alle einblenden", "Show all"},
+    {"close", "Schließen", "Close"},
+    {"allHidden", "Alle Bereiche sind ausgeblendet.", "All sections are hidden."},
 };
 
 }  // namespace

@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.5.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.5.1).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -1271,6 +1271,20 @@ Zusatz-Erläuterung möglich, z. B. SWH01_ECO, ABV01_WM_01_REP. Spalte „Typ. E
 
 ## Gebäudetechnik & Energie
 
+### Hydraulische Grundschaltungen (Regelgruppen)
+
+*Schema, Funktion, Einsatz und Ventilauslegung – mit Auswahlhilfe* — `hydraulic_circuits`
+
+```text
+Leistung Q̇ ~ V̇ · ΔT: Durchflussregelung (mengenvariabel: Drossel-, Umlenkschaltung) ändert den Volumenstrom, Mischregelung (mengenkonstant: Beimisch-, Einspritzschaltung) die Vorlauftemperatur.
+Auswahl nach Verteiler (druckbehaftet: Drossel, Umlenk, Einspritz · drucklos: Beimisch), Frostgefahr (mengenkonstant), Entfeuchtung (mengenvariabel) und gewünschter Rücklauftemperatur (Brennwert/Fernwärme: Drossel oder Einspritz mit Durchgangsventil).
+Quellen: Siemens „Einführung in die HLK- und Gebäudetechnik“ (08/2022), Kap. 5.4–5.5, S. 144–153; Belimo „Auswahltabelle von hydraulischen Grundschaltungen“ (03/2023). Prinzipskizzen ohne Absperr- und Sicherheitsarmaturen; Auslegung immer projektbezogen prüfen.
+```
+
+**Eingaben:** Anzeigen, Schaltung, Verteiler, Leistung anpassen über, Lufterwärmer mit Einfriergefahr, Luftkühler mit Entfeuchtung, Tiefe Rücklauftemperatur nötig (Brennwert, Fernwärme, Wärmepumpe), Verbraucher-VL deutlich tiefer als Erzeuger-VL (Flächenheizung), Konstanter Durchfluss im Erzeugerkreis nötig
+
+**Ergebnisse:** Schaltung, Begründung, Alternative, Regelungsart, Verteiler, Vorlauftemperatur am Verbraucher, Durchfluss Verbraucherkreis, Durchfluss Erzeugerkreis, Pumpen, Rücklauftemperatur zum Erzeuger, Funktionsweise, Eigenschaften, Typische Anwendungen, Ventil- und Bypassauslegung, Hinweis
+
 ### GA-Effizienzklasse (EN ISO 52120)
 
 *Einsparung durch bessere Gebäudeautomation – BAC-Faktoren je Gebäudetyp* — `bac_efficiency`
@@ -1389,6 +1403,21 @@ Quellen: ZVEI/VDMA-Leitfaden „Rauchableitung und Lüftung von Aufzugsschächte
 **Eingaben:** Schachtbreite (innen) [m], Schachttiefe (innen) [m]
 
 **Ergebnisse:** Schachtgrundfläche [m²], Freier Querschnitt Rauchabzug [m²], Freier Querschnitt Rauchabzug [cm²], Lüftung (Empfehlung 1 %) [m²]
+
+### Auswahltabelle hydraulische Grundschaltungen
+
+| Schaltung | Regelung | Verteiler | VL am Verbraucher | Durchfluss Verbraucher / Erzeuger | Pumpen | Rücklauf | Typisch für |
+|---|---|---|---|---|---|---|---|
+| Drosselschaltung | mengenvariabel | druckbehaftet | = Erzeuger-VL | Variabel / Variabel | Erzeugerpumpe (drehzahlgeregelt empfohlen) | Tief bei Teillast (Heizen) | Zonen, Heizkörper, Luftkühler mit Entfeuchtung |
+| Drosselschaltung mit PICV | mengenvariabel | druckbehaftet | = Erzeuger-VL | Variabel / Variabel | Erzeugerpumpe (drehzahlgeregelt) | Hoch bei Teillast (Kühlen), tief bei Teillast (Heizen) | Luftkühler mit Entfeuchtung |
+| Einspritzschaltung mit Durchgangsventil | mengenkonstant | druckbehaftet | variabel | Konstant / Variabel | Erzeuger- und Verbraucherpumpe | Relativ tief (Heizen) | Wärmepumpe, Brennwert, Fußbodenheizung |
+| Einspritzschaltung mit PICV | mengenkonstant | druckbehaftet | variabel | Konstant / Variabel | Erzeuger- und Verbraucherpumpe | Relativ tief (Heizen) | Lufterwärmer |
+| Beimischschaltung | mengenkonstant | drucklos | variabel | Konstant / Variabel | Nur Verbraucherpumpe | Tief bei kleiner Last (Heizen), hoch bei kleiner Last (Kühlen) | Heizgruppen, Lufterwärmer mit Frostgefahr |
+| Beimischschaltung mit fester Vormischung | mengenkonstant | drucklos | variabel | Konstant / Variabel | Nur Verbraucherpumpe | Allgemein tief | Fußboden-/Wandheizung, Betonkern |
+| Umlenkschaltung | mengenvariabel | druckbehaftet | = Erzeuger-VL | Variabel / Konstant | Erzeugerpumpe | Heizen: mittel bis hoch · Kühlen: mittel bis tief | Nachwärmer, WRG, Kühler mit Entfeuchtung |
+| Einspritzschaltung mit Dreiwegventil | mengenkonstant | druckbehaftet | variabel | Konstant / Konstant | Erzeuger- und Verbraucherpumpe | Relativ hoch (bei 0 % Last = Erzeuger-Vorlauf) | Lufterwärmer mit Außenluft |
+
+*Quellen: Siemens „Einführung in die HLK- und Gebäudetechnik“ (08/2022), Kap. 5.4–5.5, S. 144–153; Belimo „Auswahltabelle von hydraulischen Grundschaltungen“ (03/2023). Prinzipskizzen ohne Absperr- und Sicherheitsarmaturen; Auslegung immer projektbezogen prüfen.*
 
 ### GA-Effizienzfaktoren f_BAC (EN ISO 52120)
 

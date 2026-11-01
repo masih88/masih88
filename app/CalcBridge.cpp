@@ -106,6 +106,7 @@ CalcBridge::CalcBridge(QObject* parent) : QObject(parent) {
     norm_ = settings_.value("norm", "de").toString() == "ch" ? elc::NormProfile::CH : elc::NormProfile::DE;
     dark_ = qEnvironmentVariable("ELC_THEME", settings_.value("dark", false).toBool() ? "dark" : "light") == "dark";
     favorites_ = settings_.value("favorites").toStringList();
+    hiddenCategories_ = settings_.value("hiddenCategories").toStringList();
     // currency: stored choice, otherwise from the norm profile; exchange rate editable in the settings
     const QString cur = settings_.value("currency", norm_ == elc::NormProfile::CH ? "CHF" : "EUR").toString();
     currency_ = cur == "CHF" ? elc::Currency::CHF : elc::Currency::EUR;
@@ -281,6 +282,27 @@ QVariantList CalcBridge::favoriteItems() const {
     return list;
 }
 
+void CalcBridge::setCategoryVisible(const QString& id, bool visible) {
+    if (visible == !hiddenCategories_.contains(id)) return;
+    if (visible) {
+        hiddenCategories_.removeAll(id);
+    } else {
+        hiddenCategories_.append(id);
+    }
+    if (hiddenCategories_.isEmpty())
+        settings_.remove("hiddenCategories");
+    else
+        settings_.setValue("hiddenCategories", hiddenCategories_);
+    emit hiddenCategoriesChanged();
+}
+
+void CalcBridge::showAllCategories() {
+    if (hiddenCategories_.isEmpty()) return;
+    hiddenCategories_.clear();
+    settings_.remove("hiddenCategories");
+    emit hiddenCategoriesChanged();
+}
+
 void CalcBridge::toggleFavorite(const QString& id) {
     if (favorites_.contains(id)) {
         favorites_.removeAll(id);
@@ -404,7 +426,8 @@ QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) cons
     for (const auto& m : ch->markers) markers.append(QVariantMap{{"x", m.x}, {"y", m.y}, {"label", q(m.label)}, {"style", q(m.style)}});
     return {{"xmin", ch->x.min},     {"xmax", ch->x.max},     {"xstep", ch->x.step},       {"xtitle", txt(ch->x.title)},
             {"ymin", ch->y.min},     {"ymax", ch->y.max},     {"ystep", ch->y.step},       {"ytitle", txt(ch->y.title)},
-            {"note", txt(ch->note)}, {"series", series},      {"labels", labels},          {"markers", markers}};
+            {"note", txt(ch->note)}, {"series", series},      {"labels", labels},          {"markers", markers},
+            {"diagram", ch->diagram}, {"aspect", ch->aspect}};
 }
 
 QVariantMap CalcBridge::chartPick(const QString& id, const QVariantMap& values, double x, double y) const {

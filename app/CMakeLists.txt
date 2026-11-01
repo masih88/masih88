@@ -28,6 +28,7 @@ qt_add_qml_module(ElektroRechner
         qml/RowEditorPage.qml
         qml/Status.js
         qml/ChartView.qml
+        qml/CategoryToggles.qml
 )
 
 target_compile_definitions(ElektroRechner PRIVATE ELC_APP_VERSION="${PROJECT_VERSION}")
@@ -46,7 +47,7 @@ set_target_properties(ElektroRechner PROPERTIES
     OUTPUT_NAME ElektroRechner
     # Android (Qt 6.5+ reads these; older versions ignore them)
     QT_ANDROID_VERSION_NAME ${PROJECT_VERSION}
-    QT_ANDROID_VERSION_CODE 7
+    QT_ANDROID_VERSION_CODE 8
 )
 
 include(GNUInstallDirs)

@@ -41,6 +41,7 @@ const std::vector<Calculator>& calculators() {
         catalog::addAutomation(v);
         catalog::addHvac(v);
         catalog::addControls(v);
+        catalog::addHydraulics(v);
         catalog::addBuilding(v);
         catalog::addPid(v);
         catalog::addProcess(v);
@@ -62,6 +63,7 @@ const std::vector<Table>& tables() {
         catalog::addDatacenterTables(v);
         catalog::addVdiTables(v);
         catalog::addControlTables(v);
+        catalog::addHydraulicTables(v);
         catalog::addBuildingTables(v);
         catalog::addPidTables(v);
         catalog::addProcessTables(v);

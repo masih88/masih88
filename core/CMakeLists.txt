@@ -21,6 +21,7 @@ add_library(elc_core STATIC
     src/catalog/pid.cpp
     src/catalog/building.cpp
     src/catalog/controls.cpp
+    src/catalog/hydraulics.cpp
     src/catalog/basics.cpp
     src/catalog/hvac.cpp
     src/catalog/cleanroom.cpp

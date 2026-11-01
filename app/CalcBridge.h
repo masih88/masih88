@@ -23,6 +23,8 @@ class CalcBridge : public QObject {
     Q_PROPERTY(QVariantMap ui READ ui NOTIFY languageChanged)
     Q_PROPERTY(QVariantList categories READ categories NOTIFY languageChanged)
     Q_PROPERTY(QStringList favorites READ favorites NOTIFY favoritesChanged)
+    /// Category ids the user hid on the home page
+    Q_PROPERTY(QStringList hiddenCategories READ hiddenCategories NOTIFY hiddenCategoriesChanged)
     Q_PROPERTY(QString version READ version CONSTANT)
     Q_PROPERTY(QString startPage READ startPage CONSTANT)
 
@@ -45,6 +47,9 @@ public:
     [[nodiscard]] QVariantMap ui() const;
     [[nodiscard]] QVariantList categories() const;
     [[nodiscard]] QStringList favorites() const { return favorites_; }
+    [[nodiscard]] QStringList hiddenCategories() const { return hiddenCategories_; }
+    Q_INVOKABLE void setCategoryVisible(const QString& id, bool visible);
+    Q_INVOKABLE void showAllCategories();
     [[nodiscard]] QString version() const;
     [[nodiscard]] QString startPage() const { return startPage_; }
 
@@ -99,6 +104,7 @@ signals:
     void darkThemeChanged();
     void currencyChanged();
     void favoritesChanged();
+    void hiddenCategoriesChanged();
 
 private:
     [[nodiscard]] QString txt(const elc::Text& t) const;
@@ -117,5 +123,6 @@ private:
     elc::Currency currency_ = elc::Currency::EUR;
     double chfPerEur_ = 0.92;
     QStringList favorites_;
+    QStringList hiddenCategories_;
     QString startPage_;
 };

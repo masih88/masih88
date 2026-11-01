@@ -1,6 +1,7 @@
 import QtQuick
 
 // Draws a chart from the core's chart model (axes, lines, labels, markers) on a Canvas.
+// chart.diagram = true draws a schematic instead (no axes, same scale in x and y, see chart.hpp).
 // Tapping inside the plot area emits picked(x, y) in data units (e.g. set state 1 in the h,x chart).
 Item {
     id: view
@@ -10,13 +11,27 @@ Item {
 
     readonly property bool dark: Calc.darkTheme
     readonly property bool valid: chart.xmax !== undefined && chart.xmax > chart.xmin && chart.ymax > chart.ymin
-    readonly property real padL: 34
-    readonly property real padR: 10
-    readonly property real padT: 10
-    readonly property real padB: 38
+    readonly property bool diagram: chart.diagram === true
+    readonly property real padL: diagram ? 6 : 34
+    readonly property real padR: diagram ? 6 : 10
+    readonly property real padT: diagram ? 6 : 10
+    readonly property real padB: diagram ? 6 : 38
+    // schematic: same scale in x and y, drawing centred in the view
+    readonly property real dScale: valid ? Math.min((width - padL - padR) / (chart.xmax - chart.xmin),
+                                                     (height - padT - padB) / (chart.ymax - chart.ymin)) : 1
+    readonly property real dOffX: valid ? (width - dScale * (chart.xmax - chart.xmin)) / 2 : 0
+    readonly property real dOffY: valid ? (height - dScale * (chart.ymax - chart.ymin)) / 2 : 0
 
-    function px(x) { return padL + (x - chart.xmin) / (chart.xmax - chart.xmin) * (width - padL - padR) }
-    function py(y) { return padT + (chart.ymax - y) / (chart.ymax - chart.ymin) * (height - padT - padB) }
+    function px(x) {
+        if (diagram)
+            return dOffX + (x - chart.xmin) * dScale
+        return padL + (x - chart.xmin) / (chart.xmax - chart.xmin) * (width - padL - padR)
+    }
+    function py(y) {
+        if (diagram)
+            return dOffY + (chart.ymax - y) * dScale
+        return padT + (chart.ymax - y) / (chart.ymax - chart.ymin) * (height - padT - padB)
+    }
     function dataX(p) { return chart.xmin + (p - padL) / (width - padL - padR) * (chart.xmax - chart.xmin) }
     function dataY(p) { return chart.ymax - (p - padT) / (height - padT - padB) * (chart.ymax - chart.ymin) }
 
@@ -42,12 +57,114 @@ Item {
         }
     }
 
+    // Schematic (hydraulic circuits): pipes, symbols, centred labels and round markers, no axes.
+    function paintDiagram(ctx) {
+        const k = dScale
+        const ink = dark ? "#D5DDE8" : "#26323F"
+        const bg = dark ? "#151B26" : "#FFFFFF"
+        ctx.fillStyle = bg
+        ctx.fillRect(0, 0, width, height)
+        ctx.lineJoin = "round"
+        ctx.lineCap = "round"
+
+        for (let i = 0; i < chart.series.length; ++i) {
+            const s = chart.series[i]
+            if (s.pts.length < 4)
+                continue
+            ctx.beginPath()
+            for (let j = 0; j + 1 < s.pts.length; j += 2) {
+                if (j === 0)
+                    ctx.moveTo(px(s.pts[j]), py(s.pts[j + 1]))
+                else
+                    ctx.lineTo(px(s.pts[j]), py(s.pts[j + 1]))
+            }
+            if (ctx.setLineDash)
+                ctx.setLineDash(s.style === "sig" ? [Math.max(3, 1.4 * k), Math.max(2, k)] : [])
+            switch (s.style) {
+            case "vl":
+            case "rl":
+            case "pipe":
+                ctx.strokeStyle = s.style === "vl" ? (dark ? "#EF5350" : "#D32F2F")
+                                : s.style === "rl" ? (dark ? "#64A0F0" : "#1E5AA8")
+                                : (dark ? "#8A96A8" : "#6B7785")
+                ctx.lineWidth = Math.max(2, 0.85 * k)
+                ctx.stroke()
+                break
+            case "inkfill":
+                ctx.fillStyle = ink
+                ctx.fill()
+                ctx.strokeStyle = ink
+                ctx.lineWidth = Math.max(1, 0.3 * k)
+                ctx.stroke()
+                break
+            case "bgfill":
+                ctx.fillStyle = bg
+                ctx.fill()
+                ctx.strokeStyle = ink
+                ctx.lineWidth = Math.max(1.2, 0.4 * k)
+                ctx.stroke()
+                break
+            case "sig":
+                ctx.strokeStyle = dark ? "#F2A900" : "#D9741C"
+                ctx.lineWidth = Math.max(1, 0.35 * k)
+                ctx.stroke()
+                break
+            default: // "ink"
+                ctx.strokeStyle = ink
+                ctx.lineWidth = Math.max(1.2, 0.4 * k)
+                ctx.stroke()
+            }
+        }
+        if (ctx.setLineDash)
+            ctx.setLineDash([])
+
+        // markers: actuator (M) and temperature sensor (T)
+        for (let i = 0; i < chart.markers.length; ++i) {
+            const m = chart.markers[i]
+            const x = px(m.x), y = py(m.y)
+            const r = Math.max(7, 3.4 * k)
+            ctx.beginPath()
+            ctx.arc(x, y, r, 0, 2 * Math.PI)
+            if (m.style === "motor") {
+                ctx.fillStyle = dark ? "#F2A900" : "#D9741C"
+                ctx.fill()
+                ctx.fillStyle = "#FFFFFF"
+            } else {
+                ctx.fillStyle = bg
+                ctx.fill()
+                ctx.strokeStyle = ink
+                ctx.lineWidth = Math.max(1.2, 0.4 * k)
+                ctx.stroke()
+                ctx.fillStyle = ink
+            }
+            ctx.font = "bold " + Math.round(r * 1.15) + "px sans-serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText(m.label, x, y + 0.5)
+        }
+
+        // labels (centred; "cb" bold)
+        const fs = Math.round(Math.max(9, Math.min(15, 3.1 * k)))
+        for (let i = 0; i < chart.labels.length; ++i) {
+            const l = chart.labels[i]
+            ctx.fillStyle = ink
+            ctx.font = (l.style === "cb" ? "bold " : "") + fs + "px sans-serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText(l.text, px(l.x), py(l.y))
+        }
+    }
+
     function paint(ctx) {
         const w = width, h = height
         ctx.reset()
         ctx.clearRect(0, 0, w, h)
         if (!valid)
             return
+        if (diagram) {
+            paintDiagram(ctx)
+            return
+        }
         const left = padL, top = padT, right = w - padR, bottom = h - padB
         const textColor = dark ? "#C9D3E0" : "#4A5B72"
 
@@ -178,7 +295,7 @@ Item {
     onHeightChanged: canvas.requestPaint()
 
     TapHandler {
-        enabled: view.pickable && view.valid
+        enabled: view.pickable && view.valid && !view.diagram
         onTapped: function (eventPoint) {
             const p = eventPoint.position
             if (p.x >= view.padL && p.x <= view.width - view.padR && p.y >= view.padT && p.y <= view.height - view.padB)

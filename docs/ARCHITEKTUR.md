@@ -106,6 +106,16 @@ Eingabewerte (h,x-Diagramm: t₁ und φ₁). Beispiel: `hxGrid()` in `core/src/c
 h,x-Koordinaten mit y = t · (1,006 + 1,86·x) / 1,006 (Isothermen leicht steigend, Isenthalpen fallend).
 Tests: `tests/test_hx.cpp` (Gitter, Zustandspunkte, Rückrechnung beim Antippen).
 
+### Prinzipskizzen (ab 1.6)
+
+`Chart::diagram = true` macht aus dem Diagramm eine Skizze: keine Achsen, gleicher Maßstab in x und y (zentriert),
+Linienzüge in der gegebenen Reihenfolge; `Chart::aspect` gibt das Seitenverhältnis (Höhe/Breite) der Zeichenfläche vor.
+Stile: `vl`/`rl` Vor-/Rücklauf (rot/blau), `pipe`, `ink` (Kontur), `inkfill` (gefülltes Symbol), `bgfill` (mit
+Hintergrund gefüllt und umrandet – verdeckt darunterliegende Rohre), `sig` (gestrichelte Wirkungslinie);
+Beschriftungen `c`/`cb` zentriert, Marker `motor` (M) und `sensor` (T). Beispiel: `core/src/catalog/hydraulics.cpp`
+(Zeichenhilfe `Sketch` mit Pumpe, Ventilen, Strangregulierventil, Rückschlagklappe, Fühler), Tests in
+`tests/test_hydraulics.cpp` (alle Punkte im Zeichenbereich, Auswahlregeln).
+
 ## Werte aus Fachbüchern (ab 1.5)
 
 Die Fachbücher des Benutzers (Ordner *Fachbücher*, nach Fachgebiet sortiert, siehe `Bücherverzeichnis.md` dort) wurden
@@ -142,6 +152,12 @@ Die Ergebniszeilen (`ResultView.qml`) und das Eingabeformular (`InputForm.qml`) 
 aufgebaut (Column + Anker): umbrechende Beschriftungen und Hinweise in `GridLayout`-Zeilen bekamen sonst gelegentlich
 eine falsche Höhe und überlappten.
 
+## Bereiche ein-/ausblenden (ab 1.6)
+
+`CalcBridge::hiddenCategories` (QSettings-Schlüssel `hiddenCategories`) enthält die ausgeblendeten Kategorie-IDs;
+`HomePage.qml` filtert die Kacheln, `CategoryToggles.qml` (Schalter je Kategorie) steckt im Dialog „Anpassen“ und in
+den Einstellungen. Die Suche bleibt bewusst ungefiltert.
+
 ## Bekannte Grenzen / Ideen für Version 2
 
 - Strombelastbarkeit nur Kupfer, 1,5–300 mm², Verlegearten A1–E (keine Einleiter F/G, kein Aluminium).
@@ -157,6 +173,8 @@ Für automatische Screenshots (z. B. CI) liest die App Umgebungsvariablen:
 `ELC_OPEN=<rechner-id|table-id|list-id|list-id#zeile|list-id!settings|cat:<kategorie>|settings>`, `ELC_LANG=de|en`,
 `ELC_THEME=dark|light`, `ELC_WINDOW_SIZE=1100x760`, `ELC_SCREENSHOT=datei.png` (speichert nach 1,5 s bzw.
 `ELC_SCREENSHOT_DELAY` ms und beendet). QML-Warnungen erscheinen mit `QT_FORCE_STDERR_LOGGING=1`.
+Im Offscreen-Bild fehlen Elemente mit Material-Schatten (`layer.effect`), z. B. die Knöpfe der Schalter und der
+Standard-Hintergrund von Dialogen (auf dem Gerät vorhanden) – Dialoge bekommen deshalb einen eigenen `background`.
 
 ```bash
 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ELC_OPEN=voltage_drop ELC_SCREENSHOT=vd.png ./ElektroRechner

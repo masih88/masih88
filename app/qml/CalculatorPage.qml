@@ -69,10 +69,10 @@ Page {
     }
 
     component ChartCard: Card {
-        SectionTitle { text: Calc.ui.chart.toUpperCase() }
+        SectionTitle { text: (page.chartData.diagram ? Calc.ui.schematic : Calc.ui.chart).toUpperCase() }
         ChartView {
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(width * 0.95, 640)
+            Layout.preferredHeight: Math.min(width * (page.chartData.aspect > 0 ? page.chartData.aspect : 0.95), 640)
             chart: page.chartData
             pickable: page.def.hasPick === true
             onPicked: (x, y) => page.pick(x, y)

@@ -43,6 +43,12 @@ struct Chart {
     std::vector<ChartLabel> labels;
     std::vector<ChartMarker> markers;
     Text note;  // e.g. pressure, hint for tapping
+    // Schematic instead of a plot: no axes/ticks, same scale in x and y, series drawn in the given order.
+    // Diagram styles: "vl"/"rl" pipes (red/blue), "pipe" neutral pipe, "ink" outline, "inkfill" filled symbol,
+    // "bgfill" symbol filled with the background and outlined, "sig" dashed signal line.
+    // Label styles "c"/"cb" are centred (normal/bold); marker styles "motor" (M) and "sensor".
+    bool diagram = false;
+    double aspect = 0;  // preferred height/width of the drawing area (0 = UI default)
 };
 
 /// Value set by tapping into a chart: a number or (if choice is not empty) a choice

@@ -119,6 +119,26 @@ Page {
             }
 
             Card {
+                SectionTitle { text: Calc.ui.sectionsTitle.toUpperCase() }
+                Label {
+                    Layout.fillWidth: true
+                    text: Calc.ui.sectionsHint
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 12
+                    opacity: 0.65
+                }
+                CategoryToggles {
+                    Layout.fillWidth: true
+                }
+                Button {
+                    text: Calc.ui.showAll
+                    flat: true
+                    enabled: Calc.hiddenCategories.length > 0
+                    onClicked: Calc.showAllCategories()
+                }
+            }
+
+            Card {
                 SectionTitle { text: Calc.ui.about.toUpperCase() }
                 Label {
                     text: "ElektroRechner · " + Calc.ui.version + " " + Calc.version

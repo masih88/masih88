@@ -20,6 +20,7 @@ add_executable(elc_tests
     test_hx.cpp
     test_ex_pid.cpp
     test_books.cpp
+    test_hydraulics.cpp
 )
 target_link_libraries(elc_tests PRIVATE elc::core elc_warnings Catch2::Catch2WithMain)
 

@@ -1,5 +1,5 @@
 # Baut die fertigen Programme: Android-APK und Windows-EXE (ZIP mit allen Qt-Dateien).
-# Ergebnis: Artefakte im Actions-Lauf und zusätzlich im Branch "builds" (zum Herunterladen).
+# Ergebnis: Artefakte im Actions-Lauf und zusätzlich im Branch "<branch>-builds" (zum Herunterladen).
 #
 # Signatur der APK: android/debug-signing.p12 ist ein Entwicklungsschlüssel nach Android-Konvention
 # (Alias androiddebugkey, Passwort "android" – bewusst kein Geheimnis). Er reicht zum Installieren
@@ -8,7 +8,7 @@ name: Apps bauen
 
 on:
   push:
-    branches: [main]
+    branches: [main, elektrorechner]
   workflow_dispatch:
 
 permissions:
@@ -150,7 +150,7 @@ jobs:
           if-no-files-found: ignore
 
   publish:
-    name: Im Branch "builds" ablegen
+    name: Im Branch "<branch>-builds" ablegen
     needs: [android, windows]
     if: always()
     runs-on: ubuntu-24.04
@@ -173,4 +173,4 @@ jobs:
           git init -q -b builds
           git add -A
           git -c user.name="ElektroRechner CI" -c user.email="ci@users.noreply.github.com" commit -q -m "Builds ${GITHUB_SHA::7}"
-          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" builds
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" "HEAD:${GITHUB_REF_NAME}-builds"

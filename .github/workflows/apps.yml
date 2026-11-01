@@ -1,0 +1,176 @@
+# Baut die fertigen Programme: Android-APK und Windows-EXE (ZIP mit allen Qt-Dateien).
+# Ergebnis: Artefakte im Actions-Lauf und zusätzlich im Branch "builds" (zum Herunterladen).
+#
+# Signatur der APK: android/debug.keystore ist ein Entwicklungsschlüssel nach Android-Konvention
+# (Alias androiddebugkey, Passwort "android" – bewusst kein Geheimnis). Er reicht zum Installieren
+# und für Updates auf eigenen Geräten. Für den Play Store einen eigenen Schlüssel als Repository-Secret anlegen.
+name: Apps bauen
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  QT_VERSION: "6.8.3"
+  NDK_VERSION: "26.1.10909125"
+  BUILD_TOOLS: "34.0.0"
+
+jobs:
+  android:
+    name: Android-APK
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Qt für den Build-Rechner (Linux)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: desktop
+          arch: linux_gcc_64
+          dir: ${{ runner.temp }}
+          cache: true
+
+      - name: Qt für Android (arm64-v8a)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: linux
+          target: android
+          arch: android_arm64_v8a
+          dir: ${{ runner.temp }}
+          cache: true
+
+      - name: Android SDK und NDK
+        run: |
+          sudo apt-get install -y ninja-build > /dev/null
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --install \
+            "ndk;$NDK_VERSION" "platforms;android-34" "build-tools;$BUILD_TOOLS" > /dev/null
+
+      - name: Konfigurieren und bauen
+        run: |
+          set -o pipefail
+          mkdir -p logs
+          QT_ANDROID="$RUNNER_TEMP/Qt/$QT_VERSION/android_arm64_v8a"
+          QT_HOST="$RUNNER_TEMP/Qt/$QT_VERSION/gcc_64"
+          "$QT_ANDROID/bin/qt-cmake" -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQT_HOST_PATH="$QT_HOST" \
+            -DANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" \
+            -DANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/$NDK_VERSION" \
+            -DELC_BUILD_TESTS=OFF -DELC_BUILD_CLI=OFF 2>&1 | tee logs/android.log
+          cmake --build build --target apk 2>&1 | tee -a logs/android.log
+
+      - name: APK signieren
+        run: |
+          set -o pipefail
+          VERSION=$(sed -n 's/^ *VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt | head -1)
+          APK=$(find build -name "*.apk" | grep -v -- "-signed" | head -1)
+          echo "Gebaute APK: $APK" | tee -a logs/android.log
+          BT="$ANDROID_SDK_ROOT/build-tools/$BUILD_TOOLS"
+          "$BT/zipalign" -p -f 4 "$APK" aligned.apk
+          "$BT/apksigner" sign --ks android/debug.keystore --ks-key-alias androiddebugkey \
+            --ks-pass pass:android --key-pass pass:android \
+            --out "ElektroRechner-$VERSION.apk" aligned.apk
+          "$BT/apksigner" verify --verbose "ElektroRechner-$VERSION.apk" 2>&1 | tee -a logs/android.log
+          ls -la ElektroRechner-*.apk | tee -a logs/android.log
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ElektroRechner-Android
+          path: ElektroRechner-*.apk
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: log-android
+          path: logs/
+          if-no-files-found: ignore
+
+  windows:
+    name: Windows-EXE
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Qt für Windows (MSVC 2022)
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          cache: true
+
+      - name: Bauen und zusammenstellen
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force logs | Out-Null
+          $log = "logs/windows.log"
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR" -DELC_BUILD_TESTS=OFF -DELC_BUILD_CLI=OFF 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cmake --build build --config Release 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $version = (Select-String -Path CMakeLists.txt -Pattern '^\s*VERSION ([0-9.]+)').Matches[0].Groups[1].Value
+          $out = "ElektroRechner-$version-Windows"
+          New-Item -ItemType Directory -Force $out | Out-Null
+          Copy-Item build/app/Release/ElektroRechner.exe $out/
+          windeployqt --release --qmldir app/qml --no-translations "$out/ElektroRechner.exe" 2>&1 | Tee-Object -FilePath $log -Append
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          # Visual-C++-Laufzeit mitliefern, damit auf dem Ziel-PC nichts extra installiert werden muss
+          foreach ($dll in "msvcp140.dll", "msvcp140_1.dll", "msvcp140_2.dll", "vcruntime140.dll", "vcruntime140_1.dll", "concrt140.dll") {
+            $src = Join-Path $env:WINDIR "System32\$dll"
+            if (Test-Path $src) { Copy-Item $src $out/ }
+          }
+          Compress-Archive -Path $out -DestinationPath "$out.zip"
+          Get-ChildItem *.zip | Tee-Object -FilePath $log -Append
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ElektroRechner-Windows
+          path: ElektroRechner-*-Windows.zip
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: log-windows
+          path: logs/
+          if-no-files-found: ignore
+
+  publish:
+    name: Im Branch "builds" ablegen
+    needs: [android, windows]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Ergebnis hochladen
+        env:
+          ANDROID_RESULT: ${{ needs.android.result }}
+          WINDOWS_RESULT: ${{ needs.windows.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          mkdir -p pub
+          cp -r out/. pub/ 2>/dev/null || true
+          printf 'Commit: %s\nAndroid: %s\nWindows: %s\nLauf: %s\n' \
+            "$GITHUB_SHA" "$ANDROID_RESULT" "$WINDOWS_RESULT" "$RUN_URL" > pub/STATUS.txt
+          cd pub
+          git init -q -b builds
+          git add -A
+          git -c user.name="ElektroRechner CI" -c user.email="ci@users.noreply.github.com" commit -q -m "Builds ${GITHUB_SHA::7}"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" builds

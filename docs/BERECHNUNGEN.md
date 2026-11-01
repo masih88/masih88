@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.4.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.5.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -340,6 +340,21 @@ Motor in Dreieck für 230 V schalten (230/400-V-Motor). Kondensator-Nennspannung
 
 **Ergebnisse:** Betriebskondensator C_B [µF], Anlaufkondensator C_A, Verfügbare Leistung ca. [kW]
 
+### Pumpe/Ventilator am FU: Proportionalitätsgesetze
+
+*V̇ ~ n, Δp ~ n², P ~ n³ – Leistung und Einsparung bei Drehzahlregelung* — `fan_affinity`
+
+```text
+V̇₂/V̇₁ = n₂/n₁ · Δp₂/Δp₁ = (n₂/n₁)² · P₂/P₁ = (n₂/n₁)³
+Gilt für quadratische Anlagenkennlinien mit gleichbleibender Dichte und Wirkungsgrad (Ventilatoren, geschlossene Kreisläufe). Mit statischem Anteil (Förderhöhe, Vordruck) nicht anwendbar.
+Pumpen und Ventilatoren arbeiten meist bei 50 … 90 % Drehzahl.
+Quellen: Siemens „Einführung in die HLK- und Gebäudetechnik“ (08/2022), S. 180 (Beispiel 4000 → 8000 m³/h, 350 → 1400 Pa); Danfoss „Wissenswertes über Frequenzumrichter“, Kap. 3.
+```
+
+**Eingaben:** Volumenstrom V̇₁ [m³/h], Druckerhöhung Δp₁ [Pa], Leistungsaufnahme P₁ [kW], Drehzahl n₁ [1/min], Neuer Betriebspunkt aus, Drehzahl n₂ [1/min], Volumenstrom V̇₂ [m³/h], Betriebsstunden im neuen Punkt [h/a], Strompreis [€ / CHF]
+
+**Ergebnisse:** Drehzahlverhältnis n₂/n₁ [%], Drehzahl n₂ [1/min], Volumenstrom V̇₂ [m³/h], Druckerhöhung Δp₂ [Pa], Leistungsaufnahme P₂ [kW], Energieeinsparung [kWh/a], Kosteneinsparung [€]
+
 ## Industrie & Netze
 
 ### Blindleistungskompensation
@@ -363,12 +378,13 @@ Bei Oberschwingungen verdrosselte Anlagen vorsehen.
 
 ```text
 I = S / (√3 · U) bei 3~ bzw. S / U bei 1~    ü = U1 / U2
-I_k ≈ c · I_r2 · 100 % / u_k   (starres Netz, c = 1,05)
+I_k ≈ c · I_r2 · 100 % / u_k   (starres Netz, c = 1,05);  Dauerkurzschlussstrom I_kD = I_r · 100 % / u_k (ohne c)
+Übliche u_k (Haag Band 05 Trafo, 2007): Verteiltrafos 10 … 20 kV 4 … 6 %, 110 kV 10 … 14 %, 380 kV 11 … 20 %. Beispiel Haag: 400 kVA, u_k = 4 % → I_r = 577 A, I_kD = 14,43 kA. „Spannungssteife“ Trafos (kleines u_k) liefern höhere Kurzschlussströme.
 ```
 
 **Eingaben:** Ausführung, Bemessungsleistung S_r [kVA], Oberspannung U_1 [V], Unterspannung U_2 [V], Kurzschlussspannung u_k [%]
 
-**Ergebnisse:** Bemessungsstrom primär [A], Bemessungsstrom sekundär [A], Übersetzung ü, Kurzschlussstrom sekundär I_k [kA]
+**Ergebnisse:** Bemessungsstrom primär [A], Bemessungsstrom sekundär [A], Übersetzung ü, Kurzschlussstrom sekundär I_k [kA], Dauerkurzschlussstrom I_kD (ohne c) [kA]
 
 ### Kurzschlussstrom am Leitungsende
 
@@ -496,11 +512,12 @@ kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 10
 Ventilautorität a = Δp_V100 / (Δp_V100 + Δp_MV)
 Δp_MV = Druckverlust der mengenvariablen Strecke. Empfehlung a ≥ 0,5 (mind. 0,3).
 Wasser: ρ = 1000 kg/m³, c = 4,187 kJ/(kg·K). Glykolgemische: ρ und c aus dem Datenblatt des Herstellers.
+Kleinste regelbare Menge: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v = Stellverhältnis kvs/kvr; Wärmeleistung mit Wärmetauscher-Kennwert a_WT: Q̇/Q̇_100 = 1/(1 + a_WT·(V̇_100/V̇ − 1)). Beispiel a = 0,5, S_v = 50: ≈ 3 % (ohne WT), ≈ 4 % (a_WT = 0,7). Zwei parallele Ventile 1/3 + 2/3 in Sequenz senken die minimale Leistung auf etwa ein Drittel (QM Holzheizwerke, FAQ 37, 2015).
 ```
 
-**Eingaben:** Auslegung aus, Volumenstrom V̇ [m³/h], Leistung P [kW], Temperaturdifferenz ΔT (VL − RL) [K], Medium, Dichte ρ [kg/m³], Spez. Wärmekapazität c [kJ/(kg·K)], Gewünschter Δp am Ventil [kPa], Δp mengenvariable Strecke [kPa]
+**Eingaben:** Auslegung aus, Volumenstrom V̇ [m³/h], Leistung P [kW], Temperaturdifferenz ΔT (VL − RL) [K], Medium, Dichte ρ [kg/m³], Spez. Wärmekapazität c [kJ/(kg·K)], Gewünschter Δp am Ventil [kPa], Δp mengenvariable Strecke [kPa], Stellverhältnis S_v (kvs/kvr), Wärmetauscher-Kennwert a_WT
 
-**Ergebnisse:** Volumenstrom V̇ [m³/h], Berechneter kv-Wert [m³/h], Gewählter kvs-Wert (Normreihe) [m³/h], Δp bei kvs (voll offen) [kPa], Ventilautorität a
+**Ergebnisse:** Volumenstrom V̇ [m³/h], Berechneter kv-Wert [m³/h], Gewählter kvs-Wert (Normreihe) [m³/h], Δp bei kvs (voll offen) [kPa], Ventilautorität a, Kleinster regelbarer Volumenstrom [%], Kleinste regelbare Wärmeleistung [%]
 
 ### Wärmeleistung ↔ Volumenstrom
 
@@ -571,11 +588,59 @@ Taupunkt: τ = 243,12 · γ / (17,62 − γ), γ = ln(φ) + 17,62 · t / (243,12
 EN 16798-1 (Anhang B, Verfahren 1): q = n · q_P + A · q_B
 q_P je Person: Kat. I 10, II 7, III 4 l/s.   q_B je m² (schadstoffarmes Gebäude): I 1,0, II 0,7, III 0,4 l/(s·m²); sehr schadstoffarm: 0,5 / 0,35 / 0,2; nicht schadstoffarm: 2,0 / 1,4 / 0,8.
 CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je Person bei Büroarbeit.
+Außenluft ≈ 400 ppm, in Städten oft 550 … 700 ppm (Siemens „Regeln und Steuern von Lüftungsanlagen“, 10/2022, Kap. 3.3.1); bedarfsgeregelte Lüftung über CO₂/VOC siehe VDMA 24773.
 ```
 
 **Eingaben:** Verfahren, Personen, Raumfläche [m²], Raumhöhe (für Luftwechsel) [m], Kategorie, Gebäude-Emission, CO₂-Abgabe je Person [l/h], CO₂-Sollwert [ppm], CO₂ außen [ppm]
 
 **Ergebnisse:** Außenluftvolumenstrom [m³/h], Außenluftvolumenstrom [l/s], Je Person [m³/h], Luftwechselrate [1/h], CO₂-Konzentration (stationär) [ppm]
+
+### Reglereinstellung (Ziegler/Nichols, CHR)
+
+*Kp, Tn, Tv aus Streckenkennwerten Ks, Tu, Tg – Schwierigkeitsgrad S* — `controller_tuning`
+
+```text
+Schwierigkeitsgrad S = Tu / Tg (bzw. Tt / T): < 0,1 leicht, ≈ 0,2 mittel, > 0,3 schwierig zu regeln.
+Ziegler/Nichols (1942, max. 20 % Überschwingen; Einspeicherstrecke mit Totzeit Tt, Zeitkonstante T):
+P: Kp = T/(Ks·Tt) · PI: 0,9·T/(Ks·Tt), Tn = 3,3·Tt · PD: 1,2·T/(Ks·Tt), Tv = 0,25·Tt · PID: 1,2·T/(Ks·Tt), Tn = 2·Tt, Tv = 0,42·Tt.
+Chien/Hrones/Reswick (1952, Mehrspeicherstrecke, V0 = Ks·Kp):
+aperiodisch – Störung: P 0,3; PI 0,6 / Tn 4·Tu; PID 0,95 / Tn 2,4·Tu / Tv 0,42·Tu – Führung: P 0,3; PI 0,35 / Tn 1,2·Tg; PID 0,6 / Tn Tg / Tv 0,5·Tu;
+20 % Überschwingen – Störung: P 0,7; PI 0,7 / Tn 2,3·Tu; PID 1,2 / Tn 2·Tu / Tv 0,42·Tu – Führung: P 0,7; PI 0,6 / Tn Tg; PID 0,95 / Tn 1,35·Tg / Tv 0,47·Tu (V0-Faktoren jeweils · Tg/Tu).
+Quelle: Siemens „Regeltechnik – Grundlagen“ (08/2022), Kap. 3.3 und 6.5, S. 33–34 und 82–83 (Fig. 6-15, 6-18). Startwerte – an der Anlage nachoptimieren.
+```
+
+**Eingaben:** Streckenverstärkung Ks, Verzugszeit Tu bzw. Totzeit Tt [s], Ausgleichszeit Tg bzw. Zeitkonstante T [s], Reglertyp, Einstellregel
+
+**Ergebnisse:** Schwierigkeitsgrad S, Regelbarkeit, Proportionalbeiwert Kp, Proportionalbereich Xp = 100 %/Kp [%], Nachstellzeit Tn [s], Vorhaltezeit Tv [s]
+
+### KNX-Topologie & Linienplanung
+
+*Linien, Bereiche, Segmente, Leitungslängen und Netzteillast (KNX TP)* — `knx_topology`
+
+```text
+KNX TP: bis 64 Teilnehmer je Liniensegment mit eigener Spannungsversorgung; mit Linienverstärkern bis 4 Segmente = 255 Teilnehmer je Linie; bis 15 Linien je Bereich (Linienkoppler), bis 15 Bereiche (Bereichskoppler); Koppler zählen auf der Haupt-/Bereichslinie mit.
+Leitungslängen je Segment: Spannungsversorgung – Teilnehmer ≤ 350 m, Teilnehmer – Teilnehmer ≤ 700 m, Gesamtlänge ≤ 1000 m.
+Praxis: neue Linie ab ca. 64 Teilnehmern und Reserve einplanen.
+Quelle: KNX Association „Grundlagenwissen zum KNX Standard“ (2013), S. 8–9. Stromaufnahme je Gerät laut Hersteller.
+```
+
+**Eingaben:** Anzahl Busteilnehmer, Reserve [%], Teilnehmer je Linie (Planung), Leitungslänge je Segment (gesamt) [m], Größter Abstand Netzteil – Teilnehmer [m], Größter Abstand Teilnehmer – Teilnehmer [m], Stromaufnahme je Teilnehmer [mA], Spannungsversorgung
+
+**Ergebnisse:** Linien, Bereiche, Teilnehmer je Linie (max.), Segmente je Linie, Spannungsversorgungen (Linien), Netzteilauslastung je Segment [%]
+
+### AMEV-Datenpunktadresse
+
+*Benutzeradresse nach AMEV GA 2005 aus Gewerk, Anlage, Anlagenteil, Datenpunkt* — `amev_address`
+
+```text
+Aufbau (25 Stellen + Klartext): Liegenschaft (5) – Gebäude (3) – Gewerk (1) – Anlage (3) – lfd. Nr. (2) – Regelfabrikat (2) – Anlagenteil (3) – lfd. Nr. (2) – Datenpunktart (2) – Datenpunktbeschreibung (2).
+Beispiel: 31021-008-H-HKR-01-01-PUU-01-SM-17 = Heizkreis 01, Umwälzpumpe 01, Störmeldung „Störung allg. elektrisch“.
+Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.
+```
+
+**Eingaben:** Liegenschaftsnummer, Gebäudenummer (999 = Außenanlagen), Gewerk, Anlage, Lfd. Nr. der Anlage, Regelfabrikat (Nr.), Anlagenteil, Lfd. Nr. des Anlagenteils, Datenpunktart, Datenpunktbeschreibung
+
+**Ergebnisse:** Datenpunktadresse, Ohne Trennzeichen (GLT), Klartext (Vorschlag, max. 30 Zeichen)
 
 ### VDI 3814: Gewerkekennzeichnung
 
@@ -796,6 +861,608 @@ CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je
 
 *Auszug aus VDI 3814 Blatt 4.1 (2019-01). Kürzel können projektspezifisch ergänzt und angepasst werden.
 Zusatz-Erläuterung möglich, z. B. SWH01_ECO, ABV01_WM_01_REP. Spalte „Typ. E/A“ = übliche Zuordnung aus der Planungspraxis, nicht Teil der Richtlinie.*
+
+### Einstellregeln Ziegler/Nichols & CHR
+
+| Regel | Regler | Kp / V0 | Tn | Tv |
+|---|---|---|---|---|
+| ZN | P | T/(Ks·Tt) | – | – |
+| ZN | PI | 0,9·T/(Ks·Tt) | 3,3·Tt | – |
+| ZN | PD | 1,2·T/(Ks·Tt) | – | 0,25·Tt |
+| ZN | PID | 1,2·T/(Ks·Tt) | 2·Tt | 0,42·Tt |
+| CHR aperiodisch, Störung | P | V0 = 0,3·Tg/Tu | – | – |
+| CHR aperiodisch, Störung | PI | V0 = 0,6·Tg/Tu | 4·Tu | – |
+| CHR aperiodisch, Störung | PID | V0 = 0,95·Tg/Tu | 2,4·Tu | 0,42·Tu |
+| CHR aperiodisch, Führung | P | V0 = 0,3·Tg/Tu | – | – |
+| CHR aperiodisch, Führung | PI | V0 = 0,35·Tg/Tu | 1,2·Tg | – |
+| CHR aperiodisch, Führung | PID | V0 = 0,6·Tg/Tu | Tg | 0,5·Tu |
+| CHR 20 %, Störung | P | V0 = 0,7·Tg/Tu | – | – |
+| CHR 20 %, Störung | PI | V0 = 0,7·Tg/Tu | 2,3·Tu | – |
+| CHR 20 %, Störung | PID | V0 = 1,2·Tg/Tu | 2·Tu | 0,42·Tu |
+| CHR 20 %, Führung | P | V0 = 0,7·Tg/Tu | – | – |
+| CHR 20 %, Führung | PI | V0 = 0,6·Tg/Tu | Tg | – |
+| CHR 20 %, Führung | PID | V0 = 0,95·Tg/Tu | 1,35·Tg | 0,47·Tu |
+
+*Quelle: Siemens „Regeltechnik – Grundlagen“ (08/2022), Fig. 6-15 und 6-18, S. 82–83. CHR: V0 = Ks · Kp. ZN in der Xp-Form: P Xp = Xh·S, PI 1,25·Xh·S / Tn 3·Tt, PD 0,83·Xh·S, PID 0,83·Xh·S.*
+
+### h,x-Diagramm: Höhenkorrektur
+
+| Höhe ü. M. | p (Buch) | k (Buch) | p ISA | k ISA |
+|---|---|---|---|---|
+| 0 m | 1013 mbar | 1 | 1013 mbar | 1 |
+| 200 m | 989 mbar | 0,976 | 989 mbar | 0,977 |
+| 400 m | 966 mbar | 0,953 | 966 mbar | 0,953 |
+| 600 m | 943 mbar | 0,931 | 943 mbar | 0,931 |
+| 800 m | 921 mbar | 0,901 | 921 mbar | 0,909 |
+| 1000 m | 899 mbar | 0,887 | 899 mbar | 0,887 |
+| 1500 m | 842 mbar | 0,831 | 846 mbar | 0,835 |
+| 2000 m | 795 mbar | 0,785 | 795 mbar | 0,785 |
+
+*Buchwerte: Siemens „h,x-Diagramm – Aufbau und Anwendung“ (08/2022), S. 59. Spalte ISA: Normatmosphäre, wie sie der h,x-Rechner verwendet. Bei 800 m nennt das Buch k = 0,901; aus 921/1013 mbar ergibt sich 0,909 – vermutlich ein Druckfehler. Bei 1500 m liegt der Buchwert rund 0,5 % unter der Normatmosphäre.*
+
+### AMEV: Gewerke
+
+| Kürzel | Bedeutung |
+|---|---|
+| A | Aufzugs- und Fördertechnik |
+| E | Elektrotechnische Anlagen |
+| G | Gasanlagen |
+| H | Heizungstechnische Anlagen |
+| I | Informationstechnische und Sicherheitstechnische Anlagen |
+| K | Kältetechnische Anlagen |
+| L | Lufttechnische Anlagen |
+| N | Nutzungsspezifische Anlagen |
+| S | Sanitärtechnische Anlagen |
+| Y | Gewerkeübergreifende Anlagen |
+| Z | Energiemanagement/Verbrauchserfassung |
+
+*Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.*
+
+### AMEV: Anlagen
+
+| Kürzel | Bedeutung |
+|---|---|
+| AA_ | Abluftanlage |
+| AFF | Antennen-, Funk-, Fernsehanlage |
+| ANA | Anlage Nachtauskühlung (Fensterlüftung) |
+| AUF | Hebeanlage |
+| AUL | Aufzug Lasten |
+| AUP | Aufzug Personen |
+| AV_ | Allgemeine Stromversorgung |
+| AWA | Abwasseranlage |
+| AWB | Abwasserbehandlungsanlage |
+| AWH | Abwasserhebeanlage |
+| BEA | Beleuchtungsanlage außen |
+| BEI | Beleuchtungsanlage innen |
+| BES | Beleuchtung als Sicherheitsbeleuchtung |
+| BMA | Brandmeldeanlage |
+| BNR | Behindertennotruf |
+| BUS | Übertragungsnetz, Komponenten |
+| CO_ | CO-Warnanlage |
+| DEA | Druckerhöhungsanlage |
+| DLA | Druckluftanlage |
+| DRA | Druckregelanlage |
+| DSA | Dosieranlage |
+| DV_ | Datenverarbeitung |
+| EFA | Entfeuchtungsanlage |
+| EHA | Enthärtungsanlage |
+| EIN | Einspeisung (öffentliches Versorgungsnetz) |
+| ELA | Elektroakustische Anlage |
+| EMA | Einbruchmeldeanlage (auch Überfall) |
+| EOA | Energieoptimierungsanlage |
+| ERD | Erdungs- und Blitzschutzanlage |
+| ESA | Entsalzungsanlage |
+| FIA | Filteranlage |
+| FLA | Feuerlöschanlage (Sprinkleranlage, Gaslöschanlage) |
+| FTS | Fluchttürsysteme, -steueranlage, Rettungswegtechnik |
+| GAL | Gaslagerungsanlage |
+| GAR | Gasregelstrecke |
+| GAW | Gaswarnanlage |
+| GHV | Gebäudehauptverteilung |
+| GUV | Gebäudeunterverteilung |
+| HAS | Hausanschlussstation (HAST), Übergabe-, Trafostation |
+| HER | Be-Heizung (Einläufe, Rinnen, Rohre) |
+| HKR | Heizkreis |
+| ISP | Informationsschwerpunkt |
+| KEA | Kälteerzeugungsanlage |
+| KTA | Küchentechnische Anlage |
+| KVA | Kälteverteilanlage |
+| LFA | Leichtflüssigkeitsabscheider |
+| LWA | Leckwarnanlage |
+| MLA | Medizin-/Labortechnische Anlage |
+| MMA | Multimediaanlage |
+| MSA | Mittelspannungsanlage |
+| MSS | Mittelspannungsschaltanlage |
+| MZE | Mess-/Zählwerterfassung, Wetterstation |
+| NEA | Netzersatzanlage |
+| NEU | Neutralisationsanlage |
+| NSS | Niederspannungsschaltanlage |
+| PVA | Photovoltaikanlage |
+| RBS | Raumbedienstation |
+| RKA | Rückkühlanlage |
+| RWA | Rauchwärmeabzugsanlage |
+| SIG | Signalanlage |
+| SON | Sonnenschutz- und Verdunklungsanlage |
+| SRA | Schrankenanlage |
+| SV_ | Sicherheitsstromversorgung |
+| TAA | Tankstellen-, Tankanlage |
+| TEL | Telekommunikationsanlage |
+| TKA | Teilklimaanlage |
+| TTA | Tür-, Toranlage |
+| USV | unterbrechungsfreie Stromversorgung |
+| VID | Video-, Überwachungsanlage |
+| VKA | Vollklimaanlage |
+| WAA | Wasseranlage |
+| WAU | Wasseraufbereitungsanlage (a. Trinkwasser) |
+| WEA | Wärmeerzeugungsanlage |
+| WED | Wassererwärmer dezentral |
+| WEZ | Wassererwärmungsanlage zentral |
+| WPU | Wärmepumpe |
+| WRG | Wärmerückgewinnungsanlage |
+| WVN | Wärmeverteilnetz |
+| ZAA | Zu- und Abluftanlage |
+| ZA_ | Zuluftanlage |
+| ZDA | Zeitdienstanlage |
+| ZKA | Zugangskontrollanlage |
+
+*Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.*
+
+### AMEV: Anlagenteile
+
+| Kürzel | Bedeutung |
+|---|---|
+| AB_ | Abluft |
+| AKT | Aktor allgemein |
+| AST | Automatisierungsstation (allgemein) |
+| ATR | Antrieb (Tür, Tor, Schranke, Fenster, Jalousie) |
+| AUK | Außenluftklappe |
+| AUM | Aufzugsmaschine |
+| AUT | Aufzugstür |
+| AU_ | Außenluft |
+| BAT | Batterie/Akkumulatoren |
+| BEF | Befeuchter |
+| BRE | Brenner |
+| BSK | Brandschutzklappe |
+| DAE | Dacheinlauf, Dachrinne (Heizung) |
+| DE_ | Druckerhöhung |
+| DH_ | Druckhaltung |
+| DR_ | Druckreduzierung |
+| EG_ | Endgerät allgemein (auch Datenendgerät) |
+| EH_ | Erhitzer |
+| EIN | Spannungsversorgung |
+| ELS | Endlagenschalter |
+| ENK | Entrauchungsklappe |
+| ERR | Einzelraumregler |
+| FBH | Fußbodenheizung |
+| FIA | Filter Abluft |
+| FIG | Filter Gas |
+| FIL | Filter Luft |
+| FIR | Rückspülfilter |
+| FIU | Filter Außenluft |
+| FIW | Filter Wasser |
+| FIZ | Filter Zuluft |
+| FI_ | Filter allgemein |
+| FOK | Fortluftklappe |
+| FO_ | Fortluft |
+| FU_ | Frequenzumrichter |
+| GEN | Generator |
+| HKE | Heizkessel |
+| INT | intern (anlagenintern) |
+| ISO | Isolationsüberwachung |
+| JAK | Jalousieklappe |
+| KGK | Küchenkühlgerät |
+| KGW | Küchenwärmegerät |
+| KLK | Kühlwasserkreislauf |
+| KLP | Primärkreislauf |
+| KLS | Sekundärkreislauf |
+| KLW | Kaltwasserkreislauf |
+| KM_ | Kältemaschine/Kälteerzeuger |
+| KOM | Kompressor, Verdichter |
+| KON | Kondensator, Verflüssiger |
+| KUD | Kühl-/Lüftungsdecke |
+| KUL | Kühler, Verdampfer |
+| KUR | Kühlraum/Kühlzelle/Tiefkühltruhe |
+| LBF | Luftbefeuchter |
+| LEA | Leuchte allgemein |
+| LER | Leuchte Rettungsweg (Rettungsweg-Kennzeichenleuchte) |
+| LES | Leuchte Sicherheitsbeleuchtung |
+| LE_ | Luft-Erhitzer |
+| LKE | Luft-Kühler und -Erhitzer |
+| LK_ | Luft-Kühler |
+| LNE | Luft-Nacherhitzer |
+| LNK | Luft-Nachkühler |
+| LSF | Fehlerstromschutzschalter |
+| LSR | Leser |
+| LS_ | Leistungsschalter (allgemein) |
+| LTS | Lasttrennschalter |
+| LVE | Luft-Vorerhitzer |
+| LVK | Luft-Vorkühler |
+| LZ_ | Leitzentrale |
+| MBM | Bewegungs-/Präsenzmelder |
+| MBR | Brandmelder |
+| MEB | Einbruchmelder (auch Überfallmelder) |
+| MES | Messeinrichtung (physikalischer Größen) |
+| MGM | Gasmelder |
+| MI_ | Mischluft |
+| MOT | Motor (allgemein) |
+| MRM | Rauchmelder |
+| M__ | Melder allgemein |
+| PUE | Erhitzerpumpe |
+| PUK | Kühlwasserpumpe |
+| PUL | Ladepumpe |
+| PUP | Pumpe Primärkreislauf |
+| PUU | Umwälzpumpe |
+| PUW | Kaltwasserpumpe |
+| PUZ | Zirkulationspumpe |
+| PU_ | Pumpe allgemein |
+| REG | Regler/Controller |
+| RL_ | Rücklauf |
+| R__ | Raum(-luft) |
+| SCH | Schalter |
+| SEN | Sensor allgemein |
+| SIE | Sicherheitseinrichtung |
+| SIG | Signalisierung (optisch, akustisch) |
+| SIL | Sicherungslasttrennschalter |
+| SI_ | Sicherung, Auslöser |
+| SPU | Spannungsüberwachung (Phasenüberwachung) |
+| SP_ | Speicher |
+| TAN | Tank/Behälter |
+| TL_ | Terminal/Tableau |
+| TRA | Transformator |
+| TRO | Trockner |
+| TTF | Tür-, Tor-, Fensterkontakt |
+| UMK | Umluftklappe |
+| UM_ | Umluft |
+| USS | Überspannungsschutz, Phasenwächter |
+| VB_ | Ventil Bypass |
+| VD_ | Ventil Durchgang |
+| VE_ | Ventil Erhitzer |
+| VHK | Ventil Heizkreis |
+| VK_ | Ventil Kühler |
+| VL_ | Vorlauf |
+| VNE | Ventil Nacherhitzer |
+| VNK | Ventil Nachkühler |
+| VRA | Abluftventilator |
+| VRU | Umluftventilator |
+| VRZ | Zuluftventilator |
+| VR_ | Ventilator |
+| VSR | Volumenstromregler |
+| VST | Verstärker |
+| VVE | Ventil Vorerhitzer |
+| VVK | Ventil Vorkühler |
+| VWR | Ventil Wärmerückgewinnung |
+| VWT | Ventil Wärmetauscher |
+| V__ | Ventil |
+| WE_ | Wärmeerzeuger |
+| WRG | Wärmerückgewinnung |
+| WT_ | Wärmetauscher |
+| ZTR | Zentrale allgemein |
+| ZU_ | Zuluft |
+| Z__ | Zähler (Verbrauchszähler/Maximumzähler) |
+
+*Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.*
+
+### AMEV: Datenpunktarten
+
+| Kürzel | Bedeutung |
+|---|---|
+| AM | Alarm-/Gefahrenmeldung |
+| BM | Betriebsmeldung |
+| MW | Messwert |
+| PA | Parameter, Sollwert (-verstellung) |
+| SB | Schaltbefehl |
+| SM | Störmeldung |
+| ST | Stellbefehl |
+| VA | Virtueller Datenpunkt analog |
+| VD | Virtueller Datenpunkt digital |
+| VS | Virtueller Datenpunkt »Szene« |
+| VZ | Virtueller Datenpunkt »Zeitprogramm« |
+| WM | Wartungsmeldung |
+| ZP | Zeitprogramm |
+| ZW | Zählwert |
+
+*Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.*
+
+### AMEV: Datenpunktbeschreibung
+
+| Kürzel | Bedeutung |
+|---|---|
+| 00 | Sonderfall |
+| 01 | Aus, Zu |
+| 02 | Ein, Auf, Stufe 1 |
+| 03 | Stufe 2 |
+| 04 | Stufe 3 |
+| 05 | Stufe 4 |
+| 06 | Zentral Aus, Zentral Zu |
+| 07 | Zentral Ein, Zentral Auf, Hauptschaltbefehl |
+| 08 | Anforderung |
+| 09 | Freigabe |
+| 10 | Betrieb |
+| 11 | Wartung |
+| 12 | Warnung |
+| 13 | Alarm, Gefahr, Notruf |
+| 14 | Not-Aus |
+| 15 | Störung |
+| 16 | Sammelstörung |
+| 17 | Störung allg. elektrisch |
+| 18 | Netzausfall |
+| 19 | Ausfall Hilfsenergie |
+| 20 | Schaltzustandsfehler |
+| 21 | SV-Betrieb |
+| 22 | Störung allg. mechanisch |
+| 23 | Keilriemen |
+| 24 | Stellantrieb |
+| 25 | Auslösung (Melder) |
+| 26 | Scharfschaltung |
+| 27 | Quittierung |
+| 28 | Hand/Auto(-Umschaltung) |
+| 29 | Anlagenschalter |
+| 30 | Reparaturschalter |
+| 31 | Endlage »Zu« |
+| 32 | Endlage »Auf« |
+| 33 | Regelantrieb |
+| 34 | Regelantrieb (Rückmeldung) |
+| 35 | Sollwert (berechnet) |
+| 36 | Sollwertanhebung, Sollwertsteller |
+| 37 | Hysterese |
+| 38 | Krümmung (Heizkurve) |
+| 39 | Steigung (Heizkurve) |
+| 40 | Sicherheitstemperaturwächter (STW) |
+| 41 | Druckwächter |
+| 42 | Durchflusswächter |
+| 43 | Frostschutzwächter |
+| 44 | Feuchte-/Kondensations-Leckagewächter |
+| 45 | Max-Wächter |
+| 46 | Sicherheitstemperaturbegrenzer (STB) |
+| 47 | Sicherheitsdruckbegrenzer (SDB) |
+| 48 | Durchflussbegrenzer |
+| 49 | Temperatur |
+| 50 | Temperatur min./unten |
+| 51 | Temperatur max./oben |
+| 52 | Temperatur Mittelwert/Mitte |
+| 53 | Vorlauftemperatur |
+| 54 | Rücklauftemperatur |
+| 55 | Luftqualität |
+| 56 | Enthalpie |
+| 57 | Feuchte |
+| 58 | Druck |
+| 59 | Druck max., Hochdruck |
+| 60 | Druck min., Niederdruck |
+| 61 | Differenzdruck |
+| 62 | Volumenstrom |
+| 63 | Durchfluss/Menge |
+| 64 | Durchfluss max./Menge max. |
+| 65 | Durchfluss min./Menge min. |
+| 66 | pH-Wert |
+| 67 | Drehzahl (Geschwindigkeit) |
+| 68 | Schlupf |
+| 69 | Wassermangel |
+| 70 | Füllstand |
+| 71 | Füllstand min. |
+| 72 | Füllstand max. |
+| 73 | Wind |
+| 74 | Windrichtung |
+| 75 | Niederschlag, Eis |
+| 76 | Helligkeit innen/außen |
+| 77 | Spannung |
+| 78 | Spannung min. (auch Unterspannung) |
+| 79 | Spannung max. |
+| 80 | Strom |
+| 81 | Strom min. |
+| 82 | Strom max. |
+| 83 | Leistung |
+| 84 | Leistung max. (1/4 h Leistung) |
+| 85 | Blindleistungswert cos ϕ |
+| 86 | Zeit (Laufzeit, Betriebsstunden) |
+| 87 | elektrische Arbeit, elektrische Arbeit HT |
+| 88 | elektrische Arbeit NT |
+| 89 | Wärmemenge |
+| 90 | Gasmenge |
+| 91 | Ölmenge |
+| 92 | Dampfmenge |
+| 93 | Kaltwasser |
+| 94 | Warmwasser |
+| 95 | Fahrtenanzahl |
+| 96 | Haltestelle |
+| 97 | Feuerwehrsteuerung, Sonder-(fahrt)steuerung |
+| 98 | Szenenaufruf |
+
+*Quelle: AMEV „Gebäudeautomation 2005“ (Nr. 87), Anhang 2.1/2.2, S. 78–85. Bezeichnungen wie im Original (nur deutsch); projektspezifisch anpassbar, neuere AMEV-Empfehlungen (z. B. BACnet) prüfen.*
+
+## Gebäudetechnik & Energie
+
+### GA-Effizienzklasse (EN ISO 52120)
+
+*Einsparung durch bessere Gebäudeautomation – BAC-Faktoren je Gebäudetyp* — `bac_efficiency`
+
+```text
+Energiebedarf neu = Energiebedarf alt · f_BAC,neu / f_BAC,alt;  Einsparung = 1 − f_neu / f_alt
+f_BAC,th: Heizen und Kühlen; f_BAC,el: Beleuchtung und Hilfsenergie (ohne sonstige Geräte).
+Klasse C = 1 (Standard-Referenz), D schlechter, B und A besser.
+Quelle: Siemens „Gebäudeautomation – Einfluss auf Energie-Effizienz von Gebäuden, Anwendung der EN ISO 52120“ (09/2022), Kap. 4.4, S. 124–125. Gegen die gültige Ausgabe der EN ISO 52120-1 prüfen.
+```
+
+**Eingaben:** Gebäudetyp, GA-Klasse heute, GA-Klasse geplant, Thermischer Energiebedarf heute [kWh/a], Elektrischer Energiebedarf heute [kWh/a], Preis Wärme/Kälte [€ / CHF], Preis Strom [€ / CHF]
+
+**Ergebnisse:** f_BAC,th heute, f_BAC,th geplant, Einsparung thermisch [%], Thermischer Bedarf geplant [kWh/a], f_BAC,el heute, f_BAC,el geplant, Einsparung elektrisch [%], Elektrischer Bedarf geplant [kWh/a], Kosteneinsparung pro Jahr [€]
+
+### Heizkennlinie: Steilheit & Parallelverschiebung
+
+*Vorlauftemperatur nach Außentemperatur, Nachtabsenkung* — `heating_curve`
+
+```text
+Steilheit s = (T_V(−5 °C) − T_V(+15 °C)) / 20 K, üblicher Einstellbereich 0,25 … 4,0.
+Raumsollwert-Korrektur/Absenkung: ΔT_V = ΔT_R · (1 + s) – Parallelverschiebung der Kennlinie.
+Stützwerte: Gerade durch die Punkte bei −5 °C und +15 °C (lineares Raster wie am Regler).
+Auslegung: T_V = T_i + (T_m,a − T_i)·q^(1/n) + (T_V,a − T_R,a)·q/2, q = (T_i − T_a)/(T_i − T_a,a), Heizkörperexponent n ≈ 1,3 (Fußbodenheizung ≈ 1,1).
+Quelle: Siemens „Regeln und Steuern von Heizungsanlagen“ (03/2023), Kap. 3.1, S. 18–20 (Beispiel 67/33 °C, s = 1,7, −5 K → −13,5 K).
+```
+
+**Eingaben:** Kennlinie aus, Vorlauf bei −5 °C [°C], Vorlauf bei +15 °C [°C], Raumtemperatur (Auslegung) [°C], Norm-Außentemperatur [°C], Vorlauf bei Auslegung [°C], Rücklauf bei Auslegung [°C], Heizkörperexponent n, Raumsollwert-Korrektur / Absenkung [K], Aktuelle Außentemperatur [°C]
+
+**Ergebnisse:** Steilheit s, Vorlauf bei −5 °C [°C], Vorlauf bei +15 °C [°C], Verschiebung Vorlauf ΔT_V [K], Verschoben: Vorlauf bei −5 °C [°C], Verschoben: Vorlauf bei +15 °C [°C], Vorlauf-Sollwert bei T_a [°C], Vorlauf-Sollwert verschoben [°C]
+
+### Wärmepumpe: COP, Carnot & JAZ
+
+*Leistungszahl aus Temperaturen, Mindest-COP nach EN 14511, Jahresarbeitszahl* — `heat_pump`
+
+```text
+COP_Carnot = T_Senke / (T_Senke − T_Quelle) (Temperaturen in K); realer COP ≈ Gütegrad · COP_Carnot.
+COP = Φ_c / P_el (Momentanwert für einen Betriebspunkt);  JAZ = Wärme / Strom über ein Jahr (kWh/kWh).
+Mindest-COP für das Keymark-Gütesiegel (EN 14511): Luft/Wasser > 3,1 (A2/W35), Sole/Wasser > 4,3 (B0/W35), Wasser/Wasser > 5,1 (W10/W35). Typische JAZ (Fraunhofer 2011, AZ 2): Luft/Wasser 2,9, Sole/Wasser 3,9.
+Quelle: Siemens „Kältetechnik“ (08/2022), Kap. 7.6, S. 112–115. Gütegrad ist eine Annahme – Herstellerdaten verwenden.
+```
+
+**Eingaben:** Wärmequelle, Quellentemperatur [°C], Vorlauftemperatur (Senke) [°C], Gütegrad (Annahme), COP laut Datenblatt (Prüfpunkt), Erzeugte Wärme pro Jahr [kWh/a], Stromverbrauch pro Jahr [kWh/a]
+
+**Ergebnisse:** COP Carnot (ideal), COP geschätzt (Gütegrad), Mindest-COP Keymark (Prüfpunkt), Jahresarbeitszahl JAZ, Typische JAZ (Praxis)
+
+### RLT-Gerät & Luftkanal
+
+*Geschwindigkeitsklasse (EN 13053), SFP-Klasse, Kanaldurchmesser* — `ahu_sizing`
+
+```text
+Anströmgeschwindigkeit v = V̇ / (3600 · B · H) im freien Gerätequerschnitt.
+Geschwindigkeitsklassen EN 13053: V1 ≤ 1,6 · V2 ≤ 1,8 · V3 ≤ 2,0 · V4 ≤ 2,2 · V5 ≤ 2,5 m/s (darüber V6 …).
+SFP = P_el / V̇ in W/(m³/s); Klassen EN 13779 / EN 16798-3: SFP 1 ≤ 500, 2 ≤ 750, 3 ≤ 1250, 4 ≤ 2000, 5 ≤ 3000, 6 ≤ 4500, 7 > 4500.
+Rundkanal d = √(4 · V̇ / (3600 · π · v)); Niedergeschwindigkeitsanlagen < 10 m/s im Kanal.
+Quellen: TROX „Planungshandbuch RLT-Geräte“ (2018), S. 6; Siemens „Einführung in die HLK- und Gebäudetechnik“ (08/2022), Kap. 6. Gegen gültige Ausgaben prüfen.
+```
+
+**Eingaben:** Volumenstrom V̇ [m³/h], Gerätequerschnitt innen: Breite [m], Gerätequerschnitt innen: Höhe [m], Elektr. Leistung Ventilator(en) [kW], Geschwindigkeit im Kanal [m/s]
+
+**Ergebnisse:** Anströmgeschwindigkeit [m/s], Geschwindigkeitsklasse, Spezifische Ventilatorleistung SFP [W/(m³/s)], SFP-Klasse, Rundkanal-Durchmesser [mm], Kanalquerschnitt [m²]
+
+### Nachhallzeit (Sabine) & DIN 18041
+
+*Ist- und Soll-Nachhallzeit, nötige Absorberfläche* — `reverberation`
+
+```text
+Sabine: T = 0,163 s/m · V / A,   A = α · S (äquivalente Absorptionsfläche)
+Soll-Nachhallzeit DIN 18041 (besetzter Raum, mittlere Frequenzen, Toleranz ±20 %):
+A1 Musik T = 0,45·lg V + 0,07 · A2 Sprache/Vortrag T = 0,37·lg V − 0,14 · A3 Unterricht/Kommunikation T = 0,32·lg V − 0,17 · A4 Unterricht inklusiv T = 0,26·lg V − 0,14 (A4 seit DIN 18041:2016).
+Quelle: BAuA-Forschungsbericht Fb 1030 „Lärm in Bildungsstätten“ (2004), Kap. 3, S. 19–20 (Tab. 3.1: 150 m³ → 0,53 s); im Buch S. 50 sind die Vorzeichen der Konstanten verdruckt. Gegen DIN 18041:2016 prüfen.
+```
+
+**Eingaben:** Raumlänge [m], Raumbreite [m], Raumhöhe [m], Nutzung (DIN 18041), Mittlerer Absorptionsgrad Raumflächen, Absorptionsgrad Absorber/Akustikdecke, Vorhandene Absorberfläche [m²]
+
+**Ergebnisse:** Raumvolumen [m³], Nachhallzeit Ist [s], Nachhallzeit Soll [s], Toleranz obere Grenze (+20 %) [s], Äquivalente Absorptionsfläche Ist [m²], Nötige Absorptionsfläche [m²], Zusätzliche Absorberfläche [m²]
+
+### Schallpegel addieren & Entfernung
+
+*Energetische Summe mehrerer Quellen, Abnahme mit der Entfernung* — `sound_levels`
+
+```text
+L_Σ = 10 · lg Σ 10^(L_i/10)   (zwei gleiche Quellen: +3 dB)
+Punktquelle im Freifeld: L₂ = L₁ − 20 · lg(r₂/r₁)   (Verdopplung der Entfernung: −6 dB)
+Grundlagen der Akustik; vgl. BAuA Fb 1030 „Lärm in Bildungsstätten“ (2004).
+```
+
+**Eingaben:** Pegel Quelle 1 [dB], Pegel Quelle 2 [dB], Pegel Quelle 3 [dB], Pegel Quelle 4 [dB], Abstand der Messung [m], Neuer Abstand [m]
+
+**Ergebnisse:** Summenpegel [dB], Summenpegel im neuen Abstand [dB]
+
+### Fluchtweg: Breite & Länge (ASR A2.3)
+
+*Mindestbreiten nach Personenzahl, maximale Fluchtweglänge* — `escape_route`
+
+```text
+ASR A2.3 (Fassung 03/2022, geändert 2024), Abschn. 5: Tab. 1 Mindestbreiten (Spalte B Türen/Durchgänge, Spalte C Hauptfluchtweg): bis 5 P. 0,80/0,90 · bis 20 P. 0,90/1,00 · bis 50 P. 0,90/1,20 · bis 100 P. 1,00/1,20 · bis 200 P. 1,05/1,20 · bis 300 P. 1,65/1,80 · bis 400 P. 2,25/2,40 m; über 200 Personen linear interpolierbar. Bei Neubau für bis 5 Personen auch an Türen 0,90 m empfohlen (Barrierefreiheit).
+Hauptfluchtweglänge (Luftlinie): 35 m (normal oder erhöhte Brandgefährdung mit Löschanlage), 25 m (erhöhte Brandgefährdung ohne Löschanlage), 10 m (explosionsgefährliche Stoffe); tatsächliche Laufweglänge ≤ 1,5-fach.
+Das Buch (ASR A2.3:2007) nennt noch eine Spalte: 0,875 / 1,00 / 1,20 / 1,80 / 2,40 m und 20 m für giftstoff- und explosionsgefährdete Räume. Bauordnungsrecht kann längere Rettungswege zulassen.
+```
+
+**Eingaben:** Personen im Einzugsgebiet, Raumart, Fluchtweglänge (Luftlinie) [m], Tatsächliche Laufweglänge [m], Vorhandene lichte Breite Flur [m]
+
+**Ergebnisse:** Mindestbreite Hauptfluchtweg [m], Mindestbreite Türen/Durchgänge [m], Max. Fluchtweglänge [m], Max. Laufweglänge [m]
+
+### Aufzugsschacht: Rauchabzug & Lüftung
+
+*Freier Querschnitt der Schachtöffnung nach MBO bzw. VKF* — `lift_shaft`
+
+```text
+DE – MBO § 39 Abs. 3: Öffnung zur Rauchableitung ≥ 2,5 % der Fahrschachtgrundfläche, mindestens 0,10 m² (Landesbauordnung prüfen). Lüftung nach DIN EN 81-1/-2 (2010): Empfehlung 1 % der Schachtgrundfläche am oberen Ende.
+CH – VKF-Brandschutzrichtlinie (Stand Blatt 2007): lichter Querschnitt 5 % des Schachtquerschnitts, max. 1600 cm²; Maschinen-/Rollenraum separat entlüftet mindestens 500 cm².
+Quellen: ZVEI/VDMA-Leitfaden „Rauchableitung und Lüftung von Aufzugsschächten“ (07/2012), S. 3; IG-BSK-Arbeitsblatt D_AE_001 (03/2007). EN 81-1/-2 sind durch EN 81-20/-50 ersetzt; gültige Fassungen prüfen.
+```
+
+**Eingaben:** Schachtbreite (innen) [m], Schachttiefe (innen) [m]
+
+**Ergebnisse:** Schachtgrundfläche [m²], Freier Querschnitt Rauchabzug [m²], Freier Querschnitt Rauchabzug [cm²], Lüftung (Empfehlung 1 %) [m²]
+
+### GA-Effizienzfaktoren f_BAC (EN ISO 52120)
+
+| Gebäudetyp | thermisch D / C / B / A | elektrisch D / C / B / A |
+|---|---|---|
+| Büro | 1,51 / 1 / 0,8 / 0,7 | 1,1 / 1 / 0,93 / 0,87 |
+| Hörsaal | 1,24 / 1 / 0,75 / 0,5 a) | 1,06 / 1 / 0,94 / 0,89 |
+| Bildungseinrichtung (Schule) | 1,2 / 1 / 0,88 / 0,8 | 1,07 / 1 / 0,93 / 0,86 |
+| Krankenhaus | 1,31 / 1 / 0,91 / 0,86 | 1,05 / 1 / 0,98 / 0,96 |
+| Hotel | 1,31 / 1 / 0,85 / 0,68 | 1,07 / 1 / 0,95 / 0,9 |
+| Restaurant | 1,23 / 1 / 0,77 / 0,68 | 1,04 / 1 / 0,96 / 0,92 |
+| Groß- und Einzelhandel | 1,56 / 1 / 0,73 / 0,6 a) | 1,08 / 1 / 0,95 / 0,91 |
+| Sport, Lager, Industrie u. a. | 1 / 1 / 1 / 1 | 1 / 1 / 1 / 1 |
+| Wohngebäude | 1,1 / 1 / 0,88 / 0,81 | 1,08 / 1 / 0,93 / 0,92 |
+
+*Klasse C = 1 (Referenz). a) Wert hängt stark vom Heiz-/Kühlbedarf der Lüftung ab.
+Quelle: Siemens „Gebäudeautomation – Einfluss auf Energie-Effizienz von Gebäuden, Anwendung der EN ISO 52120“ (09/2022), Kap. 4.4, S. 124–125. Gegen die gültige Ausgabe der EN ISO 52120-1 prüfen.*
+
+### Wärmepumpen: Mindest-COP & typische JAZ
+
+| Wärmepumpe | Prüfpunkt | Mindest-COP | Typische JAZ |
+|---|---|---|---|
+| Luft/Wasser | A2/W35 | > 3,1 | 2,9 |
+| Sole/Wasser | B0/W35 | > 4,3 | 3,9 |
+| Wasser/Wasser | W10/W35 | > 5,1 | – |
+
+*Quelle: Siemens „Kältetechnik“ (08/2022), S. 113–115 (JAZ: Studie Fraunhofer-Institut 2011, AZ 2). Prüfpunkt: A = Außenluft, B = Sole, W = Wasser; Zahl = Eintrittstemperatur Quelle bzw. Vorlauf in °C. Gegen gültige Ausgabe prüfen.*
+
+### CO₂-Konzentrationen & Richtwerte
+
+| CO₂ in ppm | Bedeutung |
+|---|---|
+| 400 – 450 | Normale Außenluft (städtisch oft 550 … 700) |
+| 1000 | 20 % der eintretenden Personen unzufrieden (Pettenkofer) |
+| 1500 | Grenzwert nach DIN 1946 (laut Buch) |
+| 2000 | Empfindliche Personen klagen über Kopfweh |
+| 4000 | Maximalwerte im Klassenzimmer nach Unterricht |
+| 5000 | MAK-Wert (Arbeitsplatzgrenzwert) |
+| 100000 | Kerze erlischt, Bewusstseinsverlust |
+
+*Quelle: Siemens „Regeln und Steuern von Lüftungsanlagen“ (10/2022), Fig. 3-1, S. 28. Die Werte für DIN 1946 und MAK sind Buchangaben – gültige Regeln (z. B. ASR A3.6, UBA, TRGS 900) prüfen.*
+
+### RLT: Geschwindigkeits- und SFP-Klassen
+
+| Klasse | Grenze |
+|---|---|
+| V1 | ≤ 1,6 m/s |
+| V2 | 1,6 – 1,8 m/s |
+| V3 | 1,8 – 2,0 m/s |
+| V4 | 2,0 – 2,2 m/s |
+| V5 | 2,2 – 2,5 m/s |
+| SFP 1 | ≤ 500 W/(m³/s) |
+| SFP 2 | 500 – 750 W/(m³/s) |
+| SFP 3 | 750 – 1250 W/(m³/s) |
+| SFP 4 | 1250 – 2000 W/(m³/s) |
+| SFP 5 | 2000 – 3000 W/(m³/s) |
+| SFP 6 | 3000 – 4500 W/(m³/s) |
+| SFP 7 | > 4500 W/(m³/s) |
+
+*Quellen: TROX „Planungshandbuch RLT-Geräte“ (2018), S. 6 (V2–V5); SFP-Klassen nach EN 13779:2007 (übernommen in EN 16798-3). Gegen gültige Ausgabe prüfen.*
+
+### Fluchtwegbreiten ASR A2.3
+
+| Personen | Türen/Durchgänge 2022 | Hauptfluchtweg 2022 | Fluchtweg 2007 |
+|---|---|---|---|
+| bis 5 | 0,80 m (Neubau 0,90) | 0,90 m | 0,875 m |
+| bis 20 | 0,90 m | 1,00 m | 1,00 m |
+| bis 50 | 0,90 m | 1,20 m | 1,20 m |
+| bis 100 | 1,00 m | 1,20 m | 1,20 m |
+| bis 200 | 1,05 m | 1,20 m | 1,20 m |
+| bis 300 | 1,65 m | 1,80 m | 1,80 m |
+| bis 400 | 2,25 m | 2,40 m | 2,40 m |
+
+*ASR A2.3, Fassung 03/2022 (GMBl. 2022 S. 227, geändert 2024), Abschn. 5 Tab. 1. Die Fassung 2007 steht im Fachbuch (Ordner Brandschutz & Arbeitsstätten). Gültige Fassung bei der BAuA prüfen.*
 
 ## R&I-Kennzeichnung & Ex-Schutz
 
@@ -1787,9 +2454,9 @@ AWG 1/0 = 0, 2/0 = −1, 3/0 = −2, 4/0 = −3 eingeben.
 
 | Bus | Physik | Max. Länge | Teilnehmer | Datenrate | Hinweis |
 |---|---|---|---|---|---|
-| BACnet MS/TP | RS-485 | 1200 m je Segment | 32 Unit Loads/Segment, MAC 0–127 (Master) | 9,6–115,2 kbit/s | 120 Ω beidseitig, Bias einmal |
+| BACnet MS/TP | RS-485 | 1200 m je Segment | 32 Unit Loads/Segment, max. 128 Geräte je Bus, MAC 0–127 (Manager) | 9,6–115,2 kbit/s | 120 Ω beidseitig, Bias einmal; > 750 m ggf. 76,8 kbit/s |
 | Modbus RTU | RS-485 | ca. 1000–1200 m (baudratenabh.) | 32/Segment, Adressen 1–247 | 9,6–115,2 kbit/s | 120 Ω beidseitig; A/B-Bezeichnung prüfen |
-| KNX TP1 | 2-Draht, freie Topologie | Linie 1000 m; 350 m Netzteil–TN; 700 m TN–TN | 64 je Liniensegment | 9,6 kbit/s | SELV 30 V DC, kein Abschluss |
+| KNX TP1 | 2-Draht, freie Topologie | Linie 1000 m; 350 m Netzteil–TN; 700 m TN–TN | 64 je Liniensegment; 4 Segmente = 255 je Linie; 15 Linien × 15 Bereiche | 9,6 kbit/s | SELV 30 V DC, kein Abschluss |
 | DALI | 2-Draht, frei | 300 m | 64 Betriebsgeräte | 1,2 kbit/s | max. 2 V Spannungsfall, 250 mA |
 | LON FT-10 | 2-Draht, frei oder Bus | frei 500 m, Bus 2700 m | 64 je Segment | 78 kbit/s | Terminator: frei 1×, Bus 2× |
 | PROFIBUS DP | RS-485 | 1200 m (≤ 93,75 kbit/s) … 100 m (12 Mbit/s) | 32/Segment, 126 Adressen | 9,6 kbit/s – 12 Mbit/s | aktiver Abschluss beidseitig |
@@ -1797,7 +2464,7 @@ AWG 1/0 = 0, 2/0 = −1, 3/0 = −2, 4/0 = −3 eingeben.
 | IO-Link | Punkt-zu-Punkt, 3/5-Leiter | 20 m | 1 Gerät je Port | 4,8/38,4/230,4 kbit/s | ungeschirmte Standardleitung, M12 |
 | Ethernet (BACnet/IP, Modbus TCP, PROFINET) | Twisted Pair, Stern | 100 m je Kupferstrecke | – | 100 Mbit/s + | Cat 5e oder besser |
 
-*Typische Grenzwerte ohne Repeater laut jeweiliger Spezifikation – Herstellerangaben und Kabeltyp beachten.*
+*Typische Grenzwerte ohne Repeater laut jeweiliger Spezifikation – Herstellerangaben und Kabeltyp beachten. Abgeglichen mit Siemens „Ethernet, TCP/IP, MS/TP und BACnet“ (2023), Kap. 7.1, und KNX Association „Grundlagenwissen zum KNX Standard“ (2013), S. 8–9.*
 
 ### Isolierstoffklassen
 
@@ -2002,4 +2669,27 @@ AWG 1/0 = 0, 2/0 = −1, 3/0 = −2, 4/0 = −3 eingeben.
 | Piko | p | 10⁻¹² |
 
 *ISO 80000-1 / SI-Broschüre.*
+
+### 5 Sicherheitsregeln & Schutzabstände
+
+| Thema | Wert / Regel |
+|---|---|
+| Regel 1 | Freischalten |
+| Regel 2 | Gegen Wiedereinschalten sichern |
+| Regel 3 | Spannungsfreiheit feststellen (allpolig) |
+| Regel 4 | Erden und kurzschließen |
+| Regel 5 | Benachbarte, unter Spannung stehende Teile abdecken oder abschranken |
+| Schutzabstand Elektrofachkraft ≤ 1 kV | 0,5 m |
+| Schutzabstand Elektrofachkraft 1 … 30 kV | 1,5 m |
+| Schutzabstand Elektrofachkraft 30 … 110 kV | 2,0 m |
+| Schutzabstand Elektrofachkraft 110 … 220 kV | 3,0 m |
+| Schutzabstand Elektrofachkraft 220 … 380 kV | 4,0 m |
+| Bauarbeiten/Laien ≤ 1 kV | 1,0 m |
+| Bauarbeiten/Laien 1 … 110 kV | 3,0 m |
+| Bauarbeiten/Laien 110 … 220 kV | 4,0 m |
+| Bauarbeiten/Laien 220 … 380 kV | 5,0 m |
+| Gefahrenzone ≤ 1 kV | Abdecken (keine Berührung) |
+| Gefahrenzone 10 kV innen / 20 kV / 110 kV | 120 / 220 / 1100 mm |
+
+*Quelle: Haag „Grundlagen der Stromversorgung“, Band 09 Arbeitssicherheit (2007), S. 7–9 (DIN VDE 0105-100 Tab. 101–103, Ausschnitt). Gegen die gültige DIN VDE 0105-100 und DGUV-Vorschrift 3 prüfen.*
 

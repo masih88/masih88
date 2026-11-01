@@ -4,6 +4,29 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.5 – aktualisiert auf Basis der Fachbücher** (Siemens-Grundlagenbücher, Haag, KNX, AMEV, TROX, BAuA u. a.;
+Verzeichnis und Markdown-Fassungen liegen im Ordner *Fachbücher*). Jeder neue Wert nennt Buch, Ausgabe und Seite:
+- **Neue Kategorie Gebäudetechnik & Energie:** GA-Effizienzklasse nach EN ISO 52120 (BAC-Faktoren je Gebäudetyp,
+  Einsparung in kWh und €/CHF), **Heizkennlinie** mit Steilheit, Parallelverschiebung und Diagramm, **Wärmepumpe**
+  (Carnot-COP, Mindest-COP EN 14511, JAZ), **RLT-Gerät** (Geschwindigkeitsklasse EN 13053, SFP-Klasse, Kanaldurchmesser),
+  **Nachhallzeit** nach Sabine mit Soll-Wert DIN 18041 und nötiger Absorberfläche, Schallpegel addieren,
+  **Fluchtweg nach ASR A2.3** (aktuelle Fassung 2022 – das Buch enthält noch 2007), **Aufzugsschacht-Rauchabzug** (MBO/VKF).
+- **Reglereinstellung** nach Ziegler/Nichols und Chien/Hrones/Reswick mit Schwierigkeitsgrad S = Tu/Tg,
+  **KNX-Topologie** (Linien, Bereiche, Segmente, Längen, Netzteillast), **AMEV-Datenpunktadresse** (GA 2005) mit 5 Codetabellen.
+- **Pumpe/Ventilator am FU:** Proportionalitätsgesetze mit Diagramm und Energieeinsparung.
+- Bestehende Rechner gegen die Bücher geprüft und ergänzt: Ventil (kleinste regelbare Leistung, 1/3-2/3-Ventile),
+  Transformator (I_kD, u_k-Richtwerte), Feldbusse (MS/TP, KNX), h,x-Höhentabelle, 5 Sicherheitsregeln & Schutzabstände.
+
+| Heizkennlinie | Reglereinstellung | AMEV-Adresse (dunkel) |
+|---|---|---|
+| ![Heizkennlinie](docs/screenshots/heizkennlinie.png) | ![Regler](docs/screenshots/reglereinstellung.png) | ![AMEV](docs/screenshots/amev-adresse.png) |
+
+| Gebäudetechnik & Energie | Nachhallzeit |
+|---|---|
+| ![Kategorie](docs/screenshots/gebaeudetechnik.png) | ![Nachhall](docs/screenshots/nachhall.png) |
+
+![Pumpe/Ventilator am FU](docs/screenshots/fu-pumpe.png)
+
 **Neu in 1.4:**
 - **Währung € und CHF** – in den Einstellungen wählbar mit Wechselkurs; jedes Kostenergebnis zeigt zusätzlich den Betrag
   in der anderen Währung, dazu ein Umrechner € ↔ CHF.
@@ -52,9 +75,9 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.4)
+## Funktionsumfang (Version 1.5)
 
-**2 Projektlisten, 68 Rechner und 47 Tabellen** in 12 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
+**2 Projektlisten, 80 Rechner und 60 Tabellen** in 13 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
 [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Kategorie | Inhalt |
@@ -62,16 +85,17 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 | **Projektlisten** *(neu)* | **Verbraucherliste & Kabelauslegung**: je Verbraucher S, I_B, Schutzorgan (MSS/SelMod einstellbar, LS B/C, gG mit NH-Größe), F_ges = f1·f2·f3·f4 (f1/f2 manuell oder aus Temperatur/Häufung), Querschnitt nach Belastbarkeit, I_Z, Prüfung I_B ≤ I_N ≤ I_Z (+ I_2 ≤ 1,45·I_Z), Spannungsfall mit R′(70 °C) und X′, optional automatische Querschnittserhöhung; Summen je NN/NEA/USV, ELT/MSR, 400/230/24 V, Vorsicherung. **GA-Datenpunktliste (VDI 3814)**: ~30 Bauteil-Vorlagen → AI/AO/BI/BO/COM, Module mit Reserve, Kostenschätzung, Benutzeradressen (BAS) nach VDI 3814-4.1, Detailliste je Datenpunkt |
 | **Grundlagen** | Ohmsches Gesetz (beliebige 2 von U/I/R/P), Leistung P/Q/S/cos φ, Strom aus Leistung, Leiterwiderstand mit Temperatur, R/L- und C-Reihen-/Parallelschaltung, Energiekosten (€/CHF nach Normprofil) |
 | **Leitungen & Schutz** | Leitungsdimensionierung (Belastbarkeit + Spannungsfall + Schutzorgan in einem Schritt), Spannungsfall mit Grenzwert DE/CH, Strombelastbarkeit I_z (Verlegearten A1–E, PVC/VPE, Temperatur, Häufung), Überlastschutz I_B ≤ I_n ≤ I_z, Abschaltbedingung/L_max (TN), max. Länge für 24-V-Kreise, Kurzschlussfestigkeit I²t, Rohrfüllung |
-| **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung |
-| **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
-| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität (auch aus Leistung/ΔT wie in der Ventilliste VDI 3814-4.1), Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **h,x-Diagramm (Mollier) mit Zustandsänderungen und Leistung/Kondensat**, feuchte Luft (Taupunkt, x, h) mit Diagramm, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)**; Tabellen VDI 3814-4.1 (Gewerke, Anlagen, Bauteile, Funktionskennungen) |
+| **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung, **Pumpe/Ventilator am FU (Proportionalitätsgesetze, Einsparung)** |
+| **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k, I_kD, u_k-Richtwerte), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
+| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität (auch aus Leistung/ΔT wie in der Ventilliste VDI 3814-4.1, kleinste regelbare Leistung), Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **h,x-Diagramm (Mollier) mit Zustandsänderungen und Leistung/Kondensat**, feuchte Luft (Taupunkt, x, h) mit Diagramm, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)**, **Reglereinstellung (Ziegler/Nichols, CHR)**, **KNX-Topologie**, **AMEV-Datenpunktadresse**; Tabellen VDI 3814-4.1 (Gewerke, Anlagen, Bauteile, Funktionskennungen), AMEV-Codes, Einstellregeln, h,x-Höhenkorrektur |
+| **Gebäudetechnik & Energie** *(neu)* | GA-Effizienzklasse EN ISO 52120 (f_BAC thermisch/elektrisch, Einsparung), Heizkennlinie (Steilheit, Parallelverschiebung, Diagramm, Auslegung mit Heizkörperexponent), Wärmepumpe (Carnot-COP, Keymark-Mindest-COP, JAZ), RLT-Gerät & Luftkanal (V-Klasse, SFP-Klasse), Nachhallzeit Sabine/DIN 18041, Schallpegel, Fluchtweg ASR A2.3:2022, Aufzugsschacht-Rauchabzug DE/CH; Tabellen BAC-Faktoren, Wärmepumpen, CO₂-Richtwerte, RLT-Klassen, Fluchtwegbreiten |
 | **R&I-Kennzeichnung & Ex-Schutz** *(neu)* | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814-4.1, IEC 81346) für 78 Sensoren/Wächter, Explosionsschutz (Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub nach IEC 60079-14, Kennzeichnung, Geräteprüfung); Tabellen Kennbuchstaben, T-Klassen, Ex-Gruppen, Zonen, Zündschutzarten, Zündtemperaturen |
 | **Reinraum & Pharma** | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
 | **Rechenzentrum** | PUE/DCiE aus Leistung **oder Jahresverbrauch (Zähler)**, **PUE-Bilanz aus Verbrauchern** (pPUE Kühlung/Strom, Jahresverbrauch, Kosten, CO₂, Abwärme, ERF), EnEfG-Prüfung Bestand/Neubau (2023 oder Entwurf 2026), Rack-Kühlung & Kühlgeräte mit Redundanz (N+1/N+2/2N), USV-Module & Batterie-Autonomie, Verfügbarkeit/Ausfallzeit; Tabellen ASHRAE TC 9.9, EN 50600/Tier |
 | **Photovoltaik & Speicher** *(neu)* | String-Auslegung mit Temperaturkorrektur (U_oc bei Kälte, U_mpp bei Hitze, MPP-Bereich, Strangsicherung), Ertrag & Amortisation (€/CHF), DC-Leitungsverluste, Speichergröße mit Faustformeln |
 | **Elektronik** | Farbcode 4/5 Ringe, E-Reihen E6–E96, LED-Vorwiderstand, Spannungsteiler, RC-Glied, LC-Schwingkreis, Impedanz RLC, Akku-/USV-Laufzeit |
 | **Umrechner** | **Währung € ↔ CHF**, Leistung (W, PS, hp, BTU/h, kcal/h, TR), Energie, Temperatur, Druck (bar, psi, mWS), Volumenstrom (m³/h, l/s, CFM), AWG ↔ mm² |
-| **Tabellen & Pinouts** | IP-Schutzarten, Schutzklassen, Netzsysteme, Aderfarben, Spannungsfall-Grenzwerte DE/CH, Strombelastbarkeit (4 Tabellen), Temperatur- und Häufungsfaktoren, LS-Charakteristiken, D-Sicherungen, Kabeltypen, **Feldbusse** (BACnet MS/TP, Modbus, KNX, DALI, LON, PROFIBUS, CAN, IO-Link, Ethernet), Isolierstoffklassen, Betriebsarten, IE-Klassen, Klemmbrett Y/Δ, Bauformen, Pinouts RJ45/PoE, RS-485, M12, KNX, RS-232, USB, HDMI, Farbcode, SI-Vorsätze |
+| **Tabellen & Pinouts** | IP-Schutzarten, Schutzklassen, Netzsysteme, Aderfarben, Spannungsfall-Grenzwerte DE/CH, Strombelastbarkeit (4 Tabellen), Temperatur- und Häufungsfaktoren, LS-Charakteristiken, D-Sicherungen, Kabeltypen, **Feldbusse** (BACnet MS/TP, Modbus, KNX, DALI, LON, PROFIBUS, CAN, IO-Link, Ethernet), Isolierstoffklassen, Betriebsarten, IE-Klassen, **5 Sicherheitsregeln & Schutzabstände**, Klemmbrett Y/Δ, Bauformen, Pinouts RJ45/PoE, RS-485, M12, KNX, RS-232, USB, HDMI, Farbcode, SI-Vorsätze |
 
 Weitere Funktionen: Live-Berechnung bei jeder Eingabe, Ergebnisleiste mit Ampelstatus, Suche, Favoriten,
 Ergebnis kopieren (für Berichte/E-Mails), dunkles Design, Dezimalkomma oder -punkt.
@@ -169,7 +193,8 @@ ElektroRechner/
 ├── core/                     Rechenkern ohne Qt – auch für andere Oberflächen nutzbar
 │   ├── include/elc/          types.hpp (Datenmodell), registry.hpp, formulas/*.hpp
 │   └── src/
-│       ├── formulas/         reine Formeln (getestet): basics, cables, motors, automation, electronics, units
+│       ├── formulas/         reine Formeln (getestet): basics, cables, motors, automation, electronics, units, air,
+│       │                     datacenter, explosion, control, heating, building, acoustics
 │       ├── catalog/          Rechner-Definitionen (Eingaben, Ergebnisse, Texte DE/EN, Prüfungen)
 │       ├── lists/            Projektlisten: Verbraucherliste, GA-Datenpunktliste, CSV-Export/Import
 │       └── tables/           Nachschlagetabellen (inkl. VDI 3814-4.1 Codes)
@@ -193,13 +218,20 @@ DIN 43760, IEC 62386 (DALI), IEC 60529, IEC 61140, IEC 60445, IEC 60204-1, IEC 6
 IEC 60063, TIA-568, Modbus over Serial Line V1.02, NAMUR NE 43, ISO 14644-1/-3, EU-GMP Annex 1 (2022),
 EN 16798-1, ISO/IEC 30134-2, EnEfG, EN 50600, ASHRAE TC 9.9, IEC 62548 / DIN VDE 0100-712,
 VDI 3814 Blatt 3.1 (GA-Funktionen) und Blatt 4.1 (Kennzeichnung, Listen) – nur Codelisten/Strukturen, keine Normtexte,
-ANSI/ISA-5.1, DIN EN 62424 / DIN 19227-1, IEC 81346-2, IEC/EN 60079-0/-14/-20-1, ATEX 2014/34/EU und 1999/92/EG.
+ANSI/ISA-5.1, DIN EN 62424 / DIN 19227-1, IEC 81346-2, IEC/EN 60079-0/-14/-20-1, ATEX 2014/34/EU und 1999/92/EG,
+EN ISO 52120-1, EN 13053, EN 13779 / EN 16798-3, EN 14511, DIN 18041, ASR A2.3 (2022), MBO § 39, VKF-Brandschutzrichtlinien,
+DIN VDE 0105-100, AMEV „Gebäudeautomation 2005“.
+
+**Fachbücher (1.5):** Siemens-Grundlagenbücher (Regeltechnik, Heizung, Lüftung, h,x-Diagramm, Kältetechnik, HLK-Einführung,
+EN ISO 52120, BACnet/MS/TP), Haag „Grundlagen der Stromversorgung“, KNX Association „Grundlagenwissen“, Danfoss
+„Wissenswertes über Frequenzumrichter“, Eaton Schaltungsbuch, TROX Planungshandbuch RLT, BAuA Fb 1030 „Lärm in
+Bildungsstätten“, ZVEI/VDMA-Leitfaden Aufzugsschächte, QM Holzheizwerke FAQ 37. Die Bücher selbst liegen nicht im Repository.
 
 ## Ausbauplan
 
 - **Stufe 2 – erledigt (1.2):** Verbraucherliste/Kabelauslegung, GA-Datenpunktliste nach VDI 3814, VDI-Codetabellen,
-  Ventil aus Leistung. **Offen:** AMEV-Anlagenkennzeichnung und AMEV-BACnet-Profile (AMEV-Unterlagen fehlen noch),
-  GA-Effizienzklassen EN ISO 52120-1, Sensor-/Ventil-/BSK-Liste nach VDI 3814-4.1 Tab. 7–9 als weitere Projektlisten.
+  Ventil aus Leistung. **Erledigt in 1.5:** AMEV-Datenpunktadresse (GA 2005), GA-Effizienzklassen EN ISO 52120-1.
+  **Offen:** AMEV-BACnet-Profile (neuere AMEV-Unterlage fehlt), Sensor-/Ventil-/BSK-Liste nach VDI 3814-4.1 Tab. 7–9.
 - **Stufe 3:** mehrere Projekte je Liste, PDF-Bericht, Spannungsfall über mehrere Abschnitte, Selektivität, Elektro-Symbole.
 
 ## Lizenz

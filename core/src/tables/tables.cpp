@@ -222,15 +222,19 @@ Table cableTypes() {
 
 Table fieldbuses() {
     return make("fieldbuses", {"Feldbusse: Längen & Teilnehmer", "Fieldbuses: lengths & nodes"}, {"BACnet, Modbus, KNX, DALI, LON, PROFIBUS, CAN …", "BACnet, Modbus, KNX, DALI, LON, PROFIBUS, CAN …"},
-                {"Typische Grenzwerte ohne Repeater laut jeweiliger Spezifikation – Herstellerangaben und Kabeltyp beachten.",
-                 "Typical limits without repeaters per the respective specification – check manufacturer data and cable type."},
+                {"Typische Grenzwerte ohne Repeater laut jeweiliger Spezifikation – Herstellerangaben und Kabeltyp beachten. "
+                 "Abgeglichen mit Siemens „Ethernet, TCP/IP, MS/TP und BACnet“ (2023), Kap. 7.1, und KNX Association "
+                 "„Grundlagenwissen zum KNX Standard“ (2013), S. 8–9.",
+                 "Typical limits without repeaters per the respective specification – check manufacturer data and cable type. "
+                 "Checked against Siemens “Ethernet, TCP/IP, MS/TP and BACnet” (2023), ch. 7.1, and KNX Association "
+                 "“KNX basic knowledge” (2013), p. 8–9."},
                 {{"Bus", "Bus"}, {"Physik", "Physical"}, {"Max. Länge", "Max. length"}, {"Teilnehmer", "Nodes"}, {"Datenrate", "Data rate"}, {"Hinweis", "Note"}},
-                {{"BACnet MS/TP", "RS-485", {"1200 m je Segment", "1200 m per segment"}, {"32 Unit Loads/Segment, MAC 0–127 (Master)", "32 unit loads/segment, MAC 0–127 (master)"},
-                  "9,6–115,2 kbit/s", {"120 Ω beidseitig, Bias einmal", "120 Ω both ends, bias once"}},
+                {{"BACnet MS/TP", "RS-485", {"1200 m je Segment", "1200 m per segment"}, {"32 Unit Loads/Segment, max. 128 Geräte je Bus, MAC 0–127 (Manager)", "32 unit loads/segment, max. 128 devices per bus, MAC 0–127 (manager)"},
+                  "9,6–115,2 kbit/s", {"120 Ω beidseitig, Bias einmal; > 750 m ggf. 76,8 kbit/s", "120 Ω both ends, bias once; > 750 m possibly 76.8 kbit/s"}},
                  {"Modbus RTU", "RS-485", {"ca. 1000–1200 m (baudratenabh.)", "approx. 1000–1200 m (baud-dependent)"}, {"32/Segment, Adressen 1–247", "32/segment, addresses 1–247"},
                   "9,6–115,2 kbit/s", {"120 Ω beidseitig; A/B-Bezeichnung prüfen", "120 Ω both ends; check A/B naming"}},
                  {"KNX TP1", {"2-Draht, freie Topologie", "2-wire, free topology"}, {"Linie 1000 m; 350 m Netzteil–TN; 700 m TN–TN", "line 1000 m; 350 m PSU–device; 700 m device–device"},
-                  {"64 je Liniensegment", "64 per line segment"}, "9,6 kbit/s", {"SELV 30 V DC, kein Abschluss", "SELV 30 V DC, no termination"}},
+                  {"64 je Liniensegment; 4 Segmente = 255 je Linie; 15 Linien × 15 Bereiche", "64 per line segment; 4 segments = 255 per line; 15 lines × 15 areas"}, "9,6 kbit/s", {"SELV 30 V DC, kein Abschluss", "SELV 30 V DC, no termination"}},
                  {"DALI", {"2-Draht, frei", "2-wire, free"}, "300 m", {"64 Betriebsgeräte", "64 control gear"}, "1,2 kbit/s", {"max. 2 V Spannungsfall, 250 mA", "max. 2 V drop, 250 mA"}},
                  {"LON FT-10", {"2-Draht, frei oder Bus", "2-wire, free or bus"}, {"frei 500 m, Bus 2700 m", "free 500 m, bus 2700 m"}, {"64 je Segment", "64 per segment"},
                   "78 kbit/s", {"Terminator: frei 1×, Bus 2×", "terminator: free 1×, bus 2×"}},

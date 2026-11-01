@@ -27,5 +27,7 @@ cmake --build build && ./build/tests/elc_tests
 - Jeder Text als `Text{de, en}`; deutsche Texte mit korrekten Umlauten. Einheiten als SI-Symbole.
 - Keine locale-abhängigen Funktionen (`printf`, `strtod`, `stod`) – `elc::formatNumber` / `elc::parseNumber` nutzen.
 - Normwerte immer mit Quelle in `description` und „gegen gültige Ausgabe prüfen“; keine Werte raten.
+- Fachbücher liegen beim Benutzer im Ordner `Fachbücher/<Kategorie>/markdown/` (doc2md); dort zuerst suchen. Buchbeispiele
+  als Tests in `tests/test_books.cpp`; ist das Buch veraltet, aktuelle Fassung rechnen und Buchstand nennen.
 - Warnungsfrei bauen (`-Wall -Wextra -Wpedantic -Wshadow`), Tests unter ASan/UBSan grün halten.
 - Nach Änderungen an Rechnern die Doku in `docs/` neu erzeugen.

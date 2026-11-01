@@ -12,9 +12,15 @@ add_library(elc_core STATIC
     src/formulas/air.cpp
     src/formulas/datacenter.cpp
     src/formulas/explosion.cpp
+    src/formulas/control.cpp
+    src/formulas/heating.cpp
+    src/formulas/building.cpp
+    src/formulas/acoustics.cpp
     src/instruments/instruments.cpp
     src/catalog/process.cpp
     src/catalog/pid.cpp
+    src/catalog/building.cpp
+    src/catalog/controls.cpp
     src/catalog/basics.cpp
     src/catalog/hvac.cpp
     src/catalog/cleanroom.cpp

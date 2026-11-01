@@ -1,6 +1,6 @@
 # Architektur & Entwurfsentscheidungen
 
-Stand: 31.10.2026 · Version 1.4.0
+Stand: 01.11.2026 · Version 1.5.0
 
 ## Ziel
 
@@ -105,6 +105,22 @@ Ein Rechner kann ein Diagramm liefern: `Calculator::chart` (`ChartFn`) baut aus 
 Eingabewerte (h,x-Diagramm: t₁ und φ₁). Beispiel: `hxGrid()` in `core/src/catalog/hvac.cpp` – schiefwinklige
 h,x-Koordinaten mit y = t · (1,006 + 1,86·x) / 1,006 (Isothermen leicht steigend, Isenthalpen fallend).
 Tests: `tests/test_hx.cpp` (Gitter, Zustandspunkte, Rückrechnung beim Antippen).
+
+## Werte aus Fachbüchern (ab 1.5)
+
+Die Fachbücher des Benutzers (Ordner *Fachbücher*, nach Fachgebiet sortiert, siehe `Bücherverzeichnis.md` dort) wurden
+mit `doc2md` in Markdown umgewandelt und gezielt durchsucht. Regeln für die Übernahme:
+
+- Nur Formeln, Kennwerte und Codelisten übernehmen – mit Buch, Ausgabe und Seite in `description`; keine Buchtexte.
+- Rechenbeispiele aus dem Buch werden zu Tests (`tests/test_books.cpp`, z. B. Heizkennlinie 67/33 °C → s = 1,7;
+  Proportionalitätsgesetze 4000 → 8000 m³/h, 350 → 1400 Pa; Trafo 400 kVA, u_k 4 % → I_kD = 14,43 kA).
+- Ist das Buch älter als die gültige Regel, rechnet die App mit der aktuellen Fassung und nennt den Buchstand in der
+  Beschreibung (ASR A2.3: Buch 2007, App 2022). Druckfehler im Buch werden vermerkt (h,x-Höhentabelle k bei 800 m,
+  Vorzeichen DIN-18041-Formeln im BAuA-Bericht S. 50).
+- Neue Formelmodule: `control` (Regler-Einstellregeln), `heating` (Heizkennlinie, Proportionalitätsgesetze, Carnot-COP,
+  kleinste regelbare Ventilleistung), `building` (BAC-Faktoren, Fluchtwege, Aufzugsschacht, KNX-Topologie),
+  `acoustics` (Sabine, DIN 18041, Pegeladdition). Kataloge: `catalog/building.cpp` (Kategorie „building“) und
+  `catalog/controls.cpp` (Regler, KNX, AMEV-Adresse mit Codelisten aus AMEV GA 2005 Anhang 2.1).
 
 ## Neue Projektliste hinzufügen
 

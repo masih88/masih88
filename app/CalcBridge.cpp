@@ -23,6 +23,7 @@ QString q(const std::string& s) { return QString::fromStdString(s); }
 QString categoryColor(const std::string& id) {
     if (id == "projects") return QStringLiteral("#1F6F5C");
     if (id == "process") return QStringLiteral("#7B5E3C");
+    if (id == "building") return QStringLiteral("#B04A7A");
     if (id == "basics") return QStringLiteral("#3D7EDB");
     if (id == "cables") return QStringLiteral("#E08A1E");
     if (id == "motors") return QStringLiteral("#2E9E6B");

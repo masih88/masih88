@@ -73,9 +73,15 @@ Calculator transformer() {
     c.summary = {"Bemessungsströme, Übersetzung, Kurzschlussstrom", "Rated currents, ratio, short-circuit current"};
     c.description = {
         "I = S / (√3 · U) bei 3~ bzw. S / U bei 1~    ü = U1 / U2\n"
-        "I_k ≈ c · I_r2 · 100 % / u_k   (starres Netz, c = 1,05)",
+        "I_k ≈ c · I_r2 · 100 % / u_k   (starres Netz, c = 1,05);  Dauerkurzschlussstrom I_kD = I_r · 100 % / u_k (ohne c)\n"
+        "Übliche u_k (Haag Band 05 Trafo, 2007): Verteiltrafos 10 … 20 kV 4 … 6 %, 110 kV 10 … 14 %, 380 kV 11 … 20 %. "
+        "Beispiel Haag: 400 kVA, u_k = 4 % → I_r = 577 A, I_kD = 14,43 kA. „Spannungssteife“ Trafos (kleines u_k) liefern "
+        "höhere Kurzschlussströme.",
         "I = S / (√3 · U) for 3~ or S / U for 1~    ratio = U1 / U2\n"
-        "I_k ≈ c · I_r2 · 100 % / u_k   (infinite network, c = 1.05)"};
+        "I_k ≈ c · I_r2 · 100 % / u_k   (infinite network, c = 1.05);  steady short-circuit current I_kD = I_r · 100 % / u_k (no c)\n"
+        "Typical u_k (Haag vol. 05 transformers, 2007): distribution transformers 10 … 20 kV 4 … 6 %, 110 kV 10 … 14 %, "
+        "380 kV 11 … 20 %. Haag example: 400 kVA, u_k = 4 % → I_r = 577 A, I_kD = 14.43 kA. “Stiff” transformers (small u_k) "
+        "give higher short-circuit currents."};
     c.inputs = {
         Num::choice("sys", {"Ausführung", "Type"},
                     {{"ac3", {"Drehstrom", "Three-phase"}}, {"ac1", {"Einphasig (z. B. Steuertrafo)", "Single-phase (e.g. control)"}}},
@@ -88,8 +94,9 @@ Calculator transformer() {
     c.outputs = {Out::number("I1", {"Bemessungsstrom primär", "Rated primary current"}, "A", 2),
                  Out::number("I2", {"Bemessungsstrom sekundär", "Rated secondary current"}, "A", 1).primary(),
                  Out::number("ratio", {"Übersetzung ü", "Ratio"}, "", 2),
-                 Out::number("Ik", {"Kurzschlussstrom sekundär I_k", "Secondary short-circuit current I_k"}, "kA", 2).primary()};
-    c.keywords = {"trafo", "transformator", "transformer", "uk", "kva"};
+                 Out::number("Ik", {"Kurzschlussstrom sekundär I_k", "Secondary short-circuit current I_k"}, "kA", 2).primary(),
+                 Out::number("IkD", {"Dauerkurzschlussstrom I_kD (ohne c)", "Steady short-circuit current I_kD (no c)"}, "kA", 2)};
+    c.keywords = {"trafo", "transformator", "transformer", "uk", "kva", "kurzschlussspannung", "haag"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const bool three = in.choice("sys") != "ac1";
@@ -99,6 +106,7 @@ Calculator transformer() {
         r.set("I2", I2);
         r.set("ratio", in.num("U1") / in.num("U2"));
         r.set("Ik", 1.05 * I2 * 100.0 / in.num("uk") / 1e3);
+        r.set("IkD", I2 * 100.0 / in.num("uk") / 1e3);
         return r;
     };
     return c;

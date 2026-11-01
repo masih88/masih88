@@ -368,11 +368,15 @@ Calculator freshAir() {
         "EN 16798-1 (Anhang B, Verfahren 1): q = n · q_P + A · q_B\n"
         "q_P je Person: Kat. I 10, II 7, III 4 l/s.   q_B je m² (schadstoffarmes Gebäude): I 1,0, II 0,7, III 0,4 l/(s·m²); "
         "sehr schadstoffarm: 0,5 / 0,35 / 0,2; nicht schadstoffarm: 2,0 / 1,4 / 0,8.\n"
-        "CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je Person bei Büroarbeit.",
+        "CO₂-Bilanz (stationär): V̇ = n · G / (C_Soll − C_außen), G ≈ 20 l/h je Person bei Büroarbeit.\n"
+        "Außenluft ≈ 400 ppm, in Städten oft 550 … 700 ppm (Siemens „Regeln und Steuern von Lüftungsanlagen“, 10/2022, Kap. 3.3.1); "
+        "bedarfsgeregelte Lüftung über CO₂/VOC siehe VDMA 24773.",
         "EN 16798-1 (Annex B, method 1): q = n · q_P + A · q_B\n"
         "q_P per person: cat. I 10, II 7, III 4 l/s.   q_B per m² (low-polluting building): I 1.0, II 0.7, III 0.4 l/(s·m²); "
         "very low-polluting: 0.5 / 0.35 / 0.2; non-low-polluting: 2.0 / 1.4 / 0.8.\n"
-        "CO₂ balance (steady state): V̇ = n · G / (C_set − C_outdoor), G ≈ 20 l/h per person for office work."};
+        "CO₂ balance (steady state): V̇ = n · G / (C_set − C_outdoor), G ≈ 20 l/h per person for office work.\n"
+        "Outdoor air ≈ 400 ppm, in cities often 550 … 700 ppm (Siemens “Regeln und Steuern von Lüftungsanlagen”, 10/2022, ch. 3.3.1); "
+        "demand-controlled ventilation via CO₂/VOC see VDMA 24773."};
     c.inputs = {
         Num::choice("method", {"Verfahren", "Method"},
                     {{"en", "EN 16798-1"}, {"co2", {"CO₂-Bilanz", "CO₂ balance"}}}, "en"),

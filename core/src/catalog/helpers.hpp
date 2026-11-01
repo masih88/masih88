@@ -33,6 +33,10 @@ void addProcess(std::vector<Calculator>& out);
 void addProcessTables(std::vector<Table>& out);
 void addPid(std::vector<Calculator>& out);
 void addPidTables(std::vector<Table>& out);
+void addBuilding(std::vector<Calculator>& out);
+void addBuildingTables(std::vector<Table>& out);
+void addControls(std::vector<Calculator>& out);
+void addControlTables(std::vector<Table>& out);
 ListDef consumerList();
 ListDef dataPointList();
 

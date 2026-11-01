@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "catalog/helpers.hpp"
+#include "elc/formulas/heating.hpp"
 #include "elc/formulas/automation.hpp"
 #include "elc/formulas/cables.hpp"
 
@@ -386,12 +387,20 @@ Calculator valveKv() {
         "kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 100 kPa\n"
         "Ventilautorität a = Δp_V100 / (Δp_V100 + Δp_MV)\n"
         "Δp_MV = Druckverlust der mengenvariablen Strecke. Empfehlung a ≥ 0,5 (mind. 0,3).\n"
-        "Wasser: ρ = 1000 kg/m³, c = 4,187 kJ/(kg·K). Glykolgemische: ρ und c aus dem Datenblatt des Herstellers.",
+        "Wasser: ρ = 1000 kg/m³, c = 4,187 kJ/(kg·K). Glykolgemische: ρ und c aus dem Datenblatt des Herstellers.\n"
+        "Kleinste regelbare Menge: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v = Stellverhältnis kvs/kvr; Wärmeleistung mit "
+        "Wärmetauscher-Kennwert a_WT: Q̇/Q̇_100 = 1/(1 + a_WT·(V̇_100/V̇ − 1)). Beispiel a = 0,5, S_v = 50: ≈ 3 % (ohne WT), "
+        "≈ 4 % (a_WT = 0,7). Zwei parallele Ventile 1/3 + 2/3 in Sequenz senken die minimale Leistung auf etwa ein Drittel "
+        "(QM Holzheizwerke, FAQ 37, 2015).",
         "V̇ = P · 3600 / (ρ · c · ΔT)   (data of the valve list per VDI 3814 Part 4.1, Tab. 8: power, flow/return, ΔT)\n"
         "kv = V̇ · √(ρ/1000 / Δp[bar])    Δp_V100 = (V̇ / kvs)² · ρ/1000 · 100 kPa\n"
         "Valve authority a = Δp_V100 / (Δp_V100 + Δp_MV)\n"
         "Δp_MV = pressure drop of the variable-flow section. Recommended a ≥ 0.5 (min. 0.3).\n"
-        "Water: ρ = 1000 kg/m³, c = 4.187 kJ/(kg·K). Glycol mixtures: take ρ and c from the manufacturer's data sheet."};
+        "Water: ρ = 1000 kg/m³, c = 4.187 kJ/(kg·K). Glycol mixtures: take ρ and c from the manufacturer's data sheet.\n"
+        "Smallest controllable flow: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v = rangeability kvs/kvr; heat output with heat "
+        "exchanger characteristic a_HX: Q̇/Q̇_100 = 1/(1 + a_HX·(V̇_100/V̇ − 1)). Example a = 0.5, S_v = 50: ≈ 3 % (no HX), "
+        "≈ 4 % (a_HX = 0.7). Two parallel valves 1/3 + 2/3 in sequence reduce the minimum output to about one third "
+        "(QM Holzheizwerke, FAQ 37, 2015)."};
     c.inputs = {
         Num::choice("mode", {"Auslegung aus", "Sizing from"},
                     {{"flow", {"Volumenstrom", "Flow rate"}}, {"power", {"Leistung und ΔT (Ventilliste)", "Power and ΔT (valve list)"}}},
@@ -408,13 +417,23 @@ Calculator valveKv() {
             .withHint({"Nur für Auslegung aus Leistung", "Only for sizing from power"}),
         Num::number("dp", {"Gewünschter Δp am Ventil", "Desired Δp across valve"}, "kPa", 10).positive(),
         Num::number("dpmv", {"Δp mengenvariable Strecke", "Δp variable-flow section"}, "kPa", 10).nonNegative(),
+        Num::number("sv", {"Stellverhältnis S_v (kvs/kvr)", "Rangeability S_v (kvs/kvr)"}, "", 50)
+            .range(5, 1000)
+            .startsSection({"Kleinste regelbare Leistung", "Smallest controllable output"})
+            .withHint({"Datenblatt; typisch 50 … 100", "Data sheet; typically 50 … 100"}),
+        Num::number("awt", {"Wärmetauscher-Kennwert a_WT", "Heat exchanger characteristic a_HX"}, "", 1.0)
+            .rangeExclusiveMin(0, 1)
+            .withHint({"1 = ohne Wärmetauscher; Heizregister ≈ 0,7", "1 = no heat exchanger; heating coil ≈ 0.7"}),
     };
     c.outputs = {Out::number("Qv", {"Volumenstrom V̇", "Flow rate V̇"}, "m³/h", 3),
                  Out::number("kv", {"Berechneter kv-Wert", "Calculated kv"}, "m³/h", 2),
                  Out::number("kvs", {"Gewählter kvs-Wert (Normreihe)", "Selected kvs (standard series)"}, "m³/h", 2).primary(),
                  Out::number("dpv", {"Δp bei kvs (voll offen)", "Δp at kvs (fully open)"}, "kPa", 2),
-                 Out::number("a", {"Ventilautorität a", "Valve authority a"}, "", 2).primary()};
-    c.keywords = {"ventil", "kvs", "kv", "autorität", "hydraulik", "valve", "authority", "hlk", "ventilliste", "vdi 3814", "glykol"};
+                 Out::number("a", {"Ventilautorität a", "Valve authority a"}, "", 2).primary(),
+                 Out::number("vmin", {"Kleinster regelbarer Volumenstrom", "Smallest controllable flow"}, "%", 1),
+                 Out::number("qmin", {"Kleinste regelbare Wärmeleistung", "Smallest controllable heat output"}, "%", 1)};
+    c.keywords = {"ventil", "kvs", "kv", "autorität", "hydraulik", "valve", "authority", "hlk", "ventilliste", "vdi 3814", "glykol",
+                  "stellverhältnis", "1/3-2/3", "rangeability"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const bool custom = in.choice("medium") == "custom";
@@ -430,6 +449,14 @@ Calculator valveKv() {
         r.set("kvs", kvs);
         r.set("dpv", dpv);
         r.set("a", a);
+        const double vmin = valves::minFlowRatio(a, in.num("sv"));
+        const double qmin = valves::heatRatio(vmin, in.num("awt"));
+        r.set("vmin", 100.0 * vmin);
+        r.set("qmin", 100.0 * qmin);
+        if (qmin > 0.05) {
+            r.info({"Kleinste regelbare Leistung > 5 %: darunter Auf-Zu-Betrieb. Abhilfe z. B. zwei Ventile 1/3 + 2/3 in Sequenz.",
+                    "Smallest controllable output > 5 %: below that on/off operation. Remedy e.g. two valves 1/3 + 2/3 in sequence."});
+        }
         if (a >= 0.5) {
             r.ok({"Ventilautorität gut (a ≥ 0,5).", "Good valve authority (a ≥ 0.5)."});
         } else if (a >= 0.3) {

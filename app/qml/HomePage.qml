@@ -199,9 +199,11 @@ Page {
                             }
                             Item { Layout.fillHeight: true }
                         }
+                        // The attached ApplicationWindow property must be read from an Item (the tile):
+                        // inside a TapHandler it is null and the tap did nothing.
                         TapHandler {
                             id: tap
-                            onTapped: ApplicationWindow.window.openCategory(tile.modelData.id)
+                            onTapped: tile.ApplicationWindow.window.openCategory(tile.modelData.id)
                         }
                     }
                 }

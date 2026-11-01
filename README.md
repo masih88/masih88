@@ -4,6 +4,8 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**1.5.1:** Kategorie-Kacheln auf der Startseite lassen sich wieder antippen (Fehler in 1.5.0).
+
 **Neu in 1.5 – aktualisiert auf Basis der Fachbücher** (Siemens-Grundlagenbücher, Haag, KNX, AMEV, TROX, BAuA u. a.;
 Verzeichnis und Markdown-Fassungen liegen im Ordner *Fachbücher*). Jeder neue Wert nennt Buch, Ausgabe und Seite:
 - **Neue Kategorie Gebäudetechnik & Energie:** GA-Effizienzklasse nach EN ISO 52120 (BAC-Faktoren je Gebäudetyp,

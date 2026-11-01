@@ -9,7 +9,7 @@ ItemDelegate {
 
     Layout.fillWidth: true
     padding: 10
-    onClicked: ApplicationWindow.window.openItem(item.id)
+    onClicked: row.ApplicationWindow.window.openItem(row.item.id)
 
     contentItem: RowLayout {
         spacing: 12

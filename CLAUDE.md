@@ -22,6 +22,8 @@ cmake --build build && ./build/tests/elc_tests
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.
 - QML: wachsende Listen (`Repeater`) in `Column` statt `ColumnLayout`, umbrechende Texte mit Ankern statt GridLayout
   (Qt-6.4-Layoutfehler, siehe ARCHITEKTUR.md).
+- QML: `ApplicationWindow.window` nur über ein Item lesen (`tile.ApplicationWindow.window`) – im Kontext eines
+  `TapHandler` ist es null (Fehler in 1.5.0: Kategorie-Kacheln ließen sich nicht öffnen).
 - Kosten-Ausgaben mit Einheit „€“ deklarieren und `currencySymbol(ctx)` verwenden; Preiseingaben mit Einheit `"€ / CHF"`.
 - Sensoren/Wächter für den Kennbuchstaben-Finder in `core/src/instruments/instruments.cpp` ergänzen (Suchwörter in ae/oe/ue).
 - Jeder Text als `Text{de, en}`; deutsche Texte mit korrekten Umlauten. Einheiten als SI-Symbole.

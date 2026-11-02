@@ -80,6 +80,20 @@ Item {
             }
             if (ctx.setLineDash)
                 ctx.setLineDash(s.style === "sig" ? [Math.max(3, 1.4 * k), Math.max(2, k)] : [])
+            if (s.style.indexOf("fill:") === 0) {  // filled with the given colour (colour bands), outlined
+                ctx.fillStyle = s.style.substring(5)
+                ctx.fill()
+                ctx.strokeStyle = ink
+                ctx.lineWidth = Math.max(1, 0.3 * k)
+                ctx.stroke()
+                continue
+            }
+            if (s.style.indexOf("line:") === 0) {  // thick line in the given colour (bridges, wires)
+                ctx.strokeStyle = s.style.substring(5)
+                ctx.lineWidth = Math.max(2, 0.7 * k)
+                ctx.stroke()
+                continue
+            }
             switch (s.style) {
             case "vl":
             case "rl":
@@ -143,13 +157,13 @@ Item {
             ctx.fillText(m.label, x, y + 0.5)
         }
 
-        // labels (centred; "cb" bold)
+        // labels: "c" centred, "l" left, "r" right aligned; second letter "b" = bold
         const fs = Math.round(Math.max(9, Math.min(15, 3.1 * k)))
         for (let i = 0; i < chart.labels.length; ++i) {
             const l = chart.labels[i]
             ctx.fillStyle = ink
-            ctx.font = (l.style === "cb" ? "bold " : "") + fs + "px sans-serif"
-            ctx.textAlign = "center"
+            ctx.font = (l.style.length > 1 && l.style.charAt(1) === "b" ? "bold " : "") + fs + "px sans-serif"
+            ctx.textAlign = l.style.charAt(0) === "l" ? "left" : l.style.charAt(0) === "r" ? "right" : "center"
             ctx.textBaseline = "middle"
             ctx.fillText(l.text, px(l.x), py(l.y))
         }

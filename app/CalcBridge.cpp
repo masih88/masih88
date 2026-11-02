@@ -22,6 +22,7 @@ QString q(const std::string& s) { return QString::fromStdString(s); }
 
 QString categoryColor(const std::string& id) {
     if (id == "projects") return QStringLiteral("#1F6F5C");
+    if (id == "electrical") return QStringLiteral("#2B4C9B");
     if (id == "process") return QStringLiteral("#7B5E3C");
     if (id == "building") return QStringLiteral("#B04A7A");
     if (id == "basics") return QStringLiteral("#3D7EDB");
@@ -178,17 +179,13 @@ QString CalcBridge::version() const { return q(std::string(elc::version())); }
 QVariantList CalcBridge::categories() const {
     QVariantList list;
     for (const auto& c : elc::categories()) {
-        int calcs = 0;
-        int tables = 0;
-        for (const auto& calc : elc::calculators()) calcs += calc.category == c.id ? 1 : 0;
-        for (const auto& t : elc::tables()) tables += t.category == c.id ? 1 : 0;
-        const auto lists = std::count_if(elc::lists().begin(), elc::lists().end(),
-                                         [&](const elc::ListDef& l) { return l.category == c.id; });
+        int count = 0;
+        for (const auto& g : elc::categoryGroups(c.id)) count += static_cast<int>(g.items.size());
         list.append(QVariantMap{{"id", q(c.id)},
                                 {"title", txt(c.title)},
                                 {"badge", q(c.badge)},
                                 {"color", categoryColor(c.id)},
-                                {"count", calcs + tables + static_cast<int>(lists)}});
+                                {"count", count}});
     }
     return list;
 }
@@ -233,15 +230,18 @@ QString CalcBridge::kindOf(const QString& id) const {
 
 QVariantList CalcBridge::items(const QString& categoryId) const {
     QVariantList list;
-    const auto cid = categoryId.toStdString();
-    for (const auto& l : elc::lists()) {
-        if (l.category == cid) list.append(itemFor(q(l.id)));
+    for (const auto& g : elc::categoryGroups(categoryId.toStdString())) {
+        for (const auto& id : g.items) list.append(itemFor(q(id)));
     }
-    for (const auto& c : elc::calculators()) {
-        if (c.category == cid) list.append(itemFor(q(c.id)));
-    }
-    for (const auto& t : elc::tables()) {
-        if (t.category == cid) list.append(itemFor(q(t.id)));
+    return list;
+}
+
+QVariantList CalcBridge::groups(const QString& categoryId) const {
+    QVariantList list;
+    for (const auto& g : elc::categoryGroups(categoryId.toStdString())) {
+        QVariantList entries;
+        for (const auto& id : g.items) entries.append(itemFor(q(id)));
+        list.append(QVariantMap{{"title", txt(g.title)}, {"items", entries}});
     }
     return list;
 }

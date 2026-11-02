@@ -55,6 +55,8 @@ public:
 
     /// Calculators and tables of one category: [{id, kind, title, summary, badge, color}]
     Q_INVOKABLE QVariantList items(const QString& categoryId) const;
+    /// Grouped items of a category page: [{title, items: [...]}] (one untitled group for flat categories)
+    Q_INVOKABLE QVariantList groups(const QString& categoryId) const;
     Q_INVOKABLE QVariantList search(const QString& text) const;
     Q_INVOKABLE QVariantList favoriteItems() const;
     Q_INVOKABLE QString kindOf(const QString& id) const;  // "calc", "table", "list" or ""

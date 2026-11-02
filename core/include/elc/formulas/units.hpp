@@ -20,6 +20,8 @@ struct Unit {
 [[nodiscard]] std::span<const Unit> energyUnits();    // base J
 [[nodiscard]] std::span<const Unit> pressureUnits();  // base Pa
 [[nodiscard]] std::span<const Unit> flowUnits();      // base m³/s
+[[nodiscard]] std::span<const Unit> areaUnits();      // base m²
+[[nodiscard]] std::span<const Unit> lengthUnits();    // base m
 
 /// Convert between two units of the same table
 [[nodiscard]] double convert(double value, const Unit& from, const Unit& to);

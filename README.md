@@ -4,6 +4,24 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.7 – Bereich „Elektrotechnik“** (nach der Menüliste der App „Elektroberechnungen“, Screenshots per
+doc2md/OCR erfasst): eine Kachel mit 10 aufklappbaren Gruppen und über 100 Einträgen – Strom/Spannung/Leistung,
+Leitungen & Schutz, Sicherungen, Kurzschluss/Erdung/Überspannung, Kompensation, Bauteile & Codes, Schaltungen,
+Transformator/Antenne/CCTV/Sensoren, Motor und Umrechnung. Vorhandene Rechner erscheinen dort mit, neu sind u. a.:
+- **Leitungen:** mineralisolierte Kabel, Kupfer-Sammelschienen, Kabel-R/X/Z, Kabeltemperatur, Verlustleistung,
+  Neutralleiterstrom mit 3. Oberschwingung, Spannungsfall und Querschnitt bei verteilten Lasten, k²S²-Tabelle.
+- **Schutz:** minimaler Kurzschlussstrom, Erdung/RCD (TT/TN), Überspannungs-Risikobewertung (CRL nach 443),
+  Sicherungs-Tabellen (Betriebsklassen, D/NH, Zylinder, Feinsicherungen, Kfz).
+- **Bauteile:** Farbringe aus Wert (mit Zeichnung), SMD-Code inkl. EIA-96, Kondensator- und Induktivitätscode,
+  Stromteiler, Z-Diode, Vorwiderstand, Trafowicklung, Antennenlänge, CCTV-Speicher, Thermoelemente (NIST ITS-90), Cu-Fühler.
+- **Motor:** Leistung/Spannung/cos φ, NEC-Volllaststrom, **Schaltschemata mit 6, 9 und 12 Klemmen** (Klemmbrett und
+  Wicklungsbild), Drehrichtung, Klemmenkennzeichnung.
+- **Umrechnung:** Dreieck-Stern (mit Zeichnung), AWG-/SWG-Tabellen, mm² ↔ AWG/kcmil, Querschnitt, Länge, Spannung (dB), Phasenwinkel.
+
+| Elektrotechnik | Klemmbrett 6 Klemmen | Farbringe |
+|---|---|---|
+| ![Elektrotechnik](docs/screenshots/elektrotechnik.png) | ![Motor 6 Klemmen](docs/screenshots/motor-6-klemmen.png) | ![Farbcode](docs/screenshots/farbringe.png) |
+
 **Neu in 1.6:**
 - **Hydraulische Grundschaltungen (Regelgruppen)** als Anleitung in *Gebäudetechnik & Energie*: acht Schaltungen
   (Drossel, Drossel mit PICV, Einspritz mit Durchgangsventil / PICV / Dreiwegventil, Beimisch, Beimisch mit fester

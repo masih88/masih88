@@ -16,6 +16,8 @@ add_library(elc_core STATIC
     src/formulas/heating.cpp
     src/formulas/building.cpp
     src/formulas/acoustics.cpp
+    src/formulas/electrical.cpp
+    src/formulas/thermocouple.cpp
     src/instruments/instruments.cpp
     src/catalog/process.cpp
     src/catalog/pid.cpp
@@ -33,6 +35,12 @@ add_library(elc_core STATIC
     src/catalog/automation.cpp
     src/catalog/electronics.cpp
     src/catalog/converters.cpp
+    src/catalog/elec_power.cpp
+    src/catalog/elec_cables.cpp
+    src/catalog/elec_components.cpp
+    src/catalog/elec_motors.cpp
+    src/catalog/elec_units.cpp
+    src/catalog/elec_tables.cpp
     src/tables/tables.cpp
     src/tables/vdi_tables.cpp
     src/lists/lists.cpp

@@ -17,6 +17,8 @@ cmake --build build && ./build/tests/elc_tests
 
 - Neue Rechner datengetrieben in `core/src/catalog/*.cpp`, Formeln als reine Funktionen in `core/src/formulas/`
   mit Test (Referenzwert aus Norm/Handrechnung). QML nur ändern, wenn sich das Seitenlayout ändern soll.
+- Neue Einträge für den Bereich „Elektrotechnik“ zusätzlich in `electricalGroups()` (`catalog/elec_tables.cpp`) eintragen;
+  Zeichnungen mit `catalog/sketch.hpp` (`Chart::diagram`).
 - Projektlisten (`ListDef`) in `core/src/lists/`; Excel-Spaltennamen als `alias()`; Beispielprojekt in `example`.
 - PDFs/Office-Dateien vor dem Lesen mit `doc2md` (Ordner `Tools/doc2md`) in Markdown umwandeln und gezielt greppen.
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.

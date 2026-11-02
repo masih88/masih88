@@ -45,8 +45,10 @@ struct Chart {
     Text note;  // e.g. pressure, hint for tapping
     // Schematic instead of a plot: no axes/ticks, same scale in x and y, series drawn in the given order.
     // Diagram styles: "vl"/"rl" pipes (red/blue), "pipe" neutral pipe, "ink" outline, "inkfill" filled symbol,
-    // "bgfill" symbol filled with the background and outlined, "sig" dashed signal line.
-    // Label styles "c"/"cb" are centred (normal/bold); marker styles "motor" (M) and "sensor".
+    // "bgfill" symbol filled with the background and outlined, "sig" dashed signal line,
+    // "fill:#RRGGBB" filled with that colour and outlined, "line:#RRGGBB" thick line in that colour.
+    // Label styles "c"/"cb" centred, "l"/"lb" left and "r"/"rb" right aligned (normal/bold);
+    // marker styles "motor" (M) and "sensor".
     bool diagram = false;
     double aspect = 0;  // preferred height/width of the drawing area (0 = UI default)
 };

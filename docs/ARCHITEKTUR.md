@@ -152,6 +152,19 @@ Die Ergebniszeilen (`ResultView.qml`) und das Eingabeformular (`InputForm.qml`) 
 aufgebaut (Column + Anker): umbrechende Beschriftungen und Hinweise in `GridLayout`-Zeilen bekamen sonst gelegentlich
 eine falsche Höhe und überlappten.
 
+## Gruppierte Kategorien (ab 1.7)
+
+`Category::groups` (Liste von `CategoryGroup{title, items}`) macht aus einer Kategorie einen Bereich mit Gruppen, der
+auch Einträge anderer Kategorien zeigen darf (Bereich „Elektrotechnik“, Gruppen in `catalog/elec_tables.cpp` →
+`electricalGroups()`). `categoryGroups(id)` liefert für alle anderen Kategorien eine unbenannte Gruppe mit ihren eigenen
+Einträgen; `CalcBridge::groups()` und `ListPage.qml` (aufklappbare Gruppen) nutzen das. Test: `tests/test_electrical.cpp`
+(jede ID existiert, keine doppelt, jeder Eintrag der Kategorie steht in einer Gruppe).
+
+Zeichnungen der Elektro-Rechner nutzen die gemeinsame Hilfe `catalog/sketch.hpp` (`Sketch`: Linien, Rechtecke, Spulen-
+/Widerstandskörper `bar`, Kreise, Beschriftungen) und die Stile `fill:#RRGGBB` (Farbringe) und `line:#RRGGBB`
+(Kupferbrücken); Beschriftungen „l“/„r“ links-/rechtsbündig. Thermoelemente: Koeffizienten in
+`formulas/thermocouple_nist.hpp`, aus den NIST-ITS-90-Referenzfunktionen erzeugt (nicht von Hand ändern).
+
 ## Bereiche ein-/ausblenden (ab 1.6)
 
 `CalcBridge::hiddenCategories` (QSettings-Schlüssel `hiddenCategories`) enthält die ausgeblendeten Kategorie-IDs;

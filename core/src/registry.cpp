@@ -13,20 +13,21 @@ namespace elc {
 
 const std::vector<Category>& categories() {
     static const std::vector<Category> list{
-        {"projects", {"Projektlisten", "Project lists"}, "Σ"},
-        {"basics", {"Grundlagen", "Basics"}, "Ω"},
-        {"cables", {"Leitungen & Schutz", "Cables & protection"}, "mm²"},
-        {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~"},
-        {"industry", {"Industrie & Netze", "Industry & power"}, "kVA"},
-        {"automation", {"Gebäudeautomation & MSR", "Building automation & I&C"}, "mA"},
-        {"building", {"Gebäudetechnik & Energie", "Building services & energy"}, "GT"},
-        {"process", {"R&I-Kennzeichnung & Ex-Schutz", "P&ID tags & Ex protection"}, "Ex"},
-        {"cleanroom", {"Reinraum & Pharma", "Cleanroom & pharma"}, "ISO"},
-        {"datacenter", {"Rechenzentrum", "Data centre"}, "IT"},
-        {"pv", {"Photovoltaik & Speicher", "PV & storage"}, "PV"},
-        {"electronics", {"Elektronik", "Electronics"}, "RC"},
-        {"converters", {"Umrechner", "Converters"}, "⇄"},
-        {"tables", {"Tabellen & Pinouts", "Tables & pinouts"}, "≡"},
+        {"projects", {"Projektlisten", "Project lists"}, "Σ", {}},
+        {"electrical", {"Elektrotechnik", "Electrical engineering"}, "ET", catalog::electricalGroups()},
+        {"basics", {"Grundlagen", "Basics"}, "Ω", {}},
+        {"cables", {"Leitungen & Schutz", "Cables & protection"}, "mm²", {}},
+        {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~", {}},
+        {"industry", {"Industrie & Netze", "Industry & power"}, "kVA", {}},
+        {"automation", {"Gebäudeautomation & MSR", "Building automation & I&C"}, "mA", {}},
+        {"building", {"Gebäudetechnik & Energie", "Building services & energy"}, "GT", {}},
+        {"process", {"R&I-Kennzeichnung & Ex-Schutz", "P&ID tags & Ex protection"}, "Ex", {}},
+        {"cleanroom", {"Reinraum & Pharma", "Cleanroom & pharma"}, "ISO", {}},
+        {"datacenter", {"Rechenzentrum", "Data centre"}, "IT", {}},
+        {"pv", {"Photovoltaik & Speicher", "PV & storage"}, "PV", {}},
+        {"electronics", {"Elektronik", "Electronics"}, "RC", {}},
+        {"converters", {"Umrechner", "Converters"}, "⇄", {}},
+        {"tables", {"Tabellen & Pinouts", "Tables & pinouts"}, "≡", {}},
     };
     return list;
 }
@@ -50,6 +51,11 @@ const std::vector<Calculator>& calculators() {
         catalog::addPv(v);
         catalog::addElectronics(v);
         catalog::addConverters(v);
+        catalog::addElectricalPower(v);
+        catalog::addElectricalCables(v);
+        catalog::addElectricalComponents(v);
+        catalog::addElectricalMotors(v);
+        catalog::addElectricalUnits(v);
         return v;
     }();
     return list;
@@ -67,9 +73,27 @@ const std::vector<Table>& tables() {
         catalog::addBuildingTables(v);
         catalog::addPidTables(v);
         catalog::addProcessTables(v);
+        catalog::addElectricalTables(v);
         return v;
     }();
     return list;
+}
+
+std::vector<CategoryGroup> categoryGroups(std::string_view categoryId) {
+    for (const auto& c : categories()) {
+        if (c.id == categoryId && !c.groups.empty()) return c.groups;
+    }
+    CategoryGroup all;
+    for (const auto& l : lists()) {
+        if (l.category == categoryId) all.items.push_back(l.id);
+    }
+    for (const auto& c : calculators()) {
+        if (c.category == categoryId) all.items.push_back(c.id);
+    }
+    for (const auto& t : tables()) {
+        if (t.category == categoryId) all.items.push_back(t.id);
+    }
+    return {all};
 }
 
 const Calculator* findCalculator(std::string_view id) {

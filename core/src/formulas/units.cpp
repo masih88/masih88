@@ -50,8 +50,34 @@ const std::array<Unit, 7> kFlow{{
     {"gpm", "gpm (US)", {"US-Gallonen pro Minute", "US gallons per minute"}, 0.003785411784 / 60.0},
 }};
 
+const std::array<Unit, 7> kArea{{
+    {"mm2", "mm²", {"Quadratmillimeter", "square millimetre"}, 1e-6},
+    {"cm2", "cm²", {"Quadratzentimeter", "square centimetre"}, 1e-4},
+    {"m2", "m²", {"Quadratmeter", "square metre"}, 1.0},
+    {"in2", "in²", {"Quadratzoll", "square inch"}, 6.4516e-4},
+    {"ft2", "ft²", {"Quadratfuß", "square foot"}, 0.09290304},
+    {"kcmil", "kcmil", {"Kilo-Circular-Mil (MCM)", "kilo circular mil (MCM)"}, 5.067074790975e-7},
+    {"cmil", "cmil", {"Circular Mil", "circular mil"}, 5.067074790975e-10},
+}};
+
+const std::array<Unit, 11> kLength{{
+    {"um", "µm", {"Mikrometer", "micrometre"}, 1e-6},
+    {"mm", "mm", {"Millimeter", "millimetre"}, 1e-3},
+    {"cm", "cm", {"Zentimeter", "centimetre"}, 1e-2},
+    {"m", "m", {"Meter", "metre"}, 1.0},
+    {"km", "km", {"Kilometer", "kilometre"}, 1e3},
+    {"mil", "mil", {"Mil (1/1000 Zoll)", "mil (1/1000 inch)"}, 2.54e-5},
+    {"in", "in", {"Zoll", "inch"}, 0.0254},
+    {"ft", "ft", {"Fuß", "foot"}, 0.3048},
+    {"yd", "yd", {"Yard", "yard"}, 0.9144},
+    {"mi", "mi", {"Meile", "mile"}, 1609.344},
+    {"nmi", "sm", {"Seemeile", "nautical mile"}, 1852.0},
+}};
+
 }  // namespace
 
+std::span<const Unit> areaUnits() { return kArea; }
+std::span<const Unit> lengthUnits() { return kLength; }
 std::span<const Unit> powerUnits() { return kPower; }
 std::span<const Unit> energyUnits() { return kEnergy; }
 std::span<const Unit> pressureUnits() { return kPressure; }

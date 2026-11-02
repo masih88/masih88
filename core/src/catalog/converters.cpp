@@ -14,7 +14,7 @@ namespace {
 
 /// One generic converter per unit table: value + unit in, all units out.
 Calculator tableConverter(std::string id, Text title, Text summary, std::span<const units::Unit> table,
-                          std::string defaultUnit, double defaultValue, std::vector<std::string> keywords) {
+                          std::string defaultUnit, double defaultValue, std::vector<std::string> keywords, Text description = {}) {
     Calculator c;
     c.id = std::move(id);
     c.category = "converters";
@@ -24,6 +24,7 @@ Calculator tableConverter(std::string id, Text title, Text summary, std::span<co
                      "(PS = 735,49875 W, hp = 745,6999 W, kcal = 4186,8 J, BTU (IT) = 1055,056 J).",
                      "Conversion via the SI base unit. Factors per ISO 80000 or common definitions "
                      "(PS = 735.49875 W, hp = 745.6999 W, kcal = 4186.8 J, BTU (IT) = 1055.056 J)."};
+    if (!description.de.empty()) c.description = std::move(description);
     std::vector<Option> opts;
     for (const auto& u : table) {
         opts.push_back({std::string(u.id), {std::string(u.symbol) + " – " + u.name.de, std::string(u.symbol) + " – " + u.name.en}});
@@ -153,6 +154,19 @@ void addConverters(std::vector<Calculator>& out) {
     out.push_back(tableConverter("conv_flow", {"Volumenstrom", "Flow rate"}, {"m³/h, l/s, l/min, CFM, gpm", "m³/h, l/s, l/min, CFM, gpm"},
                                  units::flowUnits(), "m3h", 1, {"volumenstrom", "durchfluss", "cfm", "flow"}));
     out.push_back(awg());
+    out.push_back(tableConverter("conv_area", {"Querschnitt / Fläche", "Cross-section / area"},
+                                 {"mm², cm², m², in², kcmil (MCM), cmil", "mm², cm², m², in², kcmil (MCM), cmil"}, units::areaUnits(), "mm2",
+                                 2.5, {"querschnitt", "fläche", "kcmil", "mcm", "circular mil", "area"},
+                                 {"Umrechnung über m². 1 in = 25,4 mm (exakt); 1 cmil = Fläche eines Kreises von 1 mil (0,001 in) "
+                                  "Durchmesser = π/4 · (25,4 µm)² = 5,0671 · 10⁻⁴ mm²; 1 kcmil (MCM) = 1000 cmil = 0,5067 mm².",
+                                  "Conversion via m². 1 in = 25.4 mm (exact); 1 cmil = area of a circle of 1 mil (0.001 in) "
+                                  "diameter = π/4 · (25.4 µm)² = 5.0671 · 10⁻⁴ mm²; 1 kcmil (MCM) = 1000 cmil = 0.5067 mm²."}));
+    out.push_back(tableConverter("conv_length", {"Länge", "Length"}, {"mm, m, km, mil, in, ft, yd, mi, sm", "mm, m, km, mil, in, ft, yd, mi, nmi"},
+                                 units::lengthUnits(), "m", 1, {"länge", "zoll", "inch", "fuß", "meile", "length"},
+                                 {"Umrechnung über Meter. Zoll 25,4 mm, Fuß 0,3048 m, Yard 0,9144 m, Meile 1609,344 m, "
+                                  "Seemeile 1852 m (alle exakt definiert).",
+                                  "Conversion via metres. Inch 25.4 mm, foot 0.3048 m, yard 0.9144 m, mile 1609.344 m, "
+                                  "nautical mile 1852 m (all exact by definition)."}));
 }
 
 }  // namespace elc::catalog

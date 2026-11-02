@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.5.1).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.7.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -45,6 +45,1063 @@ Die Vorlagen sind Planungspraxis und projektspezifisch anzupassen (Bauteil-Kürz
 **Ergebnisse je Zeile:** AI, AO, BI, BO, COM (Bus), Physikalische Datenpunkte, Erste Benutzeradresse, Funktionen
 
 **Summen:** Physikalische Datenpunkte, Kommunikative Datenpunkte, Analoge Eingabe AI, Analoge Ausgabe AO, Binäre Eingabe BI, Binäre Ausgabe BO, Physikalisch inkl. Reserve, AI-Module, AO-Module, BI-Module, BO-Module, Kostenschätzung Datenpunkte [€]
+
+## Elektrotechnik
+
+### Spannungsberechnung
+
+*U aus Leistung, Strom und cos φ* — `voltage_from_power`
+
+```text
+DC: U = P / I    1~: U = P / (I · cos φ)    3~: U = P / (√3 · I · cos φ) (Außenleiterspannung)
+P ist die aufgenommene Wirkleistung.
+```
+
+**Eingaben:** Netz, Wirkleistung P [kW], Strom I [A], Leistungsfaktor cos φ
+
+**Ergebnisse:** Spannung U [V], Strangspannung U₀ (3~) [V], Scheinleistung S [kVA]
+
+### Leistungsfaktorberechnung
+
+*cos φ aus P und U·I, aus P und S oder aus P und Q* — `power_factor_calc`
+
+```text
+cos φ = P / S    S = k · U · I (k = 1 bei 1~, √3 bei 3~)    S = √(P² + Q²)
+φ = arccos(cos φ), Q = P · tan φ. Der Leistungsfaktor λ = P/S ist bei Oberschwingungen kleiner als cos φ₁.
+```
+
+**Eingaben:** Bekannt, Netz, Wirkleistung P [kW], Spannung U [V], Strom I [A], Scheinleistung S [kVA], Blindleistung Q [kvar]
+
+**Ergebnisse:** Leistungsfaktor cos φ, Phasenwinkel φ [°], sin φ, tan φ, Scheinleistung S [kVA], Blindleistung Q [kvar]
+
+### Impedanzberechnung
+
+*Z, R und X aus Spannung, Strom und cos φ* — `impedance_ui`
+
+```text
+1~: Z = U / I    3~ (je Strang, Sternersatz): Z = U / (√3 · I)
+R = Z · cos φ    X = Z · sin φ
+```
+
+**Eingaben:** Netz, Spannung U [V], Strom I [A], Leistungsfaktor cos φ
+
+**Ergebnisse:** Impedanz Z [Ω], Wirkwiderstand R [Ω], Blindwiderstand X [Ω], Phasenwinkel φ [°]
+
+### Betriebsstrom
+
+*I_b mit Ausnutzungs- und Gleichzeitigkeitsfaktor* — `operating_current`
+
+```text
+P_b = P_inst · k_u · k_s    I_b = P_b / (k · U · cos φ · η)
+k_u = Ausnutzungsfaktor (Last eines Verbrauchers / Bemessungsleistung, Motoren typ. 0,75), k_s = Gleichzeitigkeitsfaktor der Gruppe (z. B. 0,8–0,9 für Verteiler mit 4–9 Abgängen, IEC 61439-1 Tab. 101 als Anhalt).
+```
+
+**Eingaben:** Netz, Spannung U [V], Installierte Leistung P_inst [kW], Ausnutzungsfaktor k_u, Gleichzeitigkeitsfaktor k_s, Leistungsfaktor cos φ, Wirkungsgrad η [%]
+
+**Ergebnisse:** Betriebsstrom I_b [A], Betriebsleistung P_b [kW], Strom bei Volllast (k_u = k_s = 1) [A]
+
+### Joule-Effekt
+
+*Stromwärme W = I² · R · t und Erwärmung* — `joule_effect`
+
+```text
+P = I² · R    W = I² · R · t    ΔT = W / (m · c) (ohne Wärmeverluste)
+c: Wasser 4186, Kupfer 385, Aluminium 897, Luft 1005 J/(kg·K).
+```
+
+**Eingaben:** Widerstand R [Ω], Strom I [A], Zeit t [s], Masse m (optional) [kg], Spezifische Wärmekapazität c [J/(kg·K)]
+
+**Ergebnisse:** Leistung P [W], Wärmeenergie W [kJ], Wärmeenergie W [Wh], Temperaturerhöhung ΔT [K]
+
+### Minimaler Kurzschlussstrom
+
+*I_k1min, I_k2min am Leitungsende (c_min = 0,95)* — `short_circuit_min`
+
+```text
+I_k1min = c_min · U₀ / |Z_V + Z_L + Z_PE|    I_k2min = c_min · √3 · U₀ / |Z_V + 2 · Z_L|
+c_min = 0,95 (NS, IEC 60909-0 / DIN EN 60909-0). Leiterwiderstand bei Endtemperatur θ (Kurzschlussende, meist 80 °C für PVC bzw. Betriebstemperatur 70/90 °C). Z_V = Schleifenimpedanz am Anfang der Leitung (L–PE, gemessen oder vom Netzbetreiber), X'_L = 0,08 mΩ/m je Leiter.
+Prüfung: I_k1min ≥ I_a der Schutzeinrichtung (Abschaltbedingung).
+```
+
+**Eingaben:** Nennspannung gegen Erde U₀ [V], Schleifenimpedanz am Leitungsanfang Z_V [mΩ], Leitermaterial, Leitungslänge L [m], Querschnitt Außenleiter, Querschnitt PE, Leitertemperatur θ [°C], Abschaltstrom I_a der Schutzeinrichtung (optional) [A]
+
+**Ergebnisse:** I_k1min (L–PE) [A], I_k1min (L–N, N wie PE) [A], I_k2min (L–L) [A], Schleifenimpedanz Z_s am Ende [mΩ], I_k1min / I_a
+
+### Erdungssystem und Koordination mit Fehlerstrom-Schutzeinrichtung
+
+*TT: R_A · I_Δn ≤ U_L    TN: Z_s · I_a ≤ U₀* — `earthing_rcd`
+
+```text
+TT-System (IEC 60364-4-41 / DIN VDE 0100-410, 411.5.3): R_A · I_Δn ≤ U_L, U_L = 50 V AC (25 V in besonderen Räumen, z. B. landwirtschaftliche Betriebsstätten). R_A = Summe aus Erder- und Schutzleiterwiderstand.
+TN-System (411.4.4): Z_s · I_a ≤ U₀; mit RCD ist I_a = I_Δn (5 · I_Δn für 0,04 s).
+Gegen die gültige Ausgabe prüfen.
+```
+
+**Eingaben:** Netzsystem, Bemessungsdifferenzstrom I_Δn, Berührungsspannung U_L, Nennspannung U₀ [V], Gemessen: R_A bzw. Z_s (optional) [Ω]
+
+**Ergebnisse:** Zulässiger Widerstand (R_A bzw. Z_s) [Ω], Berührungsspannung bei I_Δn [V], Max. I_Δn für den gemessenen Widerstand [mA]
+
+### Risikoanalyse für Überspannungen atmosphärischen Ursprungs
+
+*Bewertung nach IEC 60364-4-44, 443.5 (CRL)* — `surge_risk`
+
+```text
+IEC 60364-4-44:2007+A1:2015 Abschnitt 443 (DIN VDE 0100-443:2016-10):
+Schutz gegen transiente Überspannungen ist immer vorzusehen, wenn Überspannungen Folgen haben für Menschenleben (z. B. Sicherheitsdienste, Medizin), öffentliche Einrichtungen und Kulturgüter, Gewerbe/Industrie oder eine große Anzahl von Personen (443.4). Sonst Risikobewertung:
+L_P = 2 · L_PAL + L_PCL + 0,4 · L_PAH + 0,2 · L_PCH (km; NS-Freileitung, NS-Kabel, HS-Freileitung, HS-Kabel ab dem Gebäude, zusammen höchstens 1 km)    CRL = f_env / (L_P · N_g)
+f_env = 85 (ländlich/vorstädtisch), 850 (städtisch). CRL < 1000 → Überspannungsschutz erforderlich.
+N_g = Blitzdichte (Erdblitze je km² und Jahr), z. B. aus Blitzdichtekarten (Deutschland meist 0,5–4).
+Gegen die gültige Ausgabe (DE: DIN VDE 0100-443/-534, CH: NIN 4.4.3) prüfen.
+```
+
+**Eingaben:** Folgen für Leben, öffentliche Dienste, Gewerbe oder viele Personen?, Umgebung, Blitzdichte N_g [1/(km²·a)], NS-Freileitung L_PAL [km], NS-Kabel L_PCL [km], HS-Freileitung L_PAH [km], HS-Kabel L_PCH [km]
+
+**Ergebnisse:** Ergebnis, Bewertungslänge L_P [km], Berechneter Risikopegel CRL
+
+### Blindleistungskompensation von MS/NS-Transformatoren
+
+*Leerlauf- und Last-Blindleistung, Festkompensation* — `transformer_pfc`
+
+```text
+Leerlauf: Q₀ = i₀ · S_N (Magnetisierung, immer vorhanden)
+Last: Q_L = u_k · S_N · (S/S_N)² (Streufeld)
+Festkompensation des Transformators ≈ Q₀ (Kondensator auf der NS-Seite, dauernd zugeschaltet). i₀ und u_k vom Typenschild bzw. Prüfprotokoll; Öltransformatoren typ. i₀ = 0,5–2 %, Gießharz 0,5–1,5 %. Höchstwert der Festkompensation nach den Technischen Anschlussbedingungen des Netzbetreibers prüfen (Resonanz, Überkompensation).
+```
+
+**Eingaben:** Bemessungsleistung S_N [kVA], Leerlaufstrom i₀ [%], Kurzschlussspannung u_k [%], Belastung S [kVA]
+
+**Ergebnisse:** Leerlauf-Blindleistung Q₀ [kvar], Last-Blindleistung Q_L [kvar], Gesamt Q₀ + Q_L [kvar], Auslastung S/S_N [%]
+
+### Kondensatorleistung bei verschiedenen Spannungen
+
+*Q = Q_N · (U/U_N)² · (f/f_N) und Kapazität* — `capacitor_voltage`
+
+```text
+Q = Q_N · (U/U_N)² · (f/f_N)
+Kapazität (3~): Dreieck C_Δ = Q / (3 · 2πf · U²) je Kondensator, Stern C_Y = Q / (2πf · U²) je Kondensator (U = Außenleiterspannung). 1~: C = Q / (2πf · U²).
+Kondensatoren dürfen dauerhaft höchstens mit 1,1 · U_N betrieben werden (IEC 60831-1).
+```
+
+**Eingaben:** Bemessungsleistung Q_N [kvar], Bemessungsspannung U_N [V], Bemessungsfrequenz f_N, Betriebsspannung U [V], Netzfrequenz f, Ausführung
+
+**Ergebnisse:** Leistung bei U und f [kvar], Q / Q_N [%], Kapazität je Kondensator [µF], Strom (Außenleiter) [A]
+
+### Strombelastbarkeit von blanken und mineralisolierten Leitern
+
+*MI-Kabel (Cu), Mantel 70 °C, Verlegeart C* — `ampacity_mi`
+
+```text
+Mineralisolierte Kupferkabel (MICC) nach IEC 60702-1, Mantel PVC-umhüllt oder blank berührbar (Manteltemperatur 70 °C), direkt auf der Wand (Verlegeart C), Umgebung 30 °C. Werte nach BS 7671 Tab. 4G1A = IEC 60364-5-52 Tab. B.52.6 (Herstellerdatenblatt). 1~ = 2 belastete Leiter, 3~ = 3 belastete Leiter.
+Umgebungstemperatur: f = √((70 − θ_a)/(70 − 30)) als Näherung von Tab. B.52.14 – für blanke, nicht berührbare Kabel (Mantel 105 °C, Tab. B.52.7) und Häufung die Norm verwenden. Gegen die gültige Ausgabe prüfen.
+```
+
+**Eingaben:** Ausführung, Aderzahl / Belastung, Querschnitt, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b (optional) [A]
+
+**Ergebnisse:** Belastbarkeit I_z [A], Tabellenwert (30 °C) [A], Faktor Umgebungstemperatur, Kabelbezeichnung
+
+### Strombelastbarkeit von Sammelschienen
+
+*E-Cu-Flachschienen nach DIN 43671, 1 oder 2 Schienen je Leiter* — `busbar_ampacity`
+
+```text
+Dauerströme für E-Cu-Schienen mit Rechteckquerschnitt in Innenanlagen bei 25 °C Lufttemperatur um den Leiter und max. 65 °C Schienentemperatur, Wechselstrom, Schienen hochkant (Striebel & John, Kap. 10 Sammelschienensysteme, nach DIN 43671).
+Andere Umgebungstemperatur als Näherung: I = I₂₅ · √((65 − θ_a)/(65 − 25)) (Wärmeabgabe ∝ Übertemperatur). Für Auslegung die Korrekturfaktoren der DIN 43671 bzw. Herstellerangaben verwenden (Anordnung, Anstrich, Höhe, Frequenz).
+```
+
+**Eingaben:** Schiene B × D, Schienen je Leiter, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b (optional) [A]
+
+**Ergebnisse:** Dauerstrom bei θ_a [A], Tabellenwert (25 °C) [A], Querschnitt [mm²], Stromdichte [A/mm²], Gewicht je Leiter [kg/m]
+
+### Kabelwiderstand, Reaktanz und Impedanz
+
+*R(θ), X und Z je Leiter und Schleife* — `cable_rxz`
+
+```text
+R₂₀ = ρ₂₀ · L / A    R(θ) = R₂₀ · (1 + α₂₀ · (θ − 20 °C))    X = X' · L    Z = √(R² + X²)
+Cu: ρ₂₀ = 0,017241 Ω·mm²/m, α = 0,00393 1/K; Al: 0,028264 Ω·mm²/m, 0,00403 1/K. X' ≈ 0,08 mΩ/m (mehradrige Kabel), ca. 0,1–0,15 mΩ/m für Einleiter mit Abstand. Schleife 1~/DC = Hin- und Rückleiter; 3~ = je Strang.
+Gleichstromwiderstand ohne Skineffekt (bei 50 Hz ab ca. 150 mm² merklich).
+```
+
+**Eingaben:** Netz, Leitermaterial, Querschnitt, Länge L (einfach) [m], Leitertemperatur θ [°C], Reaktanzbelag X' [mΩ/m]
+
+**Ergebnisse:** R₂₀ je Leiter [mΩ], R(θ) je Leiter [mΩ], X je Leiter [mΩ], Z je Leiter [mΩ], Z Schleife (Hin + Rück) [mΩ], R(θ) je km [Ω/km]
+
+### Berechnung der Kabeltemperatur
+
+*Leitertemperatur aus Auslastung I_b/I_z* — `cable_temperature`
+
+```text
+θ = θ_a + (θ_z − θ_a) · (I_b / I_z)²
+θ_z = zulässige Leitertemperatur (PVC 70 °C, VPE/EPR 90 °C), I_z = Belastbarkeit bei der tatsächlichen Umgebungstemperatur θ_a und Häufung. Verluste ∝ I² (IEC 60287, ohne Änderung von R mit der Temperatur).
+```
+
+**Eingaben:** Betriebsstrom I_b [A], Belastbarkeit I_z [A], Umgebungstemperatur θ_a [°C], Isolierung
+
+**Ergebnisse:** Leitertemperatur θ [°C], Übertemperatur [K], Auslastung I_b/I_z [%], R(θ)/R₂₀ (Cu)
+
+### Verlustleistung in Kabeln
+
+*P_V = n · I² · R(θ), Energie und Kosten pro Jahr* — `cable_losses`
+
+```text
+P_V = n · I² · ρ(θ) · L / A    n = 2 (DC/1~), 3 (3~, symmetrisch)
+E = P_V · Betriebsstunden    Kosten = E · Strompreis. θ = mittlere Leitertemperatur (siehe Kabeltemperatur), Neutralleiter ohne Strom.
+```
+
+**Eingaben:** Netz, Strom I [A], Länge L (einfach) [m], Leitermaterial, Querschnitt, Leitertemperatur θ [°C], Spannung U (optional, für %) [V], Leistungsfaktor cos φ, Betriebsstunden pro Jahr [h], Strompreis pro kWh [€ / CHF]
+
+**Ergebnisse:** Verlustleistung P_V [W], Verluste je Meter Leitung [W/m], Anteil an der übertragenen Leistung [%], Verlustenergie pro Jahr [kWh], Verlustkosten pro Jahr [€]
+
+### Neutralleiterstrom
+
+*Unsymmetrie und 3. Oberschwingung, Auslegung nach IEC 60364-5-52 Anhang E* — `neutral_current`
+
+```text
+Grundschwingung (gleiches cos φ, 120° versetzt): I_N1 = √(I₁² + I₂² + I₃² − I₁I₂ − I₂I₃ − I₃I₁)
+3. Oberschwingung (h₃ in % des Außenleiterstroms) addiert sich im N: I_N3 = h₃ · (I₁ + I₂ + I₃)    I_N = √(I_N1² + I_N3²)
+Auslegung (IEC 60364-5-52 Tab. E.52.1, 4-/5-adrige Kabel): h₃ ≤ 15 %: Außenleiterstrom, Faktor 1,0; 15–33 %: Außenleiterstrom, 0,86; 33–45 %: Neutralleiterstrom, 0,86; > 45 %: Neutralleiterstrom, 1,0.
+```
+
+**Eingaben:** Strom L1 [A], Strom L2 [A], Strom L3 [A], Anteil 3. Oberschwingung h₃ [%]
+
+**Ergebnisse:** Neutralleiterstrom I_N [A], Anteil Unsymmetrie I_N1 [A], Anteil 3. Oberschwingung I_N3 [A], I_N / größter Außenleiterstrom [%], Bemessungsstrom für die Kabelwahl [A], Auslegung
+
+### Spannungsfall bei verteilten Lasten
+
+*n gleiche Lasten entlang einer Leitung (z. B. Leuchtenband)* — `vdrop_distributed`
+
+```text
+Momentenmethode: ΔU = k · Σ(I · L_i) · (ρ/A · cos φ + X' · sin φ), L_i = L₁ + (i − 1) · d
+k = 2 (DC/1~), √3 (3~, symmetrisch verteilt); ρ bei 70 °C, X' = 0,08 mΩ/m. Σ(I·L) entspricht dem Gesamtstrom in der Ersatzlänge L₁ + (n − 1) · d / 2.
+Querschnitt: A = ρ · cos φ / (ΔU_max/(k · Σ I·L) − X' · sin φ), danach nächster Normquerschnitt.
+```
+
+**Eingaben:** Netz, Nennspannung U [V], Anzahl Lasten n, Strom je Last [A], Abstand bis zur ersten Last L₁ [m], Abstand zwischen den Lasten d [m], Leitermaterial, Leistungsfaktor cos φ, Querschnitt
+
+**Ergebnisse:** Spannungsfall an der letzten Last [%], Spannungsfall ΔU [V], Spannung an der letzten Last [V], Gesamtstrom am Anfang [A], Ersatzlänge [m], Länge bis zur letzten Last [m]
+
+### Leiterdimensionierung bei verteilten Lasten
+
+*Mindestquerschnitt für n gleiche Lasten entlang einer Leitung* — `sizing_distributed`
+
+```text
+Momentenmethode: ΔU = k · Σ(I · L_i) · (ρ/A · cos φ + X' · sin φ), L_i = L₁ + (i − 1) · d
+k = 2 (DC/1~), √3 (3~, symmetrisch verteilt); ρ bei 70 °C, X' = 0,08 mΩ/m. Σ(I·L) entspricht dem Gesamtstrom in der Ersatzlänge L₁ + (n − 1) · d / 2.
+Querschnitt: A = ρ · cos φ / (ΔU_max/(k · Σ I·L) − X' · sin φ), danach nächster Normquerschnitt.
+```
+
+**Eingaben:** Netz, Nennspannung U [V], Anzahl Lasten n, Strom je Last [A], Abstand bis zur ersten Last L₁ [m], Abstand zwischen den Lasten d [m], Leitermaterial, Leistungsfaktor cos φ, Zulässiger Spannungsfall [%]
+
+**Ergebnisse:** Gewählter Querschnitt [mm²], Mindestquerschnitt (rechnerisch) [mm²], Spannungsfall mit gewähltem Querschnitt [%], Gesamtstrom am Anfang [A], Ersatzlänge [m]
+
+### Widerstandsfarbcode aus Wert bestimmen
+
+*Wert → Farbringe (4 oder 5 Ringe) mit Zeichnung* — `color_from_value`
+
+```text
+IEC 60062: 4 Ringe = 2 Ziffern, Multiplikator, Toleranz (E6–E24); 5 Ringe = 3 Ziffern, Multiplikator, Toleranz (E48–E192). Multiplikator Gold = ×0,1, Silber = ×0,01. Der Wert wird auf 2 bzw. 3 gültige Ziffern gerundet; geprüft wird, ob er in der E24- bzw. E96-Reihe liegt.
+```
+
+**Eingaben:** Widerstandswert, Einheit, Anzahl Ringe, Toleranz
+
+**Ergebnisse:** Farbringe, Codierter Wert [Ω], Nächster Normwert [Ω], Normreihe
+
+### SMD-Widerstandscode
+
+*3- und 4-stellig, R-Schreibweise und EIA-96* — `smd_resistor`
+
+```text
+3-stellig (E24): zwei Ziffern + Zehnerpotenz, z. B. 472 = 47 · 10² = 4,7 kΩ
+4-stellig (E96, 1 %): drei Ziffern + Zehnerpotenz, z. B. 4702 = 47 kΩ
+R = Dezimalkomma: 4R7 = 4,7 Ω, R47 = 0,47 Ω; 0 / 000 = 0-Ω-Brücke
+EIA-96 (1 %): zwei Ziffern = Index der E96-Reihe (01 = 100 … 96 = 976) + Buchstabe: Z ×0,001, Y/R ×0,01, X/S ×0,1, A ×1, B/H ×10, C ×100, D ×1000, E ×10⁴, F ×10⁵. Beispiel 01C = 10 kΩ.
+```
+
+**Eingaben:** Aufdruck
+
+**Ergebnisse:** Widerstand [Ω], Codierung
+
+### Kondensator-Code
+
+*Aufdruck → Kapazität, Toleranz, Spannung* — `capacitor_code`
+
+```text
+3 Ziffern (pF): zwei Ziffern + Zehnerpotenz, 104 = 10 · 10⁴ pF = 100 nF; 8 = ×0,01, 9 = ×0,1.
+Buchstabe als Komma: 4n7 = 4,7 nF, 47p = 47 pF, 2u2 = 2,2 µF, 1R5 = 1,5 pF; Dezimalzahl (0.1, .047) = µF.
+Toleranz: B ±0,1 pF, C ±0,25 pF, D ±0,5 pF, F ±1 %, G ±2 %, J ±5 %, K ±10 %, M ±20 %, Z +80/−20 %.
+Spannung (EIA, vorangestellt): z. B. 1H = 50 V, 2A = 100 V, 2J = 630 V.
+```
+
+**Eingaben:** Aufdruck
+
+**Ergebnisse:** Kapazität [nF], Kapazität in pF [pF], Toleranz, Nennspannung [V]
+
+### Alphanumerischer Induktivitätscode
+
+*101 = 100 µH, 4R7 = 4,7 µH, 47N = 47 nH* — `inductor_code`
+
+```text
+Grundeinheit µH: zwei Ziffern + Zehnerpotenz (101 = 10 · 10¹ µH = 100 µH); R = Komma in µH (4R7 = 4,7 µH, R10 = 0,1 µH); N = Komma in nH (47N = 47 nH, 4N7 = 4,7 nH). Nachgestellt Toleranz J ±5 %, K ±10 %, M ±20 %.
+```
+
+**Eingaben:** Aufdruck
+
+**Ergebnisse:** Induktivität [µH], Induktivität in nH [nH]
+
+### Stromteiler
+
+*Aufteilung eines Stroms auf parallele Widerstände* — `current_divider`
+
+```text
+Parallelschaltung: U = I · R_ges, 1/R_ges = Σ 1/R_i    I_i = U / R_i
+Zwei Widerstände: I₁ = I · R₂ / (R₁ + R₂).
+```
+
+**Eingaben:** Gesamtstrom I [A], R₁ [Ω], R₂ [Ω], R₃ (optional) [Ω]
+
+**Ergebnisse:** Strom durch R₁ [A], Strom durch R₂ [A], Strom durch R₃ [A], Spannung U [V], Ersatzwiderstand R_ges [Ω]
+
+### Zener-Diode als Spannungsstabilisator
+
+*Vorwiderstand und Belastung der Z-Diode* — `zener_regulator`
+
+```text
+R_v = (U_e,min − U_Z) / (I_Z,min + I_L,max)  →  nächstkleinerer E12-Wert
+I_Z,max = (U_e,max − U_Z) / R_v − I_L,min    P_Z = U_Z · I_Z,max    P_R = (U_e,max − U_Z)² / R_v
+I_Z,min typ. 5 mA (bzw. 10 % von I_Z,max). Z-Diode nach P_Z mit Reserve wählen (z. B. 0,5 W, 1,3 W).
+```
+
+**Eingaben:** Eingangsspannung min. [V], Eingangsspannung max. [V], Zenerspannung U_Z [V], Min. Zenerstrom I_Z,min [mA], Laststrom min. [mA], Laststrom max. [mA], Belastbarkeit der Z-Diode (optional) [W]
+
+**Ergebnisse:** Vorwiderstand (E12) [Ω], Vorwiderstand rechnerisch [Ω], Verlustleistung R_v [W], Max. Zenerstrom [mA], Max. Verlustleistung Z-Diode [W]
+
+### Vorwiderstand zur Spannungsreduzierung
+
+*R = (U − U_L) / I, Leistung und Normwert* — `series_resistor`
+
+```text
+R_v = (U − U_L) / I_L    P_R = (U − U_L) · I_L    Wirkungsgrad η = U_L / U
+Nur für konstante Last geeignet – bei schwankendem Strom ändert sich U_L (dann Spannungsregler verwenden).
+```
+
+**Eingaben:** Versorgungsspannung U [V], Spannung am Verbraucher U_L [V], Strom des Verbrauchers I_L [mA]
+
+**Ergebnisse:** Vorwiderstand R_v [Ω], Nächster E12-Wert [Ω], U_L mit E12-Wert [V], Verlustleistung P_R [W], Wirkungsgrad [%]
+
+### Primär-/Sekundärwicklung von Transformatoren
+
+*Übersetzung, Ströme und Windungszahlen (Kleintransformator)* — `transformer_windings`
+
+```text
+ü = U₁/U₂ = N₁/N₂ = I₂/I₁    Windungen je Volt w = 1 / (4,44 · f · B · A_Fe)
+N₁ = w · U₁    N₂ = w · U₂ · (1 + Zuschlag) (Ausgleich der Spannungsabfälle, Kleintrafos 5–10 %)
+B: Dynamoblech 1,0–1,4 T (Kernblech EI). Ohne Angabe A_Fe ≈ √S cm² (Faustformel für EI-Kerne).
+```
+
+**Eingaben:** Bemessungsleistung S [VA], Primärspannung U₁ [V], Sekundärspannung U₂ [V], Frequenz, Flussdichte B [T], Eisenquerschnitt A_Fe (optional) [cm²], Zuschlag Sekundärwindungen [%]
+
+**Ergebnisse:** Übersetzung ü, Primärstrom I₁ [A], Sekundärstrom I₂ [A], Windungen je Volt [1/V], Windungen primär N₁, Windungen sekundär N₂, Verwendeter Eisenquerschnitt [cm²]
+
+### Antennenlängenberechnung
+
+*Wellenlänge und Länge von Dipol, Monopol (λ/4) und 5/8 λ* — `antenna_length`
+
+```text
+λ = c / f (c = 299 792 458 m/s)    l = Bruchteil · λ · k
+k = Verkürzungsfaktor (Drahtdipol ≈ 0,95, dicke Rohre kleiner); λ/2-Dipol: Gesamtlänge, jeder Arm l/2.
+```
+
+**Eingaben:** Frequenz f [MHz], Antennenform, Verkürzungsfaktor k
+
+**Ergebnisse:** Antennenlänge [cm], Wellenlänge λ [m], Länge ohne Verkürzung [cm]
+
+### CCTV Speicherplatz- und Bandbreitenberechnung
+
+*Bitrate, Netzwerklast und Speicher für Videoüberwachung* — `cctv_storage`
+
+```text
+Bitrate ≈ Pixel · Bilder/s · Bits je Pixel (Richtwerte: H.264 0,08, H.265 0,04, MJPEG 0,75 bit/Pixel; stark szenenabhängig – Herstellerwert eintragen, wenn bekannt).
+Bandbreite = n · Bitrate    Speicher = n · Bitrate · Aufzeichnungsdauer · Anteil / 8 (1 TB = 10¹² Byte).
+```
+
+**Eingaben:** Anzahl Kameras, Auflösung, Bilder pro Sekunde [1/s], Videokompression, Bitrate je Kamera (Herstellerwert, optional) [Mbit/s], Aufzeichnung pro Tag [h], Anteil mit Aufzeichnung (Bewegung) [%], Speicherdauer [d]
+
+**Ergebnisse:** Speicherbedarf [TB], Bitrate je Kamera [Mbit/s], Netzwerklast gesamt [Mbit/s], Speicher pro Tag [GB]
+
+### Kupfer-Widerstandsthermometer (Cu10/Cu50/Cu100)
+
+*R = R₀ · (1 + α · θ), linear* — `rtd_cu`
+
+```text
+Kupfer-Messwiderstände sind im Bereich −50 … +150 °C nahezu linear: R = R₀ · (1 + α · θ).
+α = 0,00427 1/K (Cu10 nach US-Praxis), 0,00428 1/K (GOST 6651). Pt- und Ni-Fühler: eigener Rechner.
+```
+
+**Eingaben:** Fühler, Temperaturkoeffizient α, Gesucht, Temperatur θ [°C], Widerstand R [Ω]
+
+**Ergebnisse:** Widerstand R [Ω], Temperatur θ [°C], Empfindlichkeit [Ω/K]
+
+### Thermoelemente (Typ K, J, T, N, E, R, S, B)
+
+*Thermospannung ↔ Temperatur mit Vergleichsstelle* — `thermocouple`
+
+```text
+Grundwerte nach IEC 60584-1 (= NIST ITS-90-Referenzfunktionen, Vergleichsstelle 0 °C).
+Gemessene Spannung U = E(θ_M) − E(θ_V) mit θ_V = Temperatur der Vergleichsstelle (Klemmen). Rückrechnung: E(θ_M) = U + E(θ_V).
+Farben der Ausgleichsleitungen nach IEC 60584-3: K grün, J schwarz, T braun, N rosa, E violett, R/S orange, B grau (Pluspol farbig, Minus weiß).
+```
+
+**Eingaben:** Typ, Gesucht, Messtemperatur θ_M [°C], Gemessene Spannung U [mV], Vergleichsstellentemperatur θ_V [°C]
+
+**Ergebnisse:** Thermospannung U [mV], Messtemperatur θ_M [°C], E(θ_M) bezogen auf 0 °C [mV], E(θ_V) der Vergleichsstelle [mV], Empfindlichkeit bei θ_M [µV/K]
+
+### Motorleistung
+
+*Abgegebene und aufgenommene Leistung aus U, I, cos φ, η* — `motor_power`
+
+```text
+P_ab = k · U · I · cos φ · η    k = 1 (1~), √3 (3~); P_auf = P_ab / η; 1 hp = 745,7 W.
+```
+
+**Eingaben:** Netz, Spannung U [V], Strom I [A], Leistungsfaktor cos φ, Wirkungsgrad η [%]
+
+**Ergebnisse:** Abgegebene Leistung P_ab [kW], Abgegebene Leistung [hp], Aufgenommene Leistung P_auf [kW], Scheinleistung S [kVA], Verluste [kW]
+
+### Motorspannung
+
+*Spannung aus Leistung, Strom, cos φ und η* — `motor_voltage`
+
+```text
+P_ab = k · U · I · cos φ · η    k = 1 (1~), √3 (3~); P_auf = P_ab / η; 1 hp = 745,7 W.
+```
+
+**Eingaben:** Netz, Abgegebene Leistung P_ab [kW], Strom I [A], Leistungsfaktor cos φ, Wirkungsgrad η [%]
+
+**Ergebnisse:** Spannung U [V], Aufgenommene Leistung P_auf [kW]
+
+### Leistungsfaktor (Motor)
+
+*cos φ aus Leistung, Spannung, Strom und η* — `motor_pf`
+
+```text
+P_ab = k · U · I · cos φ · η    k = 1 (1~), √3 (3~); P_auf = P_ab / η; 1 hp = 745,7 W.
+```
+
+**Eingaben:** Netz, Spannung U [V], Abgegebene Leistung P_ab [kW], Strom I [A], Wirkungsgrad η [%]
+
+**Ergebnisse:** Leistungsfaktor cos φ, Phasenwinkel φ [°], Aufgenommene Leistung P_auf [kW], Blindleistung Q [kvar]
+
+### Motor-Volllaststrom (NEC)
+
+*Tabellenstrom nach NEC 430.248 / 430.250 (Nordamerika)* — `nec_flc`
+
+```text
+NEC (NFPA 70) Tab. 430.248 (Einphasen-Wechselstrommotoren) und Tab. 430.250 (Drehstrom-Asynchronmotoren). Nach NEC 430.6(A)(1) sind für Leiter, Kurzschluss- und Erdschlussschutz die Tabellenwerte (nicht die Typenschildwerte) zu verwenden; Leiter für einen Motor ≥ 125 % des Tabellenstroms (430.22). Der Motorschutz (Überlast) richtet sich nach dem Typenschildstrom. 208/200 V = Werte für 208/200-V-Motoren. Gegen die gültige NEC-Ausgabe prüfen.
+```
+
+**Eingaben:** Phasen, Motorleistung, Motorleistung, Spannung, Spannung
+
+**Ergebnisse:** Volllaststrom (Tabelle) [A], Leiter-Bemessungsstrom 125 % [A], Leistung [kW]
+
+### Schaltschema Drehstrommotor (6 Klemmen)
+
+*Stern- oder Dreieckschaltung am Klemmbrett (U1…W2)* — `motor_wiring_6`
+
+```text
+Klemmenbezeichnung nach IEC 60034-8 (alt DIN VDE 0530: U, V, W / X, Y, Z). Oben W2 U2 V2, unten U1 V1 W1.
+Stern (Y): Brücke W2–U2–V2, Netz an U1/V1/W1; jede Wicklung liegt an U/√3.
+Dreieck (Δ): Brücken W2–U1, U2–V1, V2–W1; jede Wicklung liegt an U.
+Typenschild 230/400 V am 400-V-Netz → Stern; 400/690 V am 400-V-Netz → Dreieck (auch für Stern-Dreieck-Anlauf).
+L1→U1, L2→V1, L3→W1 = Rechtslauf (Blick auf das Wellenende).
+```
+
+**Eingaben:** Netzspannung (Außenleiter) [V], Typenschild, Darstellung
+
+**Ergebnisse:** Schaltung, Brücken, Netzanschluss, Spannung je Wicklung [V]
+
+### Schaltschema Drehstrommotor (9 Klemmen)
+
+*NEMA T1–T9, Stern oder Dreieck, hohe/niedrige Spannung* — `motor_wiring_9`
+
+```text
+Anschlussbezeichnung nach NEMA MG 1 (Nordamerika), Doppelspannungsmotoren z. B. 230/460 V: Hohe Spannung = Wicklungshälften in Reihe, niedrige Spannung = parallel.
+9 Klemmen: Stern (innerer Sternpunkt T7-T8-T9 intern) oder Dreieck (innere Dreieckecken T1, T2, T3).
+12 Klemmen: alle Wicklungsenden herausgeführt; Stern oder Dreieck frei wählbar (auch Stern-Dreieck-Anlauf, Teilwicklungsanlauf). Typenschild und Anschlussplan des Herstellers haben Vorrang.
+```
+
+**Eingaben:** Schaltung, Spannung
+
+**Ergebnisse:** L1, L2, L3, Zusammen verbinden (isoliert)
+
+### Schaltschema Drehstrommotor (12 Klemmen)
+
+*NEMA T1–T12, Stern/Dreieck, Reihe/parallel* — `motor_wiring_12`
+
+```text
+Anschlussbezeichnung nach NEMA MG 1 (Nordamerika), Doppelspannungsmotoren z. B. 230/460 V: Hohe Spannung = Wicklungshälften in Reihe, niedrige Spannung = parallel.
+9 Klemmen: Stern (innerer Sternpunkt T7-T8-T9 intern) oder Dreieck (innere Dreieckecken T1, T2, T3).
+12 Klemmen: alle Wicklungsenden herausgeführt; Stern oder Dreieck frei wählbar (auch Stern-Dreieck-Anlauf, Teilwicklungsanlauf). Typenschild und Anschlussplan des Herstellers haben Vorrang.
+```
+
+**Eingaben:** Schaltung, Spannung
+
+**Ergebnisse:** L1, L2, L3, Zusammen verbinden (isoliert)
+
+### Motor-Verbindungen (Drehrichtung)
+
+*Anschluss und Drehrichtungsumkehr von Drehstrom- und Kondensatormotoren* — `motor_connections`
+
+```text
+Drehstrom (IEC 60034-8): L1→U1, L2→V1, L3→W1 ergibt Rechtslauf (Blick auf das Wellenende, Rechtsdrehfeld). Linkslauf: zwei Außenleiter tauschen (z. B. L1↔L2).
+Einphasen-Kondensatormotor: Hauptwicklung U1–U2 an L–N, Hilfswicklung Z1–Z2 über den Betriebskondensator C_B parallel. Drehrichtung umkehren: Hilfswicklung umpolen (Z1↔Z2) – die tatsächliche Richtung zeigt das Anschlussbild des Herstellers.
+```
+
+**Eingaben:** Motor, Drehrichtung
+
+**Ergebnisse:** Anschluss, Umkehr
+
+### Dreieck-Stern-Umwandlung
+
+*Δ ↔ Y für Widerstände oder Impedanzen, mit Zeichnung* — `delta_star`
+
+```text
+Δ → Y: R₁ = R₁₂ · R₃₁ / ΣR    R₂ = R₁₂ · R₂₃ / ΣR    R₃ = R₂₃ · R₃₁ / ΣR    (ΣR = R₁₂ + R₂₃ + R₃₁)
+Y → Δ: R₁₂ = (R₁R₂ + R₂R₃ + R₃R₁) / R₃    R₂₃ = … / R₁    R₃₁ = … / R₂
+Symmetrisch: R_Y = R_Δ / 3. Gilt ebenso für komplexe Impedanzen.
+```
+
+**Eingaben:** Umwandlung, R₁₂ (zwischen 1 und 2) [Ω], R₂₃ (zwischen 2 und 3) [Ω], R₃₁ (zwischen 3 und 1) [Ω], R₁ (an Knoten 1) [Ω], R₂ (an Knoten 2) [Ω], R₃ (an Knoten 3) [Ω]
+
+**Ergebnisse:** R₁ [Ω], R₂ [Ω], R₃ [Ω], R₁₂ [Ω], R₂₃ [Ω], R₃₁ [Ω]
+
+### Spannung
+
+*Einheiten, Effektiv-/Scheitel-/Spitze-Spitze-Wert (Sinus) und dB-Pegel* — `conv_voltage`
+
+```text
+Sinus: Û = √2 · U_eff    U_ss = 2 · Û    Gleichrichtwert |ū| = 2Û/π = 0,9003 · U_eff
+Pegel (Effektivwert): dBV = 20 · lg(U / 1 V), dBu = 20 · lg(U / 0,7746 V), dBmV = 20 · lg(U / 1 mV), dBµV = 20 · lg(U / 1 µV).
+```
+
+**Eingaben:** Wert, Einheit, Angabe als (Sinus)
+
+**Ergebnisse:** Effektivwert [V], Scheitelwert Û [V], Spitze-Spitze [V], Gleichrichtwert [V], Effektivwert [mV], Effektivwert [kV], Pegel [dBV], Pegel [dBu], Pegel [dBmV], Pegel [dBµV]
+
+### Phasenwinkel
+
+*φ in Grad/Bogenmaß ↔ cos φ, sin φ, tan φ* — `conv_phase`
+
+```text
+φ [rad] = φ [°] · π/180    cos φ = P/S    sin φ = Q/S    tan φ = Q/P
+Für Leistungsfaktoren gilt 0 ≤ φ ≤ 90° (induktiv oder kapazitiv – das Vorzeichen von Q angeben).
+```
+
+**Eingaben:** Wert, Gegeben
+
+**Ergebnisse:** Phasenwinkel φ [°], Phasenwinkel φ [rad], cos φ, sin φ, tan φ = Q/P
+
+### Zulässige spezifische Durchlassenergie k²S²
+
+| S in mm² | Cu PVC | Cu VPE/EPR | Al PVC | Al VPE |
+|---|---|---|---|---|
+| 1,5 | 2,98 · 10⁴ | 4,6 · 10⁴ | 1,3 · 10⁴ | 1,99 · 10⁴ |
+| 2,5 | 8,27 · 10⁴ | 1,28 · 10⁵ | 3,61 · 10⁴ | 5,52 · 10⁴ |
+| 4 | 2,12 · 10⁵ | 3,27 · 10⁵ | 9,24 · 10⁴ | 1,41 · 10⁵ |
+| 6 | 4,76 · 10⁵ | 7,36 · 10⁵ | 2,08 · 10⁵ | 3,18 · 10⁵ |
+| 10 | 1,32 · 10⁶ | 2,04 · 10⁶ | 5,78 · 10⁵ | 8,84 · 10⁵ |
+| 16 | 3,39 · 10⁶ | 5,23 · 10⁶ | 1,48 · 10⁶ | 2,26 · 10⁶ |
+| 25 | 8,27 · 10⁶ | 1,28 · 10⁷ | 3,61 · 10⁶ | 5,52 · 10⁶ |
+| 35 | 1,62 · 10⁷ | 2,51 · 10⁷ | 7,08 · 10⁶ | 1,08 · 10⁷ |
+| 50 | 3,31 · 10⁷ | 5,11 · 10⁷ | 1,44 · 10⁷ | 2,21 · 10⁷ |
+| 70 | 6,48 · 10⁷ | 1 · 10⁸ | 2,83 · 10⁷ | 4,33 · 10⁷ |
+| 95 | 1,19 · 10⁸ | 1,85 · 10⁸ | 5,21 · 10⁷ | 7,97 · 10⁷ |
+| 120 | 1,9 · 10⁸ | 2,94 · 10⁸ | 8,32 · 10⁷ | 1,27 · 10⁸ |
+| 150 | 2,98 · 10⁸ | 4,6 · 10⁸ | 1,3 · 10⁸ | 1,99 · 10⁸ |
+| 185 | 4,53 · 10⁸ | 7 · 10⁸ | 1,98 · 10⁸ | 3,02 · 10⁸ |
+| 240 | 7,62 · 10⁸ | 1,18 · 10⁹ | 3,33 · 10⁸ | 5,09 · 10⁸ |
+| 300 | 1,19 · 10⁹ | 1,84 · 10⁹ | 5,2 · 10⁸ | 7,95 · 10⁸ |
+
+*Adiabatische Erwärmung (IEC 60364-4-43, 434.5.2): Die Durchlassenergie I²t der Schutzeinrichtung darf k²S² nicht überschreiten (gilt für t ≤ 5 s). k nach Tab. 43A: Cu/PVC 115 (> 300 mm²: 103), Cu/VPE-EPR 143, Al/PVC 76, Al/VPE 94. I²t der Schutzeinrichtung aus dem Herstellerdatenblatt. Gegen die gültige Ausgabe prüfen.*
+
+### Kupfer-Sammelschienen: Dauerstrom
+
+| B × D in mm | A in mm² | kg/m | 1 Schiene in A | 2 Schienen in A |
+|---|---|---|---|---|
+| 12 × 5 | 59 | 0,525 | 250 | – |
+| 12 × 10 | 119 | 1,059 | 360 | – |
+| 20 × 5 | 99 | 0,881 | 320 | – |
+| 20 × 10 | 199 | 1,771 | 500 | 850 |
+| 25 × 5 | 124 | 1,104 | 390 | – |
+| 30 × 5 | 149 | 1,331 | 440 | – |
+| 30 × 10 | 299 | 2,661 | 630 | 1250 |
+| 40 × 10 | 399 | 3,551 | 850 | 1500 |
+| 50 × 10 | 499 | 4,441 | 1000 | – |
+| 60 × 10 | 599 | 5,331 | 1250 | – |
+| 80 × 10 | 799 | 7,111 | 1450 | – |
+| 100 × 10 | 999 | 8,891 | 1700 | – |
+
+*Innenanlagen, 25 °C Lufttemperatur um den Leiter, max. 65 °C Schienentemperatur, Wechselstrom, hochkant (Striebel & John, Kap. 10 Sammelschienensysteme, nach DIN 43671). Bei Abweichungen Korrekturfaktoren der DIN 43671.*
+
+### Mineralisolierte Kabel: Belastbarkeit
+
+| Ausführung | Aderzahl | mm² | I_z in A | Bezeichnung |
+|---|---|---|---|---|
+| 500 V (leicht) | 2 Adern, 1~/DC | 1 | 18,5 | 2L1 |
+| 500 V (leicht) | 2 Adern, 1~/DC | 1,5 | 23 | 2L1.5 |
+| 500 V (leicht) | 2 Adern, 1~/DC | 2,5 | 31 | 2L2.5 |
+| 500 V (leicht) | 2 Adern, 1~/DC | 4 | 40 | 2L4 |
+| 500 V (leicht) | 3 Adern, 3~ | 1 | 15 | 3L1 |
+| 500 V (leicht) | 3 Adern, 3~ | 1,5 | 19 | 3L1.5 |
+| 500 V (leicht) | 3 Adern, 3~ | 2,5 | 26 | 3L2.5 |
+| 500 V (leicht) | 4 Adern, 3~ | 1 | 15 | 4L1 |
+| 500 V (leicht) | 4 Adern, 3~ | 1,5 | 19 | 4L1.5 |
+| 500 V (leicht) | 4 Adern, 3~ | 2,5 | 26 | 4L2.5 |
+| 500 V (leicht) | 7 Adern | 1,5 | 13 | 7L1.5 |
+| 500 V (leicht) | 7 Adern | 2,5 | 17,5 | 7L2.5 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 1,5 | 25 | 2H1.5 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 2,5 | 34 | 2H2.5 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 4 | 45 | 2H4 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 6 | 57 | 2H6 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 10 | 77 | 2H10 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 16 | 102 | 2H16 |
+| 750 V (schwer) | 2 Adern, 1~/DC | 25 | 133 | 2H25 |
+| 750 V (schwer) | 3 Adern, 3~ | 1,5 | 21 | 3H1.5 |
+| 750 V (schwer) | 3 Adern, 3~ | 2,5 | 28 | 3H2.5 |
+| 750 V (schwer) | 3 Adern, 3~ | 4 | 37 | 3H4 |
+| 750 V (schwer) | 3 Adern, 3~ | 6 | 48 | 3H6 |
+| 750 V (schwer) | 3 Adern, 3~ | 10 | 65 | 3H10 |
+| 750 V (schwer) | 3 Adern, 3~ | 16 | 86 | 3H16 |
+| 750 V (schwer) | 3 Adern, 3~ | 25 | 112 | 3H25 |
+| 750 V (schwer) | 4 Adern, 3~ | 1,5 | 21 | 4H1.5 |
+| 750 V (schwer) | 4 Adern, 3~ | 2,5 | 28 | 4H2.5 |
+| 750 V (schwer) | 4 Adern, 3~ | 4 | 37 | 4H4 |
+| 750 V (schwer) | 4 Adern, 3~ | 6 | 47 | 4H6 |
+| 750 V (schwer) | 4 Adern, 3~ | 10 | 64 | 4H10 |
+| 750 V (schwer) | 4 Adern, 3~ | 16 | 85 | 4H16 |
+| 750 V (schwer) | 4 Adern, 3~ | 25 | 110 | 4H25 |
+| 750 V (schwer) | Einleiter, 1~ | 6 | 57 | 1H6 |
+| 750 V (schwer) | Einleiter, 1~ | 10 | 77 | 1H10 |
+| 750 V (schwer) | Einleiter, 1~ | 16 | 102 | 1H16 |
+| 750 V (schwer) | Einleiter, 1~ | 25 | 133 | 1H25 |
+| 750 V (schwer) | Einleiter, 1~ | 35 | 163 | 1H35 |
+| 750 V (schwer) | Einleiter, 1~ | 50 | 202 | 1H50 |
+| 750 V (schwer) | Einleiter, 1~ | 70 | 247 | 1H70 |
+| 750 V (schwer) | Einleiter, 1~ | 95 | 296 | 1H95 |
+| 750 V (schwer) | Einleiter, 1~ | 120 | 340 | 1H120 |
+| 750 V (schwer) | Einleiter, 1~ | 150 | 388 | 1H150 |
+| 750 V (schwer) | Einleiter, 1~ | 185 | 440 | 1H185 |
+| 750 V (schwer) | Einleiter, 1~ | 240 | 514 | 1H240 |
+| 750 V (schwer) | Einleiter, 3~ | 6 | 52 | 1H6 |
+| 750 V (schwer) | Einleiter, 3~ | 10 | 70 | 1H10 |
+| 750 V (schwer) | Einleiter, 3~ | 16 | 92 | 1H16 |
+| 750 V (schwer) | Einleiter, 3~ | 25 | 120 | 1H25 |
+| 750 V (schwer) | Einleiter, 3~ | 35 | 147 | 1H35 |
+| 750 V (schwer) | Einleiter, 3~ | 50 | 181 | 1H50 |
+| 750 V (schwer) | Einleiter, 3~ | 70 | 221 | 1H70 |
+| 750 V (schwer) | Einleiter, 3~ | 95 | 264 | 1H95 |
+| 750 V (schwer) | Einleiter, 3~ | 120 | 303 | 1H120 |
+| 750 V (schwer) | Einleiter, 3~ | 150 | 346 | 1H150 |
+| 750 V (schwer) | Einleiter, 3~ | 185 | 392 | 1H185 |
+| 750 V (schwer) | Einleiter, 3~ | 240 | 457 | 1H240 |
+| 750 V (schwer) | 7 Adern | 1,5 | 14,5 | 7H1.5 |
+| 750 V (schwer) | 7 Adern | 2,5 | 19,5 | 7H2.5 |
+| 750 V (schwer) | 12 Adern | 2,5 | 16 | 12H2.5 |
+| 750 V (schwer) | 19 Adern | 1,5 | 10 | 19H1.5 |
+
+*BS 7671 Tab. 4G1A = IEC 60364-5-52 Tab. B.52.6 (Herstellerdatenblatt): PVC-umhüllt oder blank berührbar, direkt auf der Wand, alle Adern belastet. Gegen die gültige Ausgabe prüfen.*
+
+### Sicherungen: Betriebsklassen
+
+| Klasse | Bereich | Schutzobjekt / Einsatz |
+|---|---|---|
+| gG | Ganzbereich | Kabel und Leitungen, allgemein |
+| gL | Ganzbereich | alte deutsche Bezeichnung für Leitungsschutz, heute gG |
+| aM | Teilbereich | Motorstromkreise (Kurzschlussschutz, Überlast durch Motorschutzrelais) |
+| gR | Ganzbereich | Halbleiter (sehr flink) |
+| gS | Ganzbereich | Halbleiter und Leitungen |
+| aR | Teilbereich | Halbleiter (Kurzschlussschutz) |
+| gTr | Ganzbereich | Transformatoren (NS-Seite) |
+| gPV | Ganzbereich | Photovoltaik-Strings (DC, IEC 60269-6) |
+
+*IEC 60269-1/-2/-4/-6 (DIN VDE 0636). 1. Buchstabe: g = Ganzbereich (Überlast und Kurzschluss), a = Teilbereich (nur Kurzschluss, Überlastschutz durch andere Geräte). 2. Buchstabe: Schutzobjekt.*
+
+### D- und NH-Sicherungen: Größen
+
+| Größe | System | Gewinde / Bauform | Bemessungsstrom | Spannung |
+|---|---|---|---|---|
+| D01 | Neozed (D0) | E14 | 2–16 A | 400 V AC |
+| D02 | Neozed (D0) | E18 | 20–63 A | 400 V AC |
+| D03 | Neozed (D0) | M30 × 2 | 80–100 A | 400 V AC |
+| DII | Diazed (D) | E27 | 2–25 A | 500 V AC |
+| DIII | Diazed (D) | E33 | 35–63 A | 500 V AC |
+| DIV | Diazed (D) | R 1¼" | 80–100 A | 500 V AC |
+| NH000 | NH (Messer) | Größe 000 | bis 100 A | 500/690 V AC |
+| NH00 | NH (Messer) | Größe 00 | bis 160 A | 500/690 V AC |
+| NH0 | NH (Messer) | Größe 0 (nicht für Neuanlagen) | bis 160 A | 500/690 V AC |
+| NH1 | NH (Messer) | Größe 1 | bis 250 A | 500/690 V AC |
+| NH2 | NH (Messer) | Größe 2 | bis 400 A | 500/690 V AC |
+| NH3 | NH (Messer) | Größe 3 | bis 630 A | 500/690 V AC |
+| NH4a | NH (Messer) | Größe 4a | bis 1250 A | 500/690 V AC |
+
+*IEC 60269-3 (D-System, für Laien bedienbar) und IEC 60269-2 (NH, nur Fachkräfte). Größte Bemessungsströme je Größe; Passschrauben/-hülsen verhindern beim D-System zu große Einsätze. Herstellerangaben prüfen.*
+
+### Zylindersicherungen
+
+| Abmessung | Bemessungsstrom bis | Spannung | Hinweis |
+|---|---|---|---|
+| 8,5 × 31,5 mm | 20 A | 400 V AC | kleine Verbraucher |
+| 10 × 38 mm | 32 A | 400–690 V AC | auch gPV bis 1000/1500 V DC |
+| 14 × 51 mm | 50 A | 400–690 V AC | auch aM für Motoren |
+| 22 × 58 mm | 125 A | 400–690 V AC | auch aM für Motoren |
+
+*IEC 60269-2 (zylindrische Sicherungseinsätze, z. B. für Sicherungs-Trennschalter). Höchste übliche Bemessungsströme; je nach Hersteller und Spannung kleiner – Datenblatt prüfen.*
+
+### Feinsicherungen (G-Sicherungen)
+
+| Zeichen | Charakteristik | Einsatz |
+|---|---|---|
+| FF | superflink | Halbleiter, Messgeräte |
+| F | flink | ohne Einschaltstromspitzen |
+| M | mittelträge | kleine Einschaltströme |
+| T | träge | Netzteile, Transformatoren, Motoren |
+| TT | superträge | hohe Einschaltströme |
+
+*IEC 60127 / DIN EN 60127. Bauformen 5 × 20 mm und 6,3 × 32 mm. Schaltvermögen: L = niedrig (Glasrohr, typ. 35 A oder 10 · I_N), E = erhöht, H = hoch (Keramik mit Sandfüllung, 1500 A). Kennzeichnung z. B. T 1,6 A H 250 V.*
+
+### Kfz-Flachsicherungen: Farben
+
+| Strom | Farbe |
+|---|---|
+| 1 A | schwarz |
+| 2 A | grau |
+| 3 A | violett |
+| 4 A | rosa |
+| 5 A | hellbraun |
+| 7,5 A | braun |
+| 10 A | rot |
+| 15 A | blau |
+| 20 A | gelb |
+| 25 A | farblos/weiß |
+| 30 A | grün |
+| 35 A | blaugrün |
+| 40 A | orange |
+
+*ISO 8820-3 (Flachstecksicherungen ATO/ATC und Mini). 35 A ist nicht in allen Bauformen üblich. Maxi-Sicherungen verwenden teilweise andere Farben.*
+
+### EIA-96-Code (SMD 1 %)
+
+| Code | Wert | Code | Wert | Code | Wert | Code | Wert |
+|---|---|---|---|---|---|---|---|
+| 01 | 100 | 25 | 178 | 49 | 316 | 73 | 562 |
+| 02 | 102 | 26 | 182 | 50 | 324 | 74 | 576 |
+| 03 | 105 | 27 | 187 | 51 | 332 | 75 | 590 |
+| 04 | 107 | 28 | 191 | 52 | 340 | 76 | 604 |
+| 05 | 110 | 29 | 196 | 53 | 348 | 77 | 619 |
+| 06 | 113 | 30 | 200 | 54 | 357 | 78 | 634 |
+| 07 | 115 | 31 | 205 | 55 | 365 | 79 | 649 |
+| 08 | 118 | 32 | 210 | 56 | 374 | 80 | 665 |
+| 09 | 121 | 33 | 215 | 57 | 383 | 81 | 681 |
+| 10 | 124 | 34 | 221 | 58 | 392 | 82 | 698 |
+| 11 | 127 | 35 | 226 | 59 | 402 | 83 | 715 |
+| 12 | 130 | 36 | 232 | 60 | 412 | 84 | 732 |
+| 13 | 133 | 37 | 237 | 61 | 422 | 85 | 750 |
+| 14 | 137 | 38 | 243 | 62 | 432 | 86 | 768 |
+| 15 | 140 | 39 | 249 | 63 | 442 | 87 | 787 |
+| 16 | 143 | 40 | 255 | 64 | 453 | 88 | 806 |
+| 17 | 147 | 41 | 261 | 65 | 464 | 89 | 825 |
+| 18 | 150 | 42 | 267 | 66 | 475 | 90 | 845 |
+| 19 | 154 | 43 | 274 | 67 | 487 | 91 | 866 |
+| 20 | 158 | 44 | 280 | 68 | 499 | 92 | 887 |
+| 21 | 162 | 45 | 287 | 69 | 511 | 93 | 909 |
+| 22 | 165 | 46 | 294 | 70 | 523 | 94 | 931 |
+| 23 | 169 | 47 | 301 | 71 | 536 | 95 | 953 |
+| 24 | 174 | 48 | 309 | 72 | 549 | 96 | 976 |
+
+*Zwei Ziffern = Index der E96-Reihe, danach Multiplikator-Buchstabe: Z ×0,001, Y/R ×0,01, X/S ×0,1, A ×1, B/H ×10, C ×100, D ×1000, E ×10⁴, F ×10⁵. Beispiel 01C = 100 · 100 = 10 kΩ, 68X = 499 · 0,1 = 49,9 Ω.*
+
+### Kondensatorcode-Tabelle
+
+| Code | pF | nF | µF |
+|---|---|---|---|
+| 100 | 10 | 0,01 | 1e-05 |
+| 150 | 15 | 0,015 | 1,5e-05 |
+| 220 | 22 | 0,022 | 2,2e-05 |
+| 330 | 33 | 0,033 | 3,3e-05 |
+| 470 | 47 | 0,047 | 4,7e-05 |
+| 680 | 68 | 0,068 | 6,8e-05 |
+| 101 | 100 | 0,1 | 0,0001 |
+| 151 | 150 | 0,15 | 0,00015 |
+| 221 | 220 | 0,22 | 0,00022 |
+| 331 | 330 | 0,33 | 0,00033 |
+| 471 | 470 | 0,47 | 0,00047 |
+| 681 | 680 | 0,68 | 0,00068 |
+| 102 | 1000 | 1 | 0,001 |
+| 152 | 1500 | 1,5 | 0,0015 |
+| 222 | 2200 | 2,2 | 0,0022 |
+| 332 | 3300 | 3,3 | 0,0033 |
+| 472 | 4700 | 4,7 | 0,0047 |
+| 682 | 6800 | 6,8 | 0,0068 |
+| 103 | 10000 | 10 | 0,01 |
+| 153 | 15000 | 15 | 0,015 |
+| 223 | 22000 | 22 | 0,022 |
+| 333 | 33000 | 33 | 0,033 |
+| 473 | 47000 | 47 | 0,047 |
+| 683 | 68000 | 68 | 0,068 |
+| 104 | 100000 | 100 | 0,1 |
+| 154 | 150000 | 150 | 0,15 |
+| 224 | 220000 | 220 | 0,22 |
+| 334 | 330000 | 330 | 0,33 |
+| 474 | 470000 | 470 | 0,47 |
+| 684 | 680000 | 680 | 0,68 |
+| 105 | 1000000 | 1000 | 1 |
+| 155 | 1500000 | 1500 | 1,5 |
+| 225 | 2200000 | 2200 | 2,2 |
+| 335 | 3300000 | 3300 | 3,3 |
+| 475 | 4700000 | 4700 | 4,7 |
+| 685 | 6800000 | 6800 | 6,8 |
+
+*Zwei Ziffern + Anzahl Nullen in pF (EIA/IEC 60062). Toleranzbuchstabe danach: J ±5 %, K ±10 %, M ±20 %. Andere Werte siehe Rechner Kondensator-Code.*
+
+### Kondensator-Spannungscodes (EIA)
+
+| Code | Nennspannung in V |
+|---|---|
+| 0G | 4 |
+| 0L | 5,5 |
+| 0J | 6,3 |
+| 1A | 10 |
+| 1C | 16 |
+| 1D | 20 |
+| 1E | 25 |
+| 1V | 35 |
+| 1H | 50 |
+| 1J | 63 |
+| 1K | 80 |
+| 2A | 100 |
+| 2B | 125 |
+| 2C | 160 |
+| 2D | 200 |
+| 2E | 250 |
+| 2F | 315 |
+| 2V | 350 |
+| 2G | 400 |
+| 2W | 450 |
+| 2J | 630 |
+| 3A | 1000 |
+
+*EIA-Spannungscode auf Folien-, Keramik- und Elektrolytkondensatoren (z. B. 2A104J = 100 V, 100 nF, ±5 %).*
+
+### NEC 430.250: Volllaststrom Drehstrommotoren
+
+| hp | kW | 115 V | 200 V | 208 V | 230 V | 460 V | 575 V | 2300 V |
+|---|---|---|---|---|---|---|---|---|
+| 1/2 | 0,37 | 4,4 | 2,5 | 2,4 | 2,2 | 1,1 | 0,9 | – |
+| 3/4 | 0,56 | 6,4 | 3,7 | 3,5 | 3,2 | 1,6 | 1,3 | – |
+| 1 | 0,75 | 8,4 | 4,8 | 4,6 | 4,2 | 2,1 | 1,7 | – |
+| 1 1/2 | 1,12 | 12 | 6,9 | 6,6 | 6 | 3 | 2,4 | – |
+| 2 | 1,49 | 13,6 | 7,8 | 7,5 | 6,8 | 3,4 | 2,7 | – |
+| 3 | 2,24 | – | 11 | 10,6 | 9,6 | 4,8 | 3,9 | – |
+| 5 | 3,73 | – | 17,5 | 16,7 | 15,2 | 7,6 | 6,1 | – |
+| 7 1/2 | 5,59 | – | 25,3 | 24,2 | 22 | 11 | 9 | – |
+| 10 | 7,46 | – | 32,2 | 30,8 | 28 | 14 | 11 | – |
+| 15 | 11,19 | – | 48,3 | 46,2 | 42 | 21 | 17 | – |
+| 20 | 14,91 | – | 62,1 | 59,4 | 54 | 27 | 22 | – |
+| 25 | 18,64 | – | 78,2 | 74,8 | 68 | 34 | 27 | – |
+| 30 | 22,37 | – | 92 | 88 | 80 | 40 | 32 | – |
+| 40 | 29,83 | – | 120 | 114 | 104 | 52 | 41 | – |
+| 50 | 37,28 | – | 150 | 143 | 130 | 65 | 52 | – |
+| 60 | 44,74 | – | 177 | 169 | 154 | 77 | 62 | 16 |
+| 75 | 55,93 | – | 221 | 211 | 192 | 96 | 77 | 20 |
+| 100 | 74,57 | – | 285 | 273 | 248 | 124 | 99 | 26 |
+| 125 | 93,21 | – | 359 | 343 | 312 | 156 | 125 | 31 |
+| 150 | 111,85 | – | 414 | 396 | 360 | 180 | 144 | 37 |
+| 200 | 149,14 | – | 552 | 528 | 480 | 240 | 192 | 49 |
+| 250 | 186,42 | – | – | – | – | 302 | 242 | 60 |
+| 300 | 223,71 | – | – | – | – | 361 | 289 | 72 |
+| 350 | 260,99 | – | – | – | – | 414 | 336 | 83 |
+| 400 | 298,28 | – | – | – | – | 477 | 382 | 95 |
+| 450 | 335,56 | – | – | – | – | 515 | 412 | 103 |
+| 500 | 372,85 | – | – | – | – | 590 | 472 | 118 |
+
+*NEC (NFPA 70) Tab. 430.250 (Drehstrom-Asynchronmotoren) bzw. 430.248 (Einphasen-Wechselstrommotoren); für Leiter und Schutz nach 430.6(A)(1). Gegen die gültige NEC-Ausgabe prüfen.*
+
+### NEC 430.248: Volllaststrom Einphasenmotoren
+
+| hp | kW | 115 V | 200 V | 208 V | 230 V |
+|---|---|---|---|---|---|
+| 1/6 | 0,12 | 4,4 | 2,5 | 2,4 | 2,2 |
+| 1/4 | 0,19 | 5,8 | 3,3 | 3,2 | 2,9 |
+| 1/3 | 0,25 | 7,2 | 4,1 | 4 | 3,6 |
+| 1/2 | 0,37 | 9,8 | 5,6 | 5,4 | 4,9 |
+| 3/4 | 0,56 | 13,8 | 7,9 | 7,6 | 6,9 |
+| 1 | 0,75 | 16 | 9,2 | 8,8 | 8 |
+| 1 1/2 | 1,12 | 20 | 11,5 | 11 | 10 |
+| 2 | 1,49 | 24 | 13,8 | 13,2 | 12 |
+| 3 | 2,24 | 34 | 19,6 | 18,7 | 17 |
+| 5 | 3,73 | 56 | 32,2 | 30,8 | 28 |
+| 7 1/2 | 5,59 | 80 | 46 | 44 | 40 |
+| 10 | 7,46 | 100 | 57,5 | 55 | 50 |
+
+*NEC (NFPA 70) Tab. 430.250 (Drehstrom-Asynchronmotoren) bzw. 430.248 (Einphasen-Wechselstrommotoren); für Leiter und Schutz nach 430.6(A)(1). Gegen die gültige NEC-Ausgabe prüfen.*
+
+### Kennzeichnung der Motorklemmen
+
+| Maschine / Wicklung | IEC 60034-8 | Alt (DIN VDE 0530) | NEMA MG 1 |
+|---|---|---|---|
+| Drehstrom, 6 Klemmen | U1 V1 W1 / U2 V2 W2 | U V W / X Y Z | T1 T2 T3 / T4 T5 T6 |
+| Drehstrom, 9 Klemmen | – | – | T1 … T9 |
+| Drehstrom, 12 Klemmen | U1 U2 U5 U6, V…, W… | – | T1 … T12 |
+| Dahlander (2 Drehzahlen) | 1U 1V 1W / 2U 2V 2W | – | – |
+| Zwei getrennte Wicklungen | 1U1 … 1W2 / 2U1 … 2W2 | – | – |
+| Einphasen: Haupt-/Hilfswicklung | U1–U2 / Z1–Z2 | – | T1–T4 / T5, T8 |
+| Gleichstrom: Anker | A1–A2 | A–B | A1–A2 |
+| Gleichstrom: Nebenschluss | E1–E2 | C–D | F1–F2 |
+| Gleichstrom: Reihenschluss | D1–D2 | E–F | S1–S2 |
+| Gleichstrom: Wendepol | B1–B2 | G–H | – |
+| Gleichstrom: Fremderregung | F1–F2 | J–K | F1–F2 |
+
+*IEC 60034-8 (DIN EN 60034-8): Ziffer 1 = Wicklungsanfang, 2 = Wicklungsende; vorangestellte Ziffer = Drehzahlstufe bzw. Wicklung. Alte Bezeichnung nach DIN VDE 0530 (bis 1977). NEMA MG 1: T-Nummern. Typenschild hat Vorrang.*
+
+### AWG-Umrechnungstabelle
+
+| AWG | d in mm | A in mm² | R in Ω/km | metrisch ≥ |
+|---|---|---|---|---|
+| 4/0 | 11,684 | 107,22 | 0,1608 | 120 |
+| 3/0 | 10,405 | 85,03 | 0,2028 | 95 |
+| 2/0 | 9,266 | 67,43 | 0,2557 | 70 |
+| 1/0 | 8,251 | 53,48 | 0,3224 | 70 |
+| 1 | 7,348 | 42,41 | 0,4066 | 50 |
+| 2 | 6,544 | 33,63 | 0,5127 | 35 |
+| 3 | 5,827 | 26,67 | 0,6464 | 35 |
+| 4 | 5,189 | 21,15 | 0,8152 | 25 |
+| 5 | 4,621 | 16,77 | 1,03 | 25 |
+| 6 | 4,115 | 13,3 | 1,3 | 16 |
+| 7 | 3,665 | 10,55 | 1,63 | 16 |
+| 8 | 3,264 | 8,37 | 2,06 | 10 |
+| 9 | 2,906 | 6,63 | 2,6 | 10 |
+| 10 | 2,588 | 5,26 | 3,28 | 6 |
+| 11 | 2,305 | 4,17 | 4,13 | 6 |
+| 12 | 2,053 | 3,31 | 5,21 | 4 |
+| 13 | 1,828 | 2,62 | 6,57 | 4 |
+| 14 | 1,628 | 2,08 | 8,29 | 2,5 |
+| 15 | 1,45 | 1,65 | 10,45 | 2,5 |
+| 16 | 1,291 | 1,31 | 13,17 | 1,5 |
+| 17 | 1,15 | 1,04 | 16,61 | 1,5 |
+| 18 | 1,024 | 0,823 | 20,95 | 1 |
+| 19 | 0,912 | 0,6527 | 26,41 | 0,75 |
+| 20 | 0,812 | 0,5176 | 33,31 | 0,75 |
+| 21 | 0,723 | 0,4105 | 42 | 0,5 |
+| 22 | 0,644 | 0,3255 | 52,96 | 0,5 |
+| 23 | 0,573 | 0,2582 | 66,78 | 0,5 |
+| 24 | 0,511 | 0,2047 | 84,21 | 0,5 |
+| 25 | 0,455 | 0,1624 | 106,19 | 0,5 |
+| 26 | 0,405 | 0,1288 | 133,9 | 0,5 |
+| 27 | 0,361 | 0,1021 | 168,85 | 0,5 |
+| 28 | 0,321 | 0,081 | 212,92 | 0,5 |
+| 29 | 0,286 | 0,0642 | 268,48 | 0,5 |
+| 30 | 0,255 | 0,0509 | 338,55 | 0,5 |
+| 31 | 0,227 | 0,0404 | 426,9 | 0,5 |
+| 32 | 0,202 | 0,032 | 538,32 | 0,5 |
+| 33 | 0,18 | 0,0254 | 678,8 | 0,5 |
+| 34 | 0,16 | 0,0201 | 855,96 | 0,5 |
+| 35 | 0,143 | 0,016 | 1079,34 | 0,5 |
+| 36 | 0,127 | 0,0127 | 1361,02 | 0,5 |
+| 37 | 0,113 | 0,01 | 1716,22 | 0,5 |
+| 38 | 0,101 | 0,008 | 2164,11 | 0,5 |
+| 39 | 0,09 | 0,0063 | 2728,89 | 0,5 |
+| 40 | 0,08 | 0,005 | 3441,07 | 0,5 |
+
+*ASTM B258: d = 0,127 mm · 92^((36 − n)/39), n = 0 für 1/0, −1 für 2/0 …; A = π/4 · d²; R für Kupfer (massiv) bei 20 °C mit ρ = 0,017241 Ω·mm²/m. Letzte Spalte: nächster metrischer Normquerschnitt ≥ AWG-Querschnitt.*
+
+### SWG-Umrechnungstabelle
+
+| SWG | d in Zoll | d in mm | A in mm² |
+|---|---|---|---|
+| 7/0 | 0,5 | 12,7 | 126,68 |
+| 6/0 | 0,464 | 11,786 | 109,09 |
+| 5/0 | 0,432 | 10,973 | 94,56 |
+| 4/0 | 0,4 | 10,16 | 81,07 |
+| 3/0 | 0,372 | 9,449 | 70,12 |
+| 2/0 | 0,348 | 8,839 | 61,36 |
+| 1/0 | 0,324 | 8,23 | 53,19 |
+| 1 | 0,3 | 7,62 | 45,6 |
+| 2 | 0,276 | 7,01 | 38,6 |
+| 3 | 0,252 | 6,401 | 32,18 |
+| 4 | 0,232 | 5,893 | 27,27 |
+| 5 | 0,212 | 5,385 | 22,77 |
+| 6 | 0,192 | 4,877 | 18,68 |
+| 7 | 0,176 | 4,47 | 15,7 |
+| 8 | 0,16 | 4,064 | 12,97 |
+| 9 | 0,144 | 3,658 | 10,51 |
+| 10 | 0,128 | 3,251 | 8,3 |
+| 11 | 0,116 | 2,946 | 6,82 |
+| 12 | 0,104 | 2,642 | 5,48 |
+| 13 | 0,092 | 2,337 | 4,29 |
+| 14 | 0,08 | 2,032 | 3,24 |
+| 15 | 0,072 | 1,829 | 2,63 |
+| 16 | 0,064 | 1,626 | 2,08 |
+| 17 | 0,056 | 1,422 | 1,59 |
+| 18 | 0,048 | 1,219 | 1,17 |
+| 19 | 0,04 | 1,016 | 0,81 |
+| 20 | 0,036 | 0,914 | 0,6567 |
+| 21 | 0,032 | 0,813 | 0,5189 |
+| 22 | 0,028 | 0,711 | 0,3973 |
+| 23 | 0,024 | 0,61 | 0,2919 |
+| 24 | 0,022 | 0,559 | 0,2452 |
+| 25 | 0,02 | 0,508 | 0,2027 |
+| 26 | 0,018 | 0,457 | 0,1642 |
+| 27 | 0,0164 | 0,417 | 0,1363 |
+| 28 | 0,0148 | 0,376 | 0,111 |
+| 29 | 0,0136 | 0,345 | 0,0937 |
+| 30 | 0,0124 | 0,315 | 0,0779 |
+| 31 | 0,0116 | 0,295 | 0,0682 |
+| 32 | 0,0108 | 0,274 | 0,0591 |
+| 33 | 0,01 | 0,254 | 0,0507 |
+| 34 | 0,0092 | 0,234 | 0,0429 |
+| 35 | 0,0084 | 0,213 | 0,0358 |
+| 36 | 0,0076 | 0,193 | 0,0293 |
+| 37 | 0,0068 | 0,173 | 0,0234 |
+| 38 | 0,006 | 0,152 | 0,0182 |
+| 39 | 0,0052 | 0,132 | 0,0137 |
+| 40 | 0,0048 | 0,122 | 0,0117 |
+| 41 | 0,0044 | 0,112 | 0,0098 |
+| 42 | 0,004 | 0,102 | 0,0081 |
+| 43 | 0,0036 | 0,091 | 0,0066 |
+| 44 | 0,0032 | 0,081 | 0,0052 |
+| 45 | 0,0028 | 0,071 | 0,004 |
+| 46 | 0,0024 | 0,061 | 0,0029 |
+| 47 | 0,002 | 0,051 | 0,002 |
+| 48 | 0,0016 | 0,041 | 0,0013 |
+| 49 | 0,0012 | 0,03 | 0,0007297 |
+| 50 | 0,001 | 0,025 | 0,0005067 |
+
+*Britische Drahtlehre (Imperial Standard Wire Gauge, 1884; BS 3737), Durchmesser in Zoll definiert, 1 in = 25,4 mm.*
+
+### Vergleich imperialer/metrischer Leitergrößen
+
+| mm² (IEC) | Nächste US-Größe | deren mm² | Abweichung in % | US-Größe ≥ |
+|---|---|---|---|---|
+| 0,5 | 20 AWG | 0,52 | 3,5 | 20 AWG |
+| 0,75 | 18 AWG | 0,82 | 9,7 | 18 AWG |
+| 1 | 17 AWG | 1,04 | 3,8 | 17 AWG |
+| 1,5 | 15 AWG | 1,65 | 10 | 15 AWG |
+| 2,5 | 13 AWG | 2,62 | 5 | 13 AWG |
+| 4 | 11 AWG | 4,17 | 4,3 | 11 AWG |
+| 6 | 9 AWG | 6,63 | 10,6 | 9 AWG |
+| 10 | 7 AWG | 10,55 | 5,5 | 7 AWG |
+| 16 | 5 AWG | 16,77 | 4,8 | 5 AWG |
+| 25 | 3 AWG | 26,67 | 6,7 | 3 AWG |
+| 35 | 2 AWG | 33,63 | -3,9 | 1 AWG |
+| 50 | 1/0 AWG | 53,48 | 7 | 1/0 AWG |
+| 70 | 2/0 AWG | 67,43 | -3,7 | 3/0 AWG |
+| 95 | 3/0 AWG | 85,03 | -10,5 | 4/0 AWG |
+| 120 | 250 kcmil | 126,68 | 5,6 | 250 kcmil |
+| 150 | 300 kcmil | 152,01 | 1,3 | 300 kcmil |
+| 185 | 350 kcmil | 177,35 | -4,1 | 400 kcmil |
+| 240 | 500 kcmil | 253,35 | 5,6 | 500 kcmil |
+| 300 | 600 kcmil | 304,02 | 1,3 | 600 kcmil |
+
+*Für jeden metrischen Normquerschnitt (IEC 60228) die nächstliegende AWG-/kcmil-Größe (logarithmisch) und die nächstgrößere. Größen sind nicht gleichwertig – Belastbarkeit immer nach der jeweiligen Norm (IEC bzw. NEC) bestimmen.*
 
 ## Grundlagen
 
@@ -2211,6 +3268,30 @@ AWG 1/0 = 0, 2/0 = −1, 3/0 = −2, 4/0 = −3 eingeben.
 **Eingaben:** Gegeben, AWG, Querschnitt [mm²]
 
 **Ergebnisse:** AWG, Durchmesser [mm], Querschnitt [mm²], Nächster metrischer Normquerschnitt ≥ [mm²]
+
+### Querschnitt / Fläche
+
+*mm², cm², m², in², kcmil (MCM), cmil* — `conv_area`
+
+```text
+Umrechnung über m². 1 in = 25,4 mm (exakt); 1 cmil = Fläche eines Kreises von 1 mil (0,001 in) Durchmesser = π/4 · (25,4 µm)² = 5,0671 · 10⁻⁴ mm²; 1 kcmil (MCM) = 1000 cmil = 0,5067 mm².
+```
+
+**Eingaben:** Wert, Einheit
+
+**Ergebnisse:** Quadratmillimeter [mm²], Quadratzentimeter [cm²], Quadratmeter [m²], Quadratzoll [in²], Quadratfuß [ft²], Kilo-Circular-Mil (MCM) [kcmil], Circular Mil [cmil]
+
+### Länge
+
+*mm, m, km, mil, in, ft, yd, mi, sm* — `conv_length`
+
+```text
+Umrechnung über Meter. Zoll 25,4 mm, Fuß 0,3048 m, Yard 0,9144 m, Meile 1609,344 m, Seemeile 1852 m (alle exakt definiert).
+```
+
+**Eingaben:** Wert, Einheit
+
+**Ergebnisse:** Mikrometer [µm], Millimeter [mm], Zentimeter [cm], Meter [m], Kilometer [km], Mil (1/1000 Zoll) [mil], Zoll [in], Fuß [ft], Yard [yd], Meile [mi], Seemeile [sm]
 
 ## Tabellen & Pinouts
 

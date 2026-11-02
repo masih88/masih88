@@ -180,10 +180,19 @@ struct Table {
     std::vector<std::vector<Text>> rows;
 };
 
+/// Titled group of item ids (calculators, tables, lists) inside a category page
+struct CategoryGroup {
+    Text title;
+    std::vector<std::string> items;
+};
+
 struct Category {
     std::string id;
     Text title;
     std::string badge;  // short symbol for the UI tile
+    /// Optional: grouped page that may also list items of other categories (area "Elektrotechnik").
+    /// Empty = one untitled group with all items whose category is this id.
+    std::vector<CategoryGroup> groups;
 };
 
 /// Raised inside compute functions for a physically impossible or unsupported case.

@@ -12,6 +12,9 @@ namespace elc {
 [[nodiscard]] const std::vector<Calculator>& calculators();
 [[nodiscard]] const std::vector<Table>& tables();
 
+/// Groups shown on a category page (Category::groups, or all items of the category in one untitled group)
+[[nodiscard]] std::vector<CategoryGroup> categoryGroups(std::string_view categoryId);
+
 [[nodiscard]] const Calculator* findCalculator(std::string_view id);
 [[nodiscard]] const Table* findTable(std::string_view id);
 

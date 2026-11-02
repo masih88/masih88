@@ -7,12 +7,13 @@
 #include <vector>
 
 #include "catalog/helpers.hpp"
+#include "catalog/sketch.hpp"
 
 namespace elc::catalog {
 
 namespace {
 
-using P = std::array<double, 2>;
+using P = Sketch::P;
 
 // ------------------------------------------------------------------ drawing helpers (data units, y up)
 
@@ -21,23 +22,7 @@ constexpr double kH = 132;   // drawing height
 constexpr double kVl = 34;   // x of the flow (supply) riser
 constexpr double kRl = 66;   // x of the return riser
 
-struct Sketch {
-    Chart ch;
-
-    void line(const char* style, std::vector<P> pts) { ch.series.push_back({style, std::move(pts)}); }
-    void closed(const char* style, std::vector<P> pts) {
-        pts.push_back(pts.front());
-        line(style, std::move(pts));
-    }
-    void circle(const char* style, double x, double y, double r) {
-        std::vector<P> pts;
-        for (int i = 0; i <= 28; ++i) {
-            const double a = 2.0 * kPi * i / 28.0;
-            pts.push_back({x + r * std::cos(a), y + r * std::sin(a)});
-        }
-        line(style, std::move(pts));
-    }
-    void label(double x, double y, Text t, const char* style = "c") { ch.labels.push_back({x, y, std::move(t), style}); }
+struct HydSketch : Sketch {
     void box(double x0, double y0, double x1, double y1, Text t) {
         closed("bgfill", {{x0, y0}, {x1, y0}, {x1, y1}, {x0, y1}});
         label(0.5 * (x0 + x1), 0.5 * (y0 + y1), std::move(t), "cb");
@@ -104,7 +89,7 @@ struct Sketch {
     }
 };
 
-void drawThrottle(Sketch& s, bool picv) {
+void drawThrottle(HydSketch& s, bool picv) {
     s.risers();
     s.pump(kVl, 42, true);
     s.valve2(kRl, 68, true);
@@ -113,7 +98,7 @@ void drawThrottle(Sketch& s, bool picv) {
     s.boxes();
 }
 
-void drawInject2(Sketch& s, bool picv) {
+void drawInject2(HydSketch& s, bool picv) {
     s.risers();
     s.line("rl", {{kVl, 72}, {kRl, 72}});
     s.pump(kVl, 40, true);
@@ -126,7 +111,7 @@ void drawInject2(Sketch& s, bool picv) {
     s.boxes();
 }
 
-void drawMixing(Sketch& s, bool fixed) {
+void drawMixing(HydSketch& s, bool fixed) {
     s.risers();
     const double node = fixed ? 56 : 64;
     s.line("rl", {{kVl, node}, {kRl, node}});
@@ -141,7 +126,7 @@ void drawMixing(Sketch& s, bool fixed) {
     s.boxes();
 }
 
-void drawDiverting(Sketch& s) {
+void drawDiverting(HydSketch& s) {
     s.risers();
     s.line("vl", {{kVl, 66}, {kRl, 66}});
     s.balancing(50, 66);
@@ -151,7 +136,7 @@ void drawDiverting(Sketch& s) {
     s.boxes();
 }
 
-void drawInject3(Sketch& s) {
+void drawInject3(HydSketch& s) {
     s.risers();
     s.line("vl", {{kVl, 46}, {kRl, 46}});
     s.line("rl", {{kVl, 78}, {kRl, 78}});
@@ -375,7 +360,7 @@ const Circuit& findCircuit(const std::vector<Circuit>& all, const std::string& c
 }
 
 Chart drawCircuit(const std::string& code) {
-    Sketch s;
+    HydSketch s;
     if (code == "throttle") drawThrottle(s, false);
     else if (code == "throttle_picv") drawThrottle(s, true);
     else if (code == "inject2") drawInject2(s, false);

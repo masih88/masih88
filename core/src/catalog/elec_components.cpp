@@ -256,7 +256,7 @@ Calculator currentDivider() {
     c.inputs = {Num::number("I", {"Gesamtstrom I", "Total current I"}, "A", 1).positive(),
                 Num::number("R1", {"R₁", "R₁"}, "Ω", 100).positive(),
                 Num::number("R2", {"R₂", "R₂"}, "Ω", 220).positive(),
-                Num::number("R3", {"R₃ (optional)", "R₃ (optional)"}, "Ω", 470).positive().opt()};
+                Num::number("R3", {"R₃", "R₃"}, "Ω", 470).positive().opt()};
     c.outputs = {Out::number("I1", {"Strom durch R₁", "Current through R₁"}, "A", 4).primary(),
                  Out::number("I2", {"Strom durch R₂", "Current through R₂"}, "A", 4),
                  Out::number("I3", {"Strom durch R₃", "Current through R₃"}, "A", 4),
@@ -297,7 +297,7 @@ Calculator zenerCalc() {
                 Num::number("IzMin", {"Min. Zenerstrom I_Z,min", "Min. Zener current I_Z,min"}, "mA", 5).positive(),
                 Num::number("ILmin", {"Laststrom min.", "Load current min."}, "mA", 0).nonNegative(),
                 Num::number("ILmax", {"Laststrom max.", "Load current max."}, "mA", 20).nonNegative(),
-                Num::number("Pz", {"Belastbarkeit der Z-Diode (optional)", "Zener power rating (optional)"}, "W", 0.5).positive().opt()};
+                Num::number("Pz", {"Belastbarkeit der Z-Diode", "Zener power rating"}, "W", 0.5).positive().opt()};
     c.outputs = {Out::number("Rv", {"Vorwiderstand (E12)", "Series resistor (E12)"}, "Ω", 0).primary(),
                  Out::number("Rcalc", {"Vorwiderstand rechnerisch", "Series resistor calculated"}, "Ω", 1),
                  Out::number("PR", {"Verlustleistung R_v", "Power in R_v"}, "W", 3),
@@ -383,7 +383,7 @@ Calculator transformerWindings() {
                 Num::number("U2", {"Sekundärspannung U₂", "Secondary voltage U₂"}, "V", 24).positive(),
                 Num::choice("f", {"Frequenz", "Frequency"}, {{"50", "50 Hz"}, {"60", "60 Hz"}}, "50"),
                 Num::number("B", {"Flussdichte B", "Flux density B"}, "T", 1.2).rangeExclusiveMin(0, 2),
-                Num::number("A", {"Eisenquerschnitt A_Fe (optional)", "Core cross-section A_core (optional)"}, "cm²", 10).positive().opt(),
+                Num::number("A", {"Eisenquerschnitt A_Fe", "Core cross-section A_core"}, "cm²", 10).positive().opt(),
                 Num::number("add", {"Zuschlag Sekundärwindungen", "Allowance secondary turns"}, "%", 5).range(0, 30)};
     c.outputs = {Out::number("ratio", {"Übersetzung ü", "Turns ratio"}, "", 3).primary(),
                  Out::number("I1", {"Primärstrom I₁", "Primary current I₁"}, "A", 3),
@@ -464,7 +464,7 @@ Calculator cctvStorage() {
                 Num::number("fps", {"Bilder pro Sekunde", "Frames per second"}, "1/s", 15).range(1, 60),
                 Num::choice("codec", {"Videokompression", "Video codec"},
                             {{"h264", "H.264"}, {"h265", "H.265"}, {"mjpeg", "MJPEG"}}, "h265"),
-                Num::number("br", {"Bitrate je Kamera (Herstellerwert, optional)", "Bitrate per camera (manufacturer, optional)"}, "Mbit/s", kNaN)
+                Num::number("br", {"Bitrate je Kamera (Herstellerwert)", "Bitrate per camera (manufacturer)"}, "Mbit/s", kNaN)
                     .positive()
                     .opt(),
                 Num::number("hours", {"Aufzeichnung pro Tag", "Recording per day"}, "h", 24).range(0, 24),

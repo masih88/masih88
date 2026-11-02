@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.7.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.8.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -109,7 +109,7 @@ P = I² · R    W = I² · R · t    ΔT = W / (m · c) (ohne Wärmeverluste)
 c: Wasser 4186, Kupfer 385, Aluminium 897, Luft 1005 J/(kg·K).
 ```
 
-**Eingaben:** Widerstand R [Ω], Strom I [A], Zeit t [s], Masse m (optional) [kg], Spezifische Wärmekapazität c [J/(kg·K)]
+**Eingaben:** Widerstand R [Ω], Strom I [A], Zeit t [s], Masse m [kg], Spezifische Wärmekapazität c [J/(kg·K)]
 
 **Ergebnisse:** Leistung P [W], Wärmeenergie W [kJ], Wärmeenergie W [Wh], Temperaturerhöhung ΔT [K]
 
@@ -123,7 +123,7 @@ c_min = 0,95 (NS, IEC 60909-0 / DIN EN 60909-0). Leiterwiderstand bei Endtempera
 Prüfung: I_k1min ≥ I_a der Schutzeinrichtung (Abschaltbedingung).
 ```
 
-**Eingaben:** Nennspannung gegen Erde U₀ [V], Schleifenimpedanz am Leitungsanfang Z_V [mΩ], Leitermaterial, Leitungslänge L [m], Querschnitt Außenleiter, Querschnitt PE, Leitertemperatur θ [°C], Abschaltstrom I_a der Schutzeinrichtung (optional) [A]
+**Eingaben:** Nennspannung gegen Erde U₀ [V], Schleifenimpedanz am Leitungsanfang Z_V [mΩ], Leitermaterial, Leitungslänge L [m], Querschnitt Außenleiter, Querschnitt PE, Leitertemperatur θ [°C], Abschaltstrom I_a der Schutzeinrichtung [A]
 
 **Ergebnisse:** I_k1min (L–PE) [A], I_k1min (L–N, N wie PE) [A], I_k2min (L–L) [A], Schleifenimpedanz Z_s am Ende [mΩ], I_k1min / I_a
 
@@ -137,7 +137,7 @@ TN-System (411.4.4): Z_s · I_a ≤ U₀; mit RCD ist I_a = I_Δn (5 · I_Δn f�
 Gegen die gültige Ausgabe prüfen.
 ```
 
-**Eingaben:** Netzsystem, Bemessungsdifferenzstrom I_Δn, Berührungsspannung U_L, Nennspannung U₀ [V], Gemessen: R_A bzw. Z_s (optional) [Ω]
+**Eingaben:** Netzsystem, Bemessungsdifferenzstrom I_Δn, Berührungsspannung U_L, Nennspannung U₀ [V], Gemessen: R_A bzw. Z_s [Ω]
 
 **Ergebnisse:** Zulässiger Widerstand (R_A bzw. Z_s) [Ω], Berührungsspannung bei I_Δn [V], Max. I_Δn für den gemessenen Widerstand [mA]
 
@@ -195,7 +195,7 @@ Mineralisolierte Kupferkabel (MICC) nach IEC 60702-1, Mantel PVC-umhüllt oder b
 Umgebungstemperatur: f = √((70 − θ_a)/(70 − 30)) als Näherung von Tab. B.52.14 – für blanke, nicht berührbare Kabel (Mantel 105 °C, Tab. B.52.7) und Häufung die Norm verwenden. Gegen die gültige Ausgabe prüfen.
 ```
 
-**Eingaben:** Ausführung, Aderzahl / Belastung, Querschnitt, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b (optional) [A]
+**Eingaben:** Ausführung, Aderzahl / Belastung, Querschnitt, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b [A]
 
 **Ergebnisse:** Belastbarkeit I_z [A], Tabellenwert (30 °C) [A], Faktor Umgebungstemperatur, Kabelbezeichnung
 
@@ -208,7 +208,7 @@ Dauerströme für E-Cu-Schienen mit Rechteckquerschnitt in Innenanlagen bei 25 �
 Andere Umgebungstemperatur als Näherung: I = I₂₅ · √((65 − θ_a)/(65 − 25)) (Wärmeabgabe ∝ Übertemperatur). Für Auslegung die Korrekturfaktoren der DIN 43671 bzw. Herstellerangaben verwenden (Anordnung, Anstrich, Höhe, Frequenz).
 ```
 
-**Eingaben:** Schiene B × D, Schienen je Leiter, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b (optional) [A]
+**Eingaben:** Schiene B × D, Schienen je Leiter, Umgebungstemperatur θ_a [°C], Betriebsstrom I_b [A]
 
 **Ergebnisse:** Dauerstrom bei θ_a [A], Tabellenwert (25 °C) [A], Querschnitt [mm²], Stromdichte [A/mm²], Gewicht je Leiter [kg/m]
 
@@ -248,7 +248,7 @@ P_V = n · I² · ρ(θ) · L / A    n = 2 (DC/1~), 3 (3~, symmetrisch)
 E = P_V · Betriebsstunden    Kosten = E · Strompreis. θ = mittlere Leitertemperatur (siehe Kabeltemperatur), Neutralleiter ohne Strom.
 ```
 
-**Eingaben:** Netz, Strom I [A], Länge L (einfach) [m], Leitermaterial, Querschnitt, Leitertemperatur θ [°C], Spannung U (optional, für %) [V], Leistungsfaktor cos φ, Betriebsstunden pro Jahr [h], Strompreis pro kWh [€ / CHF]
+**Eingaben:** Netz, Strom I [A], Länge L (einfach) [m], Leitermaterial, Querschnitt, Leitertemperatur θ [°C], Spannung U (für %) [V], Leistungsfaktor cos φ, Betriebsstunden pro Jahr [h], Strompreis pro kWh [€ / CHF]
 
 **Ergebnisse:** Verlustleistung P_V [W], Verluste je Meter Leitung [W/m], Anteil an der übertragenen Leistung [%], Verlustenergie pro Jahr [kWh], Verlustkosten pro Jahr [€]
 
@@ -357,7 +357,7 @@ Parallelschaltung: U = I · R_ges, 1/R_ges = Σ 1/R_i    I_i = U / R_i
 Zwei Widerstände: I₁ = I · R₂ / (R₁ + R₂).
 ```
 
-**Eingaben:** Gesamtstrom I [A], R₁ [Ω], R₂ [Ω], R₃ (optional) [Ω]
+**Eingaben:** Gesamtstrom I [A], R₁ [Ω], R₂ [Ω], R₃ [Ω]
 
 **Ergebnisse:** Strom durch R₁ [A], Strom durch R₂ [A], Strom durch R₃ [A], Spannung U [V], Ersatzwiderstand R_ges [Ω]
 
@@ -371,7 +371,7 @@ I_Z,max = (U_e,max − U_Z) / R_v − I_L,min    P_Z = U_Z · I_Z,max    P_R = (
 I_Z,min typ. 5 mA (bzw. 10 % von I_Z,max). Z-Diode nach P_Z mit Reserve wählen (z. B. 0,5 W, 1,3 W).
 ```
 
-**Eingaben:** Eingangsspannung min. [V], Eingangsspannung max. [V], Zenerspannung U_Z [V], Min. Zenerstrom I_Z,min [mA], Laststrom min. [mA], Laststrom max. [mA], Belastbarkeit der Z-Diode (optional) [W]
+**Eingaben:** Eingangsspannung min. [V], Eingangsspannung max. [V], Zenerspannung U_Z [V], Min. Zenerstrom I_Z,min [mA], Laststrom min. [mA], Laststrom max. [mA], Belastbarkeit der Z-Diode [W]
 
 **Ergebnisse:** Vorwiderstand (E12) [Ω], Vorwiderstand rechnerisch [Ω], Verlustleistung R_v [W], Max. Zenerstrom [mA], Max. Verlustleistung Z-Diode [W]
 
@@ -398,7 +398,7 @@ N₁ = w · U₁    N₂ = w · U₂ · (1 + Zuschlag) (Ausgleich der Spannungsa
 B: Dynamoblech 1,0–1,4 T (Kernblech EI). Ohne Angabe A_Fe ≈ √S cm² (Faustformel für EI-Kerne).
 ```
 
-**Eingaben:** Bemessungsleistung S [VA], Primärspannung U₁ [V], Sekundärspannung U₂ [V], Frequenz, Flussdichte B [T], Eisenquerschnitt A_Fe (optional) [cm²], Zuschlag Sekundärwindungen [%]
+**Eingaben:** Bemessungsleistung S [VA], Primärspannung U₁ [V], Sekundärspannung U₂ [V], Frequenz, Flussdichte B [T], Eisenquerschnitt A_Fe [cm²], Zuschlag Sekundärwindungen [%]
 
 **Ergebnisse:** Übersetzung ü, Primärstrom I₁ [A], Sekundärstrom I₂ [A], Windungen je Volt [1/V], Windungen primär N₁, Windungen sekundär N₂, Verwendeter Eisenquerschnitt [cm²]
 
@@ -424,7 +424,7 @@ Bitrate ≈ Pixel · Bilder/s · Bits je Pixel (Richtwerte: H.264 0,08, H.265 0,
 Bandbreite = n · Bitrate    Speicher = n · Bitrate · Aufzeichnungsdauer · Anteil / 8 (1 TB = 10¹² Byte).
 ```
 
-**Eingaben:** Anzahl Kameras, Auflösung, Bilder pro Sekunde [1/s], Videokompression, Bitrate je Kamera (Herstellerwert, optional) [Mbit/s], Aufzeichnung pro Tag [h], Anteil mit Aufzeichnung (Bewegung) [%], Speicherdauer [d]
+**Eingaben:** Anzahl Kameras, Auflösung, Bilder pro Sekunde [1/s], Videokompression, Bitrate je Kamera (Herstellerwert) [Mbit/s], Aufzeichnung pro Tag [h], Anteil mit Aufzeichnung (Bewegung) [%], Speicherdauer [d]
 
 **Ergebnisse:** Speicherbedarf [TB], Bitrate je Kamera [Mbit/s], Netzwerklast gesamt [Mbit/s], Speicher pro Tag [GB]
 
@@ -599,6 +599,43 @@ Für Leistungsfaktoren gilt 0 ≤ φ ≤ 90° (induktiv oder kapazitiv – das V
 **Eingaben:** Wert, Gegeben
 
 **Ergebnisse:** Phasenwinkel φ [°], Phasenwinkel φ [rad], cos φ, sin φ, tan φ = Q/P
+
+### Auslösekennlinien
+
+*Zeit-Strom-Bereich von LS-Schaltern B, C, D (IEC 60898-1)* — `trip_curves`
+
+```text
+Auslösebereich zwischen Nichtauslöse- und Auslösekennlinie nach den Prüfpunkten der IEC 60898-1: 1,13 · I_n ≥ 1 h, 1,45 · I_n < 1 h, 2,55 · I_n 1 … 60 s (I_n ≤ 32 A), magnetisch B 3–5, C 5–10, D 10–20 · I_n (< 0,1 s). Zwischen den Prüfpunkten schematisch (im log-log-Diagramm gerade). Genaue Kennlinien liefert der Hersteller.
+Mit Kurzschlussstrom: Auslösezeit-Bereich am Fehlerort (Abschaltbedingung: Auslösung im magnetischen Bereich).
+```
+
+**Eingaben:** Charakteristik, Bemessungsstrom I_n [A], Fehler-/Kurzschlussstrom [A]
+
+**Ergebnisse:** Sicher magnetisch ab [A], Keine Schnellauslösung bis [A], I_k / I_n, Bereich bei I_k
+
+### Netzsysteme TN, TT, IT (Schaltbild)
+
+*Aufbau von TN-S, TN-C, TN-C-S, TT und IT mit Zeichnung* — `earthing_systems`
+
+```text
+IEC 60364-1 / DIN VDE 0100-100: 1. Buchstabe Erdung der Stromquelle (T = direkt geerdet, I = isoliert oder hochohmig), 2. Buchstabe Erdung der Körper (T = eigener Erder, N = über den Schutzleiter mit dem Sternpunkt). S = N und PE getrennt, C = kombiniert als PEN. Schutzmaßnahmen siehe Rechner Erdung/RCD und Abschaltbedingung.
+```
+
+**Eingaben:** Netzsystem
+
+**Ergebnisse:** Stromquelle, Körper (Gehäuse), Fehlerschutz, Hinweis
+
+### Schaltzeichen
+
+*Grafische Symbole nach IEC 60617 (vereinfacht)* — `electrical_symbols`
+
+```text
+Schaltzeichen nach IEC 60617 / DIN EN 60617 (Stromlaufpläne) und Installationssymbole nach DIN EN 60617-11 (Installationspläne), vereinfacht gezeichnet. Bauteilkennbuchstaben nach IEC 81346-2 (z. B. R Widerstand, C Kondensator, Q Schaltgerät, K Relais, F Schutzgerät, M Motor, P Messgerät, E Leuchte).
+```
+
+**Eingaben:** Gruppe
+
+**Ergebnisse:** Symbole
 
 ### Zulässige spezifische Durchlassenergie k²S²
 
@@ -1102,6 +1139,533 @@ Für Leistungsfaktoren gilt 0 ≤ φ ≤ 90° (induktiv oder kapazitiv – das V
 | 300 | 600 kcmil | 304,02 | 1,3 | 600 kcmil |
 
 *Für jeden metrischen Normquerschnitt (IEC 60228) die nächstliegende AWG-/kcmil-Größe (logarithmisch) und die nächstgrößere. Größen sind nicht gleichwertig – Belastbarkeit immer nach der jeweiligen Norm (IEC bzw. NEC) bestimmen.*
+
+### UL/CSA-Sicherungsklassen
+
+| Klasse | Spannung | Bemessungsstrom | Schaltvermögen | Merkmal / Einsatz |
+|---|---|---|---|---|
+| CC | 600 V AC | 0–30 A | 200 kA | klein (13/32" × 1½"), Steuerstromkreise, Motoren |
+| CD | 600 V AC | 35–60 A | 200 kA | wie CC, größere Ströme |
+| G | 480–600 V AC | 0–60 A | 100 kA | Längen je Strombereich verschieden |
+| H | 250/600 V AC | 0–600 A | 10 kA | ältere Bauart, geringes Schaltvermögen |
+| J | 600 V AC | 0–600 A | 200 kA | strombegrenzend, kompakt |
+| K | 250/600 V AC | 0–600 A | 50–200 kA | Maße wie H, ohne Unverwechselbarkeit |
+| L | 600 V AC | 601–6000 A | 200 kA | Schraubbefestigung, Einspeisungen |
+| R (RK1, RK5) | 250/600 V AC | 0–600 A | 200 kA | Unverwechselbarkeit durch Nut, Motorabgänge |
+| T | 300/600 V AC | 0–1200 A | 200 kA | sehr kompakt, sehr flink |
+
+*UL 248 / CSA C22.2 No. 248. Klassen mit Unverwechselbarkeit (rejection: CC, J, L, R, T) nehmen keine Sicherung mit geringerem Schaltvermögen auf. Werte als Übersicht – Herstellerdaten und gültige Normausgabe prüfen.*
+
+### Auslösekennlinien: Prüfströme
+
+| Gerät | Nichtauslösen | Auslösen | Hinweis |
+|---|---|---|---|
+| LS B, C, D (thermisch) | 1,13 · I_n ≥ 1 h | 1,45 · I_n < 1 h | 2,55 · I_n: 1–60 s (I_n ≤ 32 A), 1–120 s (> 32 A) |
+| LS B (magnetisch) | 3 · I_n ≥ 0,1 s | 5 · I_n < 0,1 s | Leitungsschutz |
+| LS C (magnetisch) | 5 · I_n ≥ 0,1 s | 10 · I_n < 0,1 s | Motoren, Leuchten |
+| LS D (magnetisch) | 10 · I_n ≥ 0,1 s | 20 · I_n < 0,1 s | hohe Einschaltströme |
+| LS K | 1,05 · I_n; 8 · I_n | 1,2 · I_n; 14 · I_n | IEC 60947-2, Herstellerangaben |
+| LS Z | 1,05 · I_n; 2 · I_n | 1,2 · I_n; 3 · I_n | Halbleiter, Messkreise |
+| Sicherung gG (I_n ≥ 16 A) | 1,25 · I_n (I_nf) | 1,6 · I_n (I_f) | Prüfdauer 1–4 h je nach I_n |
+| RCD unverzögert | 0,5 · I_Δn | I_Δn ≤ 300 ms, 2 · I_Δn ≤ 150 ms, 5 · I_Δn ≤ 40 ms | Typ AC, A, F, B je nach Fehlerstromform |
+| RCD selektiv (S) | I_Δn: ≥ 130 ms | I_Δn ≤ 500 ms, 5 · I_Δn ≤ 150 ms | vorgeschaltet für Selektivität |
+
+*LS-Schalter IEC 60898-1 (B, C, D) bzw. IEC 60947-2 (K, Z); gG-Sicherungen IEC 60269-2; RCD IEC 61008/61009 (Abschaltzeiten bei Bemessungsdifferenzstrom, unverzögert/selektiv S). Verlauf der Kennlinien: Rechner „Auslösekennlinien“. Gegen die gültige Ausgabe prüfen.*
+
+### Normwerte von Widerständen (E-Reihen)
+
+| E24 | E12 | E6 | E3 |
+|---|---|---|---|
+| 1 | ✓ | ✓ | ✓ |
+| 1,1 | – | – | – |
+| 1,2 | ✓ | – | – |
+| 1,3 | – | – | – |
+| 1,5 | ✓ | ✓ | – |
+| 1,6 | – | – | – |
+| 1,8 | ✓ | – | – |
+| 2 | – | – | – |
+| 2,2 | ✓ | ✓ | ✓ |
+| 2,4 | – | – | – |
+| 2,7 | ✓ | – | – |
+| 3 | – | – | – |
+| 3,3 | ✓ | ✓ | – |
+| 3,6 | – | – | – |
+| 3,9 | ✓ | – | – |
+| 4,3 | – | – | – |
+| 4,7 | ✓ | ✓ | ✓ |
+| 5,1 | – | – | – |
+| 5,6 | ✓ | – | – |
+| 6,2 | – | – | – |
+| 6,8 | ✓ | ✓ | – |
+| 7,5 | – | – | – |
+| 8,2 | ✓ | – | – |
+| 9,1 | – | – | – |
+
+*IEC 60063: Werte je Dekade (× 1, 10, 100 … Ω). Toleranz: E3 > ±20 %, E6 ±20 %, E12 ±10 %, E24 ±5 %; E48 ±2 %, E96 ±1 %, E192 ≤ ±0,5 % – E96 siehe Tabelle EIA-96-Code. Rechner „E-Reihe“ findet den nächsten Normwert.*
+
+### Reaktanzbeläge von Kabeln
+
+| A in mm² | mehradrig | Einleiter, Dreieck | Einleiter, Abstand |
+|---|---|---|---|
+| 1,5 | 0,108 | 0,157 | 0,201 |
+| 2,5 | 0,099 | 0,145 | 0,189 |
+| 4 | 0,099 | 0,138 | 0,181 |
+| 6 | 0,093 | 0,129 | 0,172 |
+| 10 | 0,087 | 0,119 | 0,162 |
+| 16 | 0,082 | 0,11 | 0,154 |
+| 25 | 0,082 | 0,105 | 0,148 |
+| 35 | 0,079 | 0,1 | 0,143 |
+| 50 | 0,078 | 0,096 | 0,14 |
+| 70 | 0,076 | 0,092 | 0,135 |
+| 95 | 0,075 | 0,09 | 0,133 |
+| 120 | 0,074 | 0,087 | 0,13 |
+| 150 | 0,074 | 0,086 | 0,129 |
+| 185 | 0,074 | 0,085 | 0,128 |
+| 240 | 0,073 | 0,083 | 0,126 |
+| 300 | 0,073 | 0,082 | 0,125 |
+
+*Berechnet je Leiter: X' = 2πf · μ₀/(2π) · (1/4 + ln(a/r)), r = √(A/π), a = Achsabstand der Leiter. Mehradrig: a = 2 · (r + Isolierdicke nach IEC 60502-1); Einleiter im Dreieck: zusätzlich 1,8 mm Mantel; Einleiter mit Abstand = doppelter Kabeldurchmesser. Näherung (Sektorleiter, Verseilung und Bewehrung nicht berücksichtigt) – Herstellerwerte bevorzugen. Üblicher Rechenwert für mehradrige Kabel: 0,08 mΩ/m. Bei 60 Hz × 1,2.*
+
+### Spezifischer Widerstand und Leitfähigkeit
+
+| Werkstoff | ρ in Ω·mm²/m | κ in m/(Ω·mm²) | α in 10⁻³/K |
+|---|---|---|---|
+| Silber | 0,0159 | 62,89 | 3,8 |
+| Kupfer (IACS, weich) | 0,0172 | 58 | 3,93 |
+| Gold | 0,0244 | 40,98 | 3,4 |
+| Aluminium (Leiter) | 0,0283 | 35,38 | 4,03 |
+| Wolfram | 0,055 | 18,18 | 4,5 |
+| Zink | 0,059 | 16,95 | 3,7 |
+| Nickel | 0,069 | 14,49 | 6 |
+| Messing (CuZn37) | 0,067 | 14,93 | 1,5 |
+| Eisen (rein) | 0,1 | 10 | 6,5 |
+| Platin | 0,106 | 9,43 | 3,85 |
+| Zinn | 0,115 | 8,7 | 4,5 |
+| Stahl (unlegiert) | 0,14 | 7,14 | 5 |
+| Blei | 0,208 | 4,81 | 3,9 |
+| Edelstahl 1.4301 | 0,73 | 1,37 | 1 |
+| Manganin | 0,43 | 2,33 | 0,01 |
+| Konstantan | 0,49 | 2,04 | 0,01 |
+| Quecksilber | 0,958 | 1,04 | 0,9 |
+| Nickelchrom (NiCr 80/20) | 1,1 | 0,91 | 0,1 |
+
+*Typische Werte bei 20 °C (Tabellenbuch); je nach Reinheit/Legierung abweichend. Kupfer und Aluminium für Leiter nach IEC 60028 bzw. IEC 60889. R = ρ · L / A, κ = 1/ρ, R(θ) = R₂₀ · (1 + α · (θ − 20 °C)).*
+
+### Spannungsfall je Ampere und Meter
+
+| A in mm² | 1~ cos φ = 1 | 1~ cos φ = 0,8 | 3~ cos φ = 1 | 3~ cos φ = 0,8 |
+|---|---|---|---|---|
+| 1,5 | 27,51 | 22,1 | 23,82 | 19,14 |
+| 2,5 | 16,5 | 13,3 | 14,29 | 11,52 |
+| 4 | 10,31 | 8,35 | 8,93 | 7,23 |
+| 6 | 6,88 | 5,6 | 5,96 | 4,85 |
+| 10 | 4,13 | 3,4 | 3,57 | 2,94 |
+| 16 | 2,58 | 2,16 | 2,23 | 1,87 |
+| 25 | 1,65 | 1,42 | 1,43 | 1,23 |
+| 35 | 1,18 | 1,04 | 1,02 | 0,9 |
+| 50 | 0,83 | 0,76 | 0,71 | 0,65 |
+| 70 | 0,59 | 0,57 | 0,51 | 0,49 |
+| 95 | 0,43 | 0,44 | 0,38 | 0,38 |
+| 120 | 0,34 | 0,37 | 0,3 | 0,32 |
+| 150 | 0,28 | 0,32 | 0,24 | 0,27 |
+| 185 | 0,22 | 0,27 | 0,19 | 0,24 |
+| 240 | 0,17 | 0,23 | 0,15 | 0,2 |
+| 300 | 0,14 | 0,21 | 0,12 | 0,18 |
+
+*ΔU = k · (ρ/A · cos φ + X' · sin φ) mit k = 2 (1~, Hin- und Rückleiter) bzw. √3 (3~), ρ bei 70 °C (PVC), X' = 0,08 mΩ/m. Spannungsfall = Tabellenwert · I · L / 1000 in V. Rechner „Spannungsfall“ rechnet genauer.*
+
+### Abmessungen und Gewicht von Leitern
+
+| A in mm² | d in mm | R₂₀ max. in Ω/km | Cu in kg/km | Al in kg/km | Isolierung in mm |
+|---|---|---|---|---|---|
+| 1,5 | 1,38 | 12,1 | 13,3 | 4,1 | 0,8 |
+| 2,5 | 1,78 | 7,41 | 22,2 | 6,8 | 0,8 |
+| 4 | 2,26 | 4,61 | 35,6 | 10,8 | 1 |
+| 6 | 2,76 | 3,08 | 53,3 | 16,2 | 1 |
+| 10 | 3,57 | 1,83 | 88,9 | 27 | 1 |
+| 16 | 4,51 | 1,15 | 142,2 | 43,2 | 1 |
+| 25 | 5,64 | 0,727 | 222,2 | 67,5 | 1,2 |
+| 35 | 6,68 | 0,524 | 311,2 | 94,5 | 1,2 |
+| 50 | 7,98 | 0,387 | 444,5 | 135 | 1,4 |
+| 70 | 9,44 | 0,268 | 622,3 | 189 | 1,4 |
+| 95 | 11 | 0,193 | 844,6 | 256,5 | 1,6 |
+| 120 | 12,36 | 0,153 | 1066,8 | 324 | 1,6 |
+| 150 | 13,82 | 0,124 | 1333,5 | 405 | 1,8 |
+| 185 | 15,35 | 0,0991 | 1644,7 | 499,5 | 2 |
+| 240 | 17,48 | 0,0754 | 2133,6 | 648 | 2,2 |
+| 300 | 19,54 | 0,0601 | 2667 | 810 | 2,4 |
+
+*d = Durchmesser eines massiven Rundleiters; R₂₀ max. nach IEC 60228 (Kupfer blank, Klasse 1/2); Metallgewicht je Leiter mit Dichte Cu 8,89 und Al 2,70 kg/dm³ (Kabelgewicht = Metall · Aderzahl + Isolierung und Mantel, siehe Herstellerdatenblatt); Isolierwanddicke PVC 0,6/1 kV nach IEC 60502-1. Außendurchmesser sind herstellerabhängig.*
+
+### IK-Code (Stoßfestigkeit)
+
+| IK | Energie | Masse | Fallhöhe |
+|---|---|---|---|
+| IK00 | kein Schutz | – | – |
+| IK01 | 0,14 J | 0,25 kg | 56 mm |
+| IK02 | 0,2 J | 0,25 kg | 80 mm |
+| IK03 | 0,35 J | 0,25 kg | 140 mm |
+| IK04 | 0,5 J | 0,25 kg | 200 mm |
+| IK05 | 0,7 J | 0,25 kg | 280 mm |
+| IK06 | 1 J | 0,25 kg | 400 mm |
+| IK07 | 2 J | 0,5 kg | 400 mm |
+| IK08 | 5 J | 1,7 kg | 300 mm |
+| IK09 | 10 J | 5 kg | 200 mm |
+| IK10 | 20 J | 5 kg | 400 mm |
+
+*IEC 62262 / EN 62262: Schutz von Gehäusen gegen mechanische Stöße. Prüfung mit Fallhammer (Masse, Fallhöhe).*
+
+### NEMA-Gehäusetypen
+
+| Typ | Einsatz / Schutz | ≈ IP |
+|---|---|---|
+| 1 | innen, Berührung, fallender Schmutz | IP10 |
+| 2 | innen, Tropfwasser | IP11 |
+| 3 | außen, Regen, Schnee, Staub, Eis | IP54 |
+| 3R | außen, Regen, Schnee, Eis (nicht Staub) | IP14 |
+| 3S | wie 3, bedienbar bei Vereisung | IP54 |
+| 4 | innen/außen, Strahlwasser | IP56 |
+| 4X | wie 4 + korrosionsbeständig | IP56 |
+| 5 | innen, Staub, Tropfwasser | IP52 |
+| 6 | zeitweises Untertauchen | IP67 |
+| 6P | längeres Untertauchen | IP67 |
+| 7, 8, 9, 10 | explosionsgefährdete Bereiche / Bergbau | – |
+| 12, 12K | innen, Industrie: Staub, Tropföl, Kühlmittel | IP52 |
+| 13 | innen, Staub, Spritzöl und Kühlmittel | IP54 |
+
+*NEMA 250 (Nordamerika). Die IP-Angabe ist die Mindestentsprechung nach NEMA-Umrechnungstabelle – NEMA-Typen verlangen zusätzliche Prüfungen (Korrosion, Eis, Öl); eine Umrechnung von IP nach NEMA ist nicht zulässig.*
+
+### CCTV-Auflösungen
+
+| Bezeichnung | Pixel | Megapixel | Format |
+|---|---|---|---|
+| QCIF | 176 × 144 | 0,03 | 11:9 |
+| CIF | 352 × 288 | 0,1 | 11:9 |
+| 4CIF | 704 × 576 | 0,41 | 11:9 |
+| D1 (PAL) | 720 × 576 | 0,41 | 5:4 |
+| 960H | 960 × 576 | 0,55 | 5:3 |
+| 720p (HD) | 1280 × 720 | 0,92 | 16:9 |
+| 960p (1,3 MP) | 1280 × 960 | 1,23 | 4:3 |
+| 1080p (Full HD, 2 MP) | 1920 × 1080 | 2,07 | 16:9 |
+| 3 MP | 2048 × 1536 | 3,15 | 4:3 |
+| 4 MP | 2560 × 1440 | 3,69 | 16:9 |
+| 5 MP | 2592 × 1944 | 5,04 | 4:3 |
+| 6 MP | 3072 × 2048 | 6,29 | 3:2 |
+| 4K UHD (8 MP) | 3840 × 2160 | 8,29 | 16:9 |
+| 12 MP | 4000 × 3000 | 12 | 4:3 |
+
+*Übliche Auflösungen von Überwachungskameras (analog: CIF/D1/960H, IP: HD bis 4K). Speicherbedarf siehe Rechner „CCTV Speicherplatz“. Bezeichnungen „MP“ sind herstellerüblich, die genaue Pixelzahl kann abweichen.*
+
+### Thermoelemente: Farben und Daten
+
+| Typ | Paarung | Bereich | E(100 °C) in mV | IEC 60584-3 | ANSI MC96.1 |
+|---|---|---|---|---|---|
+| K | NiCr – NiAl | -270 … 1372 °C | 4,096 | grün / weiß | gelb / rot, Mantel gelb |
+| J | Fe – CuNi | -210 … 1200 °C | 5,269 | schwarz / weiß | weiß / rot, Mantel schwarz |
+| T | Cu – CuNi | -270 … 400 °C | 4,279 | braun / weiß | blau / rot, Mantel blau |
+| E | NiCr – CuNi | -270 … 1000 °C | 6,319 | violett / weiß | violett / rot, Mantel violett |
+| N | NiCrSi – NiSi | -270 … 1300 °C | 2,774 | rosa / weiß | orange / rot, Mantel orange |
+| R | Pt13Rh – Pt | -50 … 1768 °C | 0,647 | orange / weiß | schwarz / rot, Mantel grün |
+| S | Pt10Rh – Pt | -50 … 1768 °C | 0,646 | orange / weiß | schwarz / rot, Mantel grün |
+| B | Pt30Rh – Pt6Rh | 0 … 1820 °C | 0,033 | grau / weiß | grau / rot, Mantel grau |
+
+*Paarung (Plus – Minus), Definitionsbereich der Grundwerte (IEC 60584-1 / NIST ITS-90), Thermospannung bei 100 °C (Vergleichsstelle 0 °C), Aderfarben Plus/Minus der Ausgleichsleitung nach IEC 60584-3 (Mantel wie Plusader) und ANSI/ASTM MC96.1 (Minus immer rot). Einsatzbereich je nach Drahtstärke kleiner. Rechner „Thermoelemente“.*
+
+### ANSI-Gerätenummern (IEEE C37.2)
+
+| Nr. | Funktion |
+|---|---|
+| 2 | Zeitrelais (Anlauf/Verzögerung) |
+| 21 | Distanzschutz |
+| 25 | Synchronisierungs-/Synchroncheck-Relais |
+| 27 | Unterspannungsschutz |
+| 32 | Rückleistungs-/Richtungsleistungsschutz |
+| 37 | Unterstrom-/Unterleistungsschutz |
+| 40 | Erregungsverlustschutz |
+| 46 | Schieflastschutz (Gegensystem) |
+| 47 | Phasenfolge-/Spannungsasymmetrieschutz |
+| 49 | thermischer Überlastschutz |
+| 50 | unverzögerter Überstromschutz |
+| 51 | abhängiger/verzögerter Überstromschutz |
+| 52 | Leistungsschalter (AC) |
+| 59 | Überspannungsschutz |
+| 63 | Druck-/Buchholzschutz |
+| 64 | Erdschlussschutz |
+| 67 | gerichteter Überstromschutz |
+| 79 | Wiedereinschaltrelais (AWE) |
+| 81 | Frequenzschutz (81O/81U) |
+| 86 | Verriegelungs-/Lockout-Relais |
+| 87 | Differentialschutz |
+| 89 | Trennschalter |
+| 94 | Auslöserelais |
+
+*IEEE C37.2 (ANSI): Nummern für Schutz- und Schaltfunktionen, z. B. 50/51 für Überstromzeitschutz. Zusätze: N = Neutralleiter/Erde (berechnet), G = Erde (gemessen), P = Phase, V = spannungsabhängig (51V), T = Transformator (87T).*
+
+### Geräteabkürzungen
+
+| Kürzel | Deutsch | Englisch |
+|---|---|---|
+| MCB | Leitungsschutzschalter (LS) | miniature circuit breaker |
+| MCCB | Kompaktleistungsschalter | moulded-case circuit breaker |
+| ACB | offener Leistungsschalter | air circuit breaker |
+| MPCB | Motorschutzschalter | motor protection circuit breaker |
+| RCD | Fehlerstrom-Schutzeinrichtung | residual current device |
+| RCCB | FI-Schutzschalter (ohne Überstromauslöser) | residual current circuit breaker |
+| RCBO | FI/LS-Schalter | RCCB with overcurrent protection |
+| AFDD | Brandschutzschalter | arc fault detection device |
+| SPD | Überspannungsschutzgerät | surge protective device |
+| IMD | Isolationsüberwachungsgerät | insulation monitoring device |
+| RCM | Differenzstromüberwachung | residual current monitor |
+| OLR | Überlastrelais (Motorschutzrelais) | overload relay |
+| VFD / VSD | Frequenzumrichter (FU) | variable frequency / speed drive |
+| UPS | unterbrechungsfreie Stromversorgung (USV) | uninterruptible power supply |
+| ATS | automatischer Netzumschalter | automatic transfer switch |
+| CT / VT | Strom-/Spannungswandler | current / voltage transformer |
+| PLC | speicherprogrammierbare Steuerung (SPS) | programmable logic controller |
+| HMI | Bedien- und Beobachtungsgerät | human-machine interface |
+| SELV / PELV | Schutzkleinspannung / Funktionskleinspannung mit Erdung | safety / protective extra-low voltage |
+| MV / LV | Mittelspannung / Niederspannung (MS/NS) | medium / low voltage |
+| EMC | elektromagnetische Verträglichkeit (EMV) | electromagnetic compatibility |
+| LOTO | Freischalten und Sichern (Lockout-Tagout) | lockout-tagout |
+
+*Häufige Abkürzungen aus Datenblättern und Normen (IEC/IEV) mit deutscher Bezeichnung.*
+
+### Netzspannung und Stecker weltweit
+
+| Land | Spannung in V | Frequenz in Hz | Stecker |
+|---|---|---|---|
+| Afghanistan | 220 | 50 | C, F |
+| Ägypten | 220 | 50 | C, F |
+| Argentinien | 220 | 50 | C, I |
+| Australien | 230 | 50 | I |
+| Belgien | 230 | 50 | C, E |
+| Brasilien | 127 / 220 | 60 | C, N |
+| Chile | 220 | 50 | C, L |
+| China | 220 | 50 | A, C, I |
+| Dänemark | 230 | 50 | C, E, F, K |
+| Deutschland | 230 | 50 | C, F |
+| Finnland | 230 | 50 | C, F |
+| Frankreich | 230 | 50 | C, E |
+| Griechenland | 230 | 50 | C, F |
+| Großbritannien | 230 | 50 | G |
+| Indien | 230 | 50 | C, D, M |
+| Indonesien | 230 | 50 | C, F |
+| Iran | 230 | 50 | C, F |
+| Irland | 230 | 50 | G |
+| Israel | 230 | 50 | C, H, M |
+| Italien | 230 | 50 | C, F, L |
+| Japan | 100 | 50 / 60 | A, B |
+| Kanada | 120 | 60 | A, B |
+| Kenia | 240 | 50 | G |
+| Kroatien | 230 | 50 | C, F |
+| Marokko | 220 | 50 | C, E |
+| Mexiko | 127 | 60 | A, B |
+| Neuseeland | 230 | 50 | I |
+| Niederlande | 230 | 50 | C, F |
+| Nigeria | 230 | 50 | D, G |
+| Norwegen | 230 | 50 | C, F |
+| Österreich | 230 | 50 | C, F |
+| Pakistan | 230 | 50 | C, D |
+| Philippinen | 220 | 60 | A, B, C |
+| Polen | 230 | 50 | C, E |
+| Portugal | 230 | 50 | C, F |
+| Rumänien | 230 | 50 | C, F |
+| Russland | 230 | 50 | C, F |
+| Saudi-Arabien | 230 | 60 | G |
+| Schweden | 230 | 50 | C, F |
+| Schweiz | 230 | 50 | C, J |
+| Singapur | 230 | 50 | G |
+| Spanien | 230 | 50 | C, F |
+| Südafrika | 230 | 50 | C, D, M, N |
+| Südkorea | 220 | 60 | C, F |
+| Taiwan | 110 | 60 | A, B |
+| Thailand | 230 | 50 | A, B, C, O |
+| Tschechien | 230 | 50 | C, E |
+| Türkei | 230 | 50 | C, F |
+| Ukraine | 230 | 50 | C, F |
+| Ungarn | 230 | 50 | C, F |
+| USA | 120 | 60 | A, B |
+| Vereinigte Arabische Emirate | 230 | 50 | G |
+| Vietnam | 220 | 50 | A, C |
+
+*Haushalts-Nennspannung (Außenleiter–Neutralleiter) und Frequenz, übliche Steckertypen (A–O, siehe Tabelle Steckertypen). Nach IEC World Plugs; ohne Gewähr – vor Ort und am Gerät prüfen. Drehstrom meist √3 · U (z. B. 230/400 V, 120/208 V, 127/220 V).*
+
+### Steckertypen A–O
+
+| Typ | Aufbau | Bemessung | Norm / Verbreitung |
+|---|---|---|---|
+| A | 2 Flachstifte | 15 A 125 V | NEMA 1-15; USA, Kanada, Japan |
+| B | 2 Flachstifte + Rund-Erde | 15 A 125 V | NEMA 5-15; Nordamerika |
+| C | 2 Rundstifte 4 mm (Eurostecker) | 2,5 A 250 V | CEE 7/16; Europa |
+| D | 3 Rundstifte (Dreieck) | 5 A 250 V | BS 546; Indien |
+| E | 2 Rundstifte, Erdstift in der Dose | 16 A 250 V | CEE 7/5; Frankreich, Belgien |
+| F | 2 Rundstifte 4,8 mm, seitliche Erdbügel (Schuko) | 16 A 250 V | CEE 7/3, 7/4; Deutschland, Europa |
+| G | 3 Rechteckstifte, Sicherung im Stecker | 13 A 250 V | BS 1363; UK, Irland |
+| H | 3 Stifte (V-Form bzw. rund) | 16 A 250 V | SI 32; Israel |
+| I | 2 schräge Flachstifte + Erde | 10 A 250 V | AS/NZS 3112; Australien, China |
+| J | 3 Rundstifte (versetzt) | 10 A 250 V | SN 441011 (T12/T13); Schweiz |
+| K | 2 Rundstifte + halbrunde Erde | 13 A 250 V | DS 60884-2-D1; Dänemark |
+| L | 3 Rundstifte in einer Reihe | 10 / 16 A 250 V | CEI 23-50; Italien |
+| M | 3 dicke Rundstifte (Dreieck) | 15 A 250 V | BS 546; Südafrika, Indien |
+| N | 3 Rundstifte (kompakt) | 10 / 20 A 250 V | IEC 60906-1, NBR 14136; Brasilien |
+| O | 3 Rundstifte | 16 A 250 V | TIS 166-2549; Thailand |
+
+*Typbezeichnung nach IEC World Plugs (IEC TR 60083). Bemessungsströme typisch; Länderzuordnung siehe Tabelle „Netzspannung und Stecker weltweit“.*
+
+### Gerätesteckverbinder IEC 60320
+
+| Kupplung / Stecker | Bemessung | Schutzleiter | Bezeichnung / Einsatz |
+|---|---|---|---|
+| C1 / C2 | 0,2 A 250 V | nein | Rasierer, Kleingeräte |
+| C5 / C6 | 2,5 A 250 V | ja | „Mickey-Mouse“, Notebook-Netzteile |
+| C7 / C8 | 2,5 A 250 V | nein | „Achter“, Radio, Ladegeräte |
+| C13 / C14 | 10 A 250 V | ja | Kaltgerätestecker: PC, Monitor, IT |
+| C15 / C16 | 10 A 250 V | ja | Warmgerät bis 120 °C (Wasserkocher) |
+| C15A / C16A | 10 A 250 V | ja | Heißgerät bis 155 °C |
+| C17 / C18 | 10 A 250 V | nein | wie C13 ohne Erde |
+| C19 / C20 | 16 A 250 V | ja | Server, USV, Rechenzentrum |
+| C21 / C22 | 16 A 250 V | ja | wie C19 bis 155 °C |
+| C23 / C24 | 16 A 250 V | nein | wie C19 ohne Erde |
+
+*IEC 60320-1: ungerade Nummer = Kupplung (Buchse am Kabel), gerade = Gerätestecker (am Gerät). Bemessungsströme für IEC-Länder; in Nordamerika teils höher (z. B. C13 15 A). Höchsttemperatur am Stift: 70 °C (kalt), 120 °C (warm), 155 °C (heiß).*
+
+### CEE-Steckvorrichtungen (IEC 60309)
+
+| Farbe | Spannung | Typischer Einsatz |
+|---|---|---|
+| violett | 20–25 V | Kleinspannung |
+| weiß | 40–50 V | Kleinspannung |
+| gelb | 100–130 V | Baustellen (UK 110 V) |
+| blau | 200–250 V | 1~ 230 V: Camping, Baustelle, Marina |
+| rot | 380–480 V | 3~ 400 V: Maschinen, Baustromverteiler |
+| schwarz | 500–690 V | Industrie, Bergbau |
+| grün | > 60–500 Hz | Sonderfrequenzen |
+
+*IEC 60309-2 (CEE): Farbe = Spannungsbereich, Lage der Schutzkontaktbuchse (Uhrzeit, Nase bei 6 h) codiert Spannung/Frequenz; Standard 50/60 Hz: 6 h (z. B. blau 230 V, rot 400 V). Bemessungsströme 16, 32, 63, 125 A; IP44 (spritzwassergeschützt) oder IP67 (wasserdicht). Polzahl 2P+E (3-polig), 3P+E (4-polig), 3P+N+E (5-polig).*
+
+### NEMA-Steckverbinder
+
+| Typ | Spannung | Strom | Pole / Leiter | Einsatz |
+|---|---|---|---|---|
+| 1-15 | 125 V | 15 A | 2P 2W | ohne Erde (Altbestand) |
+| 5-15 | 125 V | 15 A | 2P 3W | Standardsteckdose |
+| 5-20 | 125 V | 20 A | 2P 3W | Küche, Werkstatt |
+| 6-15 / 6-20 | 250 V | 15 / 20 A | 2P 3W | Klimageräte, Werkzeuge |
+| 6-30 / 6-50 | 250 V | 30 / 50 A | 2P 3W | Schweißgeräte |
+| 10-30 / 10-50 | 125/250 V | 30 / 50 A | 3P 3W | alte Trockner/Herde (ohne Erde) |
+| 14-30 | 125/250 V | 30 A | 3P 4W | Wäschetrockner |
+| 14-50 | 125/250 V | 50 A | 3P 4W | Herde, Wohnmobile, E-Auto-Laden |
+| L5-20 / L5-30 | 125 V | 20 / 30 A | 2P 3W | verriegelbar, Industrie |
+| L6-20 / L6-30 | 250 V | 20 / 30 A | 2P 3W | verriegelbar, USV, Server |
+| L14-20 / L14-30 | 125/250 V | 20 / 30 A | 3P 4W | Generatoren |
+| L15-20 / L15-30 | 3~ 250 V | 20 / 30 A | 3P 4W | Drehstrom |
+| L21-20 / L21-30 | 3~ 120/208 V | 20 / 30 A | 4P 5W | Drehstrom mit N, Rechenzentren |
+
+*NEMA WD 6: Nummer = Spannungs-/Polkonfiguration, Zahl nach dem Strich = Strom (z. B. 5-15: 125 V, 15 A); L = Verriegelung (Twist-Lock). P = Pole, W = Leiter (inkl. Schutzleiter).*
+
+### Ladestecker für Elektrofahrzeuge
+
+| Stecker | Norm | Strom / Leistung | Region |
+|---|---|---|---|
+| Typ 1 | SAE J1772, IEC 62196-2 | AC 1~, bis 32 A (7,4 kW) | Nordamerika, Japan |
+| Typ 2 (Mennekes) | IEC 62196-2 | AC 1~/3~, bis 63 A (43 kW), üblich 11/22 kW | Europa (EU-Standard) |
+| CCS Combo 1 | IEC 62196-3 | DC bis ca. 350 kW | Nordamerika |
+| CCS Combo 2 | IEC 62196-3 | DC bis ca. 400 kW (1000 V, 500 A) | Europa |
+| CHAdeMO | IEC 62196-3 | DC bis 62,5 kW (v1), höher in v2 | Japan |
+| GB/T | GB/T 20234 | AC und DC (getrennte Stecker) | China |
+| NACS | SAE J3400 | AC und DC über einen Stecker | Nordamerika |
+| Schuko / CEE (Mode 2) | IEC 61851-1 | 1~ 8–10 A bzw. CEE 16/32 A | Notladen, mobil |
+
+*IEC 62196 (Stecker), IEC 61851-1 (Lademodi): Mode 1 Haushaltssteckdose ohne Kommunikation (in DE/CH nicht üblich), Mode 2 Haushalts-/CEE-Steckdose mit Kabel-Schutzeinrichtung (IC-CPD), Mode 3 Ladestation AC (Wallbox), Mode 4 DC-Schnellladung. Leistungen als Richtwerte; Fahrzeug und Ladestation begrenzen.*
+
+### Aderfarben international
+
+| Land / System | L1 | L2 | L3 | N | PE |
+|---|---|---|---|---|---|
+| Europa (IEC 60445) | braun | schwarz | grau | blau | grün-gelb |
+| UK vor 2004 | rot | gelb | blau | schwarz | grün-gelb |
+| USA 120/208 V | schwarz | rot | blau | weiß | grün |
+| USA 277/480 V | braun | orange | gelb | grau | grün |
+| Kanada | rot | schwarz | blau | weiß | grün |
+| Australien / Neuseeland | rot | weiß | dunkelblau | schwarz | grün-gelb |
+| China | gelb | grün | rot | hellblau | grün-gelb |
+
+*Europa: IEC 60445 / HD 308 S2 (seit 2004 in DE, UK nach 2004). USA/Kanada: NEC/CEC schreiben nur N (weiß/grau) und Erde (grün, grün-gelb oder blank) vor, Außenleiterfarben sind übliche Praxis. Ohne Gewähr – vor Arbeiten immer messen.*
+
+### Maßeinheiten der Elektrotechnik
+
+| Größe | Einheit | Zeichen | Definition |
+|---|---|---|---|
+| Stromstärke | Ampere | A | SI-Basiseinheit |
+| Spannung | Volt | V | 1 V = 1 W/A |
+| Widerstand | Ohm | Ω | 1 Ω = 1 V/A |
+| Leitwert | Siemens | S | 1 S = 1/Ω |
+| Ladung | Coulomb | C | 1 C = 1 A·s (1 Ah = 3600 C) |
+| Kapazität | Farad | F | 1 F = 1 C/V |
+| Induktivität | Henry | H | 1 H = 1 V·s/A |
+| Magnetischer Fluss | Weber | Wb | 1 Wb = 1 V·s |
+| Flussdichte | Tesla | T | 1 T = 1 Wb/m² |
+| Frequenz | Hertz | Hz | 1 Hz = 1/s |
+| Wirkleistung | Watt | W | 1 W = 1 J/s = 1 V·A |
+| Scheinleistung | Voltampere | VA | S = U · I |
+| Blindleistung | Var | var | Q = U · I · sin φ |
+| Energie | Joule | J | 1 J = 1 W·s; 1 kWh = 3,6 MJ |
+| Elektrische Feldstärke | Volt pro Meter | V/m | E = U / d |
+| Magnetische Feldstärke | Ampere pro Meter | A/m | H = I · N / l |
+| Lichtstärke | Candela | cd | SI-Basiseinheit |
+| Lichtstrom | Lumen | lm | 1 lm = 1 cd·sr |
+| Beleuchtungsstärke | Lux | lx | 1 lx = 1 lm/m² |
+| Temperatur | Kelvin | K | SI-Basiseinheit; θ [°C] = T − 273,15 |
+| Kraft | Newton | N | 1 N = 1 kg·m/s² |
+| Druck | Pascal | Pa | 1 Pa = 1 N/m²; 1 bar = 10⁵ Pa |
+
+*Internationales Einheitensystem (SI, ISO 80000 / IEC 80000). Vorsätze siehe Tabelle SI-Vorsätze, Umrechnungen siehe Umrechner.*
+
+### Rohrabmessungen (Stahlrohr)
+
+| Nennweite | Zoll | Außen-Ø in mm |
+|---|---|---|
+| DN 6 | 1/8" | 10,2 |
+| DN 8 | 1/4" | 13,5 |
+| DN 10 | 3/8" | 17,2 |
+| DN 15 | 1/2" | 21,3 |
+| DN 20 | 3/4" | 26,9 |
+| DN 25 | 1" | 33,7 |
+| DN 32 | 1 1/4" | 42,4 |
+| DN 40 | 1 1/2" | 48,3 |
+| DN 50 | 2" | 60,3 |
+| DN 65 | 2 1/2" | 76,1 |
+| DN 80 | 3" | 88,9 |
+| DN 100 | 4" | 114,3 |
+| DN 125 | 5" | 139,7 |
+| DN 150 | 6" | 165,1 / 168,3 |
+
+*Gewinderohre EN 10255 / ISO 65 bzw. nahtlose/geschweißte Rohre EN 10220 (Außendurchmesser in mm). Die Zollgröße ist eine Nenngröße, nicht der Durchmesser. Wanddicke je Reihe (mittel/schwer) verschieden.*
+
+### Kabelverschraubungen und Installationsrohre
+
+| Gewinde | Gewinde-Ø in mm | Klemmbereich in mm |
+|---|---|---|
+| M12 × 1,5 | 12 | 3–7 |
+| M16 × 1,5 | 16 | 4,5–10 |
+| M20 × 1,5 | 20 | 6–13 |
+| M25 × 1,5 | 25 | 9–17 |
+| M32 × 1,5 | 32 | 13–21 |
+| M40 × 1,5 | 40 | 16–28 |
+| M50 × 1,5 | 50 | 21–35 |
+| M63 × 1,5 | 63 | 34–48 |
+| PG 7 | 12,5 | – |
+| PG 9 | 15,2 | – |
+| PG 11 | 18,6 | – |
+| PG 13,5 | 20,4 | – |
+| PG 16 | 22,5 | – |
+| PG 21 | 28,3 | – |
+| PG 29 | 37,0 | – |
+| PG 36 | 47,0 | – |
+| PG 42 | 54,0 | – |
+| PG 48 | 59,3 | – |
+
+*Metrisch EN 62444 / EN 50262: Gewinde-Außen-Ø = Kennzahl (= Außendurchmesser der Installationsrohre M16–M63 nach EN 61386); Klemmbereich typisch, herstellerabhängig. PG (DIN 40430, nicht mehr genormt): Gewinde-Außen-Ø.*
 
 ## Grundlagen
 

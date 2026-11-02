@@ -160,6 +160,10 @@ auch Einträge anderer Kategorien zeigen darf (Bereich „Elektrotechnik“, Gru
 Einträgen; `CalcBridge::groups()` und `ListPage.qml` (aufklappbare Gruppen) nutzen das. Test: `tests/test_electrical.cpp`
 (jede ID existiert, keine doppelt, jeder Eintrag der Kategorie steht in einer Gruppe).
 
+Ein Eintrag darf in einer Themengruppe und zusätzlich in der Gruppe „Ressourcen“ stehen (Abbild des Reiters der
+Vorlage); innerhalb einer Gruppe nur einmal. Diagramme können logarithmische Achsen haben (`Chart::xLog/yLog`, z. B.
+Auslösekennlinien); `ChartView.qml` zeichnet dann Dekaden-Teilung und -Gitter.
+
 Zeichnungen der Elektro-Rechner nutzen die gemeinsame Hilfe `catalog/sketch.hpp` (`Sketch`: Linien, Rechtecke, Spulen-
 /Widerstandskörper `bar`, Kreise, Beschriftungen) und die Stile `fill:#RRGGBB` (Farbringe) und `line:#RRGGBB`
 (Kupferbrücken); Beschriftungen „l“/„r“ links-/rechtsbündig. Thermoelemente: Koeffizienten in

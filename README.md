@@ -4,6 +4,18 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.8 – Kapitel „Ressourcen“** im Bereich Elektrotechnik (alle 27 Punkte des Reiters „Ressourcen“ der App
+„Elektroberechnungen“): Sicherungs-Kennzeichnung und UL/CSA-Klassen, E-Reihen, **Auslösekennlinien** (Diagramm mit
+logarithmischen Achsen), Reaktanzbeläge, spezifische Widerstände, Spannungsfall je A·m, Leiterdaten, **Netzsysteme TN/TT/IT
+als Schaltbild**, IP/IK/NEMA, ATEX, Schutzklassen, CCTV-Auflösungen, Thermoelement-Farben, ANSI-Gerätenummern,
+Geräteabkürzungen, **Schaltzeichen nach IEC 60617** (5 Seiten), Netzspannung und Stecker weltweit, Steckertypen A–O,
+IEC 60320, CEE (IEC 60309), NEMA-Stecker, E-Auto-Ladestecker, Aderfarben international, SI-Vorsätze und Einheiten,
+Rohrabmessungen und Kabelverschraubungen.
+
+| Ressourcen | Auslösekennlinien | Schaltzeichen |
+|---|---|---|
+| ![Ressourcen](docs/screenshots/ressourcen.png) | ![Auslösekennlinien](docs/screenshots/ausloesekennlinien.png) | ![Schaltzeichen](docs/screenshots/schaltzeichen.png) |
+
 **Neu in 1.7 – Bereich „Elektrotechnik“** (nach der Menüliste der App „Elektroberechnungen“, Screenshots per
 doc2md/OCR erfasst): eine Kachel mit 10 aufklappbaren Gruppen und über 100 Einträgen – Strom/Spannung/Leistung,
 Leitungen & Schutz, Sicherungen, Kurzschluss/Erdung/Überspannung, Kompensation, Bauteile & Codes, Schaltungen,

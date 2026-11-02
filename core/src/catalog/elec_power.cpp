@@ -186,7 +186,7 @@ Calculator jouleCalc() {
     c.inputs = {Num::number("R", {"Widerstand R", "Resistance R"}, "Ω", 26.5).positive(),
                 Num::number("I", {"Strom I", "Current I"}, "A", 8.7).positive(),
                 Num::number("t", {"Zeit t", "Time t"}, "s", 180).positive(),
-                Num::number("m", {"Masse m (optional)", "Mass m (optional)"}, "kg", 1.5).positive().opt(),
+                Num::number("m", {"Masse m", "Mass m"}, "kg", 1.5).positive().opt(),
                 Num::number("c", {"Spezifische Wärmekapazität c", "Specific heat capacity c"}, "J/(kg·K)", 4186).positive()};
     c.outputs = {Out::number("P", {"Leistung P", "Power P"}, "W", 1).primary(),
                  Out::number("W", {"Wärmeenergie W", "Heat W"}, "kJ", 2),
@@ -228,7 +228,7 @@ Calculator shortCircuitMinCalc() {
         Num::choice("Sph", {"Querschnitt Außenleiter", "Line conductor cross-section"}, areaOptions(cables::kStandardAreas), "2.5"),
         Num::choice("Spe", {"Querschnitt PE", "PE cross-section"}, areaOptions(cables::kStandardAreas), "2.5"),
         Num::number("theta", {"Leitertemperatur θ", "Conductor temperature θ"}, "°C", 80).range(20, 250),
-        Num::number("Ia", {"Abschaltstrom I_a der Schutzeinrichtung (optional)", "Tripping current I_a of the device (optional)"}, "A", 80)
+        Num::number("Ia", {"Abschaltstrom I_a der Schutzeinrichtung", "Tripping current I_a of the device"}, "A", 80)
             .positive()
             .opt()
             .withHint({"z. B. B16: 5 · 16 = 80 A, C16: 160 A", "e.g. B16: 5 · 16 = 80 A, C16: 160 A"}),
@@ -286,7 +286,7 @@ Calculator earthingCalc() {
                     {{"10", "10 mA"}, {"30", "30 mA"}, {"100", "100 mA"}, {"300", "300 mA"}, {"500", "500 mA"}, {"1000", "1 A"}}, "30"),
         Num::choice("ul", {"Berührungsspannung U_L", "Touch voltage U_L"}, {{"50", "50 V"}, {"25", "25 V"}}, "50"),
         Num::number("U0", {"Nennspannung U₀", "Nominal voltage U₀"}, "V", 230).positive(),
-        Num::number("R", {"Gemessen: R_A bzw. Z_s (optional)", "Measured: R_A or Z_s (optional)"}, "Ω", 120).nonNegative().opt(),
+        Num::number("R", {"Gemessen: R_A bzw. Z_s", "Measured: R_A or Z_s"}, "Ω", 120).nonNegative().opt(),
     };
     c.inputs[2].showIf("sys", {"tt"});
     c.inputs[3].showIf("sys", {"tn"});

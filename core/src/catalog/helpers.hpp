@@ -45,6 +45,8 @@ void addElectricalComponents(std::vector<Calculator>& out);  // elec_components.
 void addElectricalMotors(std::vector<Calculator>& out);      // elec_motors.cpp
 void addElectricalUnits(std::vector<Calculator>& out);       // elec_units.cpp
 void addElectricalTables(std::vector<Table>& out);           // elec_tables.cpp
+void addElectricalResources(std::vector<Calculator>& out);   // elec_resources.cpp
+void addElectricalResourceTables(std::vector<Table>& out);   // elec_resources.cpp
 std::vector<CategoryGroup> electricalGroups();               // elec_tables.cpp
 ListDef consumerList();
 ListDef dataPointList();

@@ -1,4 +1,5 @@
 // Area "Elektrotechnik" (v1.7): formulas with reference values (hand calculation, NIST, NEC, IEC tables).
+#include <algorithm>
 #include <cmath>
 #include <set>
 #include <string>
@@ -228,10 +229,12 @@ TEST_CASE("Area Elektrotechnik: groups reference existing items, each once, and 
         CHECK_FALSE(g.title.de.empty());
         CHECK_FALSE(g.title.en.empty());
         CHECK_FALSE(g.items.empty());
+        std::set<std::string> inGroup;  // an item may appear in a topic group and in "Ressourcen", but only once per group
         for (const auto& id : g.items) {
             INFO(id);
             CHECK((findCalculator(id) != nullptr || findTable(id) != nullptr || findList(id) != nullptr));
-            CHECK(seen.insert(id).second);
+            CHECK(inGroup.insert(id).second);
+            seen.insert(id);
         }
     }
     for (const auto& c : calculators()) {
@@ -251,4 +254,47 @@ TEST_CASE("Area Elektrotechnik: groups reference existing items, each once, and 
     REQUIRE(basics.size() == 1);
     CHECK(basics.front().title.de.empty());
     CHECK_FALSE(basics.front().items.empty());
+}
+
+TEST_CASE("Ressourcen: computed tables match the formulas", "[electrical]") {
+    // voltage drop per A and m: 2.5 mm² Cu at 70 °C, 1~, cos φ = 1 → 2 · ρ70 / 2.5 · 1000 = 16.50 mV/(A·m)
+    const auto* t = findTable("vdrop_per_length");
+    REQUIRE(t != nullptr);
+    CHECK(t->rows[1][0].en == "2.5");
+    CHECK(t->rows[1][1].en == "16.5");
+    // reactance of multi-core cables lies around the usual design value 0.08 mΩ/m
+    const auto* x = findTable("cable_reactance_table");
+    REQUIRE(x != nullptr);
+    for (const auto& row : x->rows) {
+        const double v = parseNumber(row[1].en).value();
+        CHECK(v > 0.06);
+        CHECK(v < 0.12);
+    }
+    // the Ressourcen group lists every item of the original resources tab
+    const auto groups = categoryGroups("electrical");
+    const auto it = std::find_if(groups.begin(), groups.end(), [](const CategoryGroup& g) { return g.title.de == "Ressourcen"; });
+    REQUIRE(it != groups.end());
+    CHECK(it->items.size() >= 27);
+}
+
+TEST_CASE("Tripping curve chart is logarithmic and monotonic", "[electrical]") {
+    const auto* c = findCalculator("trip_curves");
+    REQUIRE(c != nullptr);
+    for (const char* type : {"B", "C", "D"}) {
+        INFO(type);
+        Inputs in = defaultInputs(*c);
+        in.setChoice("type", type);
+        const auto ch = evaluateChart(*c, in, Context{});
+        REQUIRE(ch);
+        CHECK(ch->xLog);
+        CHECK(ch->yLog);
+        REQUIRE(ch->series.size() == 2);
+        for (const auto& s : ch->series) {
+            for (std::size_t i = 1; i < s.pts.size(); ++i) {
+                CHECK(s.pts[i][0] >= s.pts[i - 1][0] - 1e-9);  // current never decreases
+                CHECK(s.pts[i][1] <= s.pts[i - 1][1] + 1e-9);  // time never increases
+                CHECK(s.pts[i][1] > 0);
+            }
+        }
+    }
 }

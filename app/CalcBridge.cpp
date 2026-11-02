@@ -427,7 +427,7 @@ QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) cons
     return {{"xmin", ch->x.min},     {"xmax", ch->x.max},     {"xstep", ch->x.step},       {"xtitle", txt(ch->x.title)},
             {"ymin", ch->y.min},     {"ymax", ch->y.max},     {"ystep", ch->y.step},       {"ytitle", txt(ch->y.title)},
             {"note", txt(ch->note)}, {"series", series},      {"labels", labels},          {"markers", markers},
-            {"diagram", ch->diagram}, {"aspect", ch->aspect}};
+            {"diagram", ch->diagram}, {"aspect", ch->aspect},  {"xlog", ch->xLog},           {"ylog", ch->yLog}};
 }
 
 QVariantMap CalcBridge::chartPick(const QString& id, const QVariantMap& values, double x, double y) const {

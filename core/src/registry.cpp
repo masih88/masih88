@@ -56,6 +56,7 @@ const std::vector<Calculator>& calculators() {
         catalog::addElectricalComponents(v);
         catalog::addElectricalMotors(v);
         catalog::addElectricalUnits(v);
+        catalog::addElectricalResources(v);
         return v;
     }();
     return list;
@@ -74,6 +75,7 @@ const std::vector<Table>& tables() {
         catalog::addPidTables(v);
         catalog::addProcessTables(v);
         catalog::addElectricalTables(v);
+        catalog::addElectricalResourceTables(v);
         return v;
     }();
     return list;

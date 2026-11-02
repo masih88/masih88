@@ -22,18 +22,50 @@ Item {
     readonly property real dOffX: valid ? (width - dScale * (chart.xmax - chart.xmin)) / 2 : 0
     readonly property real dOffY: valid ? (height - dScale * (chart.ymax - chart.ymin)) / 2 : 0
 
+    readonly property bool xlog: chart.xlog === true && chart.xmin > 0
+    readonly property bool ylog: chart.ylog === true && chart.ymin > 0
+    function lg(v) { return Math.log(v) / Math.LN10 }
+    // fraction 0…1 of a value along an axis (linear or logarithmic)
+    function fx(x) { return xlog ? (lg(Math.max(x, 1e-300)) - lg(chart.xmin)) / (lg(chart.xmax) - lg(chart.xmin)) : (x - chart.xmin) / (chart.xmax - chart.xmin) }
+    function fy(y) { return ylog ? (lg(Math.max(y, 1e-300)) - lg(chart.ymin)) / (lg(chart.ymax) - lg(chart.ymin)) : (y - chart.ymin) / (chart.ymax - chart.ymin) }
+
     function px(x) {
         if (diagram)
             return dOffX + (x - chart.xmin) * dScale
-        return padL + (x - chart.xmin) / (chart.xmax - chart.xmin) * (width - padL - padR)
+        return padL + fx(x) * (width - padL - padR)
     }
     function py(y) {
         if (diagram)
             return dOffY + (chart.ymax - y) * dScale
-        return padT + (chart.ymax - y) / (chart.ymax - chart.ymin) * (height - padT - padB)
+        return padT + (1 - fy(y)) * (height - padT - padB)
     }
-    function dataX(p) { return chart.xmin + (p - padL) / (width - padL - padR) * (chart.xmax - chart.xmin) }
-    function dataY(p) { return chart.ymax - (p - padT) / (height - padT - padB) * (chart.ymax - chart.ymin) }
+    function dataX(p) {
+        const f = (p - padL) / (width - padL - padR)
+        return xlog ? Math.pow(10, lg(chart.xmin) + f * (lg(chart.xmax) - lg(chart.xmin))) : chart.xmin + f * (chart.xmax - chart.xmin)
+    }
+    function dataY(p) {
+        const f = 1 - (p - padT) / (height - padT - padB)
+        return ylog ? Math.pow(10, lg(chart.ymin) + f * (lg(chart.ymax) - lg(chart.ymin))) : chart.ymin + f * (chart.ymax - chart.ymin)
+    }
+    // tick values: every step (linear) or every decade (log)
+    function ticks(min, max, step, log) {
+        const t = []
+        if (log) {
+            for (let e = Math.ceil(lg(min) - 1e-9); e <= lg(max) + 1e-9; ++e)
+                t.push(Math.pow(10, e))
+        } else {
+            for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step)
+                t.push(v)
+        }
+        return t
+    }
+    function tickText(v, log) {
+        if (!log)
+            return Math.round(v * 10) / 10
+        if (v >= 1e4)
+            return (v / 1000) + "k"
+        return v >= 1 ? Math.round(v) : Number(v.toPrecision(1))
+    }
 
     // pen per series style: [colour light, colour dark, width, dashed]
     function pen(style) {
@@ -185,6 +217,21 @@ Item {
         // plot area
         ctx.fillStyle = dark ? "#151B26" : "#FFFFFF"
         ctx.fillRect(left, top, right - left, bottom - top)
+        const xt = ticks(chart.xmin, chart.xmax, chart.xstep, xlog)
+        const yt = ticks(chart.ymin, chart.ymax, chart.ystep, ylog)
+        // light decade grid for log charts
+        if (xlog || ylog) {
+            ctx.save()
+            ctx.strokeStyle = dark ? "#2A3445" : "#E6EAF0"
+            ctx.lineWidth = 1
+            for (let i = 0; xlog && i < xt.length; ++i) {
+                ctx.beginPath(); ctx.moveTo(px(xt[i]), top); ctx.lineTo(px(xt[i]), bottom); ctx.stroke()
+            }
+            for (let i = 0; ylog && i < yt.length; ++i) {
+                ctx.beginPath(); ctx.moveTo(left, py(yt[i])); ctx.lineTo(right, py(yt[i])); ctx.stroke()
+            }
+            ctx.restore()
+        }
 
         // series (clipped to the plot area)
         ctx.save()
@@ -241,22 +288,25 @@ Item {
         ctx.font = "10px sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "top"
-        for (let x = Math.ceil(chart.xmin / chart.xstep) * chart.xstep; x <= chart.xmax + 1e-9; x += chart.xstep) {
+        for (let i = 0; i < xt.length; ++i) {
+            const x = xt[i]
             ctx.beginPath()
             ctx.moveTo(px(x), bottom)
             ctx.lineTo(px(x), bottom + 4)
             ctx.stroke()
-            ctx.fillText(Math.round(x * 10) / 10, px(x), bottom + 5)
+            ctx.fillText(tickText(x, xlog), px(x), bottom + 5)
         }
         ctx.textAlign = "right"
         ctx.textBaseline = "middle"
-        for (let y = Math.ceil(chart.ymin / chart.ystep) * chart.ystep; y <= chart.ymax + 1e-9; y += chart.ystep) {
+        for (let i = 0; i < yt.length; ++i) {
+            const y = yt[i]
             ctx.beginPath()
             ctx.moveTo(left - 4, py(y))
             ctx.lineTo(left, py(y))
             ctx.stroke()
-            ctx.fillText(Math.round(y * 10) / 10, left - 6, py(y))
+            ctx.fillText(tickText(y, ylog), left - 6, py(y))
         }
+
         ctx.font = "11px sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "bottom"

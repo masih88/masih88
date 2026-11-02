@@ -51,6 +51,9 @@ struct Chart {
     // marker styles "motor" (M) and "sensor".
     bool diagram = false;
     double aspect = 0;  // preferred height/width of the drawing area (0 = UI default)
+    // Logarithmic axes (min > 0): ticks at every decade, `step` is ignored (e.g. time-current curves)
+    bool xLog = false;
+    bool yLog = false;
 };
 
 /// Value set by tapping into a chart: a number or (if choice is not empty) a choice

@@ -64,7 +64,7 @@ Calculator ampacityMi() {
                     "3c"),
         Num::choice("A", {"Querschnitt", "Cross-section"}, areaOptions(areas), "2.5"),
         Num::number("Ta", {"Umgebungstemperatur θ_a", "Ambient temperature θ_a"}, "°C", 30).range(-20, 65),
-        Num::number("Ib", {"Betriebsstrom I_b (optional)", "Operating current I_b (optional)"}, "A", 20).positive().opt(),
+        Num::number("Ib", {"Betriebsstrom I_b", "Operating current I_b"}, "A", 20).positive().opt(),
     };
     c.outputs = {Out::number("Iz", {"Belastbarkeit I_z", "Current rating I_z"}, "A", 1).primary(),
                  Out::number("Iz0", {"Tabellenwert (30 °C)", "Table value (30 °C)"}, "A", 1),
@@ -129,7 +129,7 @@ Calculator busbarAmpacity() {
     c.inputs = {Num::choice("size", {"Schiene B × D", "Bar W × T"}, sizes, "30x10"),
                 Num::choice("n", {"Schienen je Leiter", "Bars per conductor"}, {{"1", "1"}, {"2", "2"}}, "1"),
                 Num::number("Ta", {"Umgebungstemperatur θ_a", "Ambient temperature θ_a"}, "°C", 35).range(-20, 60),
-                Num::number("Ib", {"Betriebsstrom I_b (optional)", "Operating current I_b (optional)"}, "A", 500).positive().opt()};
+                Num::number("Ib", {"Betriebsstrom I_b", "Operating current I_b"}, "A", 500).positive().opt()};
     c.outputs = {Out::number("I", {"Dauerstrom bei θ_a", "Continuous current at θ_a"}, "A", 0).primary(),
                  Out::number("I25", {"Tabellenwert (25 °C)", "Table value (25 °C)"}, "A", 0),
                  Out::number("A", {"Querschnitt", "Cross-section"}, "mm²", 0),
@@ -271,7 +271,7 @@ Calculator cableLosses() {
                 Num::choice("mat", {"Leitermaterial", "Conductor material"}, materialOptions(), "cu"),
                 Num::choice("A", {"Querschnitt", "Cross-section"}, areaOptions(cables::kStandardAreas), "16"),
                 Num::number("theta", {"Leitertemperatur θ", "Conductor temperature θ"}, "°C", 50).range(-40, 90),
-                Num::number("U", {"Spannung U (optional, für %)", "Voltage U (optional, for %)"}, "V", 400).positive().opt(),
+                Num::number("U", {"Spannung U (für %)", "Voltage U (for %)"}, "V", 400).positive().opt(),
                 cosPhiInput(0.9),
                 Num::number("h", {"Betriebsstunden pro Jahr", "Operating hours per year"}, "h", 4000).range(0, 8784),
                 Num::number("price", {"Strompreis pro kWh", "Energy price per kWh"}, kCurrencyUnit, 0.25).nonNegative()};

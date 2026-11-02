@@ -556,13 +556,18 @@ Table evPlugs() {
 }
 
 Table wiringColoursIntl() {
-    return make("wiring_colours_intl", {"Aderfarben international", "Wiring colour codes worldwide"},
-                {"Außenleiter, Neutralleiter, Schutzleiter je Land", "Line, neutral and protective conductors per country"},
-                {"Europa: IEC 60445 / HD 308 S2 (seit 2004 in DE, UK nach 2004). USA/Kanada: NEC/CEC schreiben nur N (weiß/grau) "
-                 "und Erde (grün, grün-gelb oder blank) vor, Außenleiterfarben sind übliche Praxis. Ohne Gewähr – vor Arbeiten "
-                 "immer messen.",
-                 "Europe: IEC 60445 / HD 308 S2 (since 2004 in DE, UK after 2004). USA/Canada: NEC/CEC only mandate N (white/grey) "
-                 "and ground (green, green-yellow or bare), line colours are customary. Without guarantee – always measure before work."},
+    return make("wiring_colours_intl", {"Aderfarben (Europa und international)", "Conductor colours (Europe and worldwide)"},
+                {"L1, L2, L3, N, PE je Land; PEN und Maschinenverdrahtung", "L1, L2, L3, N, PE per country; PEN and machine wiring"},
+                {"Europa: IEC 60445 / HD 308 S2 (DIN EN 60445 / VDE 0197, seit 2004 in DE, UK nach 2004). PEN-Leiter: grün-gelb mit "
+                 "blauer Markierung an den Enden (oder blau mit grün-gelber Markierung). Maschinen nach IEC 60204-1 Abschn. 13.2 "
+                 "(Empfehlung): Hauptstromkreise AC/DC schwarz, AC-Steuerstromkreise rot, DC-Steuerstromkreise blau, Fremdspannung "
+                 "(bleibt bei Hauptschalter AUS unter Spannung) orange. USA/Kanada: NEC/CEC schreiben nur N (weiß/grau) und Erde "
+                 "(grün, grün-gelb oder blank) vor, Außenleiterfarben sind übliche Praxis. Ohne Gewähr – vor Arbeiten immer messen.",
+                 "Europe: IEC 60445 / HD 308 S2 (since 2004 in DE, UK after 2004). PEN conductor: green-yellow with blue marking at the "
+                 "ends (or blue with green-yellow marking). Machines per IEC 60204-1 clause 13.2 (recommendation): AC/DC power circuits "
+                 "black, AC control circuits red, DC control circuits blue, external supply (live with main switch OFF) orange. "
+                 "USA/Canada: NEC/CEC only mandate N (white/grey) and ground (green, green-yellow or bare), line colours are customary. "
+                 "Without guarantee – always measure before work."},
                 {{"Land / System", "Country / system"}, "L1", "L2", "L3", "N", "PE"},
                 {{{"Europa (IEC 60445)", "Europe (IEC 60445)"}, {"braun", "brown"}, {"schwarz", "black"}, {"grau", "grey"}, {"blau", "blue"}, {"grün-gelb", "green-yellow"}},
                  {{"UK vor 2004", "UK before 2004"}, {"rot", "red"}, {"gelb", "yellow"}, {"blau", "blue"}, {"schwarz", "black"}, {"grün-gelb", "green-yellow"}},

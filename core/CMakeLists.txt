@@ -42,6 +42,8 @@ add_library(elc_core STATIC
     src/catalog/elec_units.cpp
     src/catalog/elec_tables.cpp
     src/catalog/elec_resources.cpp
+    src/catalog/elec_pinouts.cpp
+    src/catalog/layout.cpp
     src/tables/tables.cpp
     src/tables/vdi_tables.cpp
     src/lists/lists.cpp

@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-// Items of one category. Grouped categories (area "Elektrotechnik") show collapsible groups like the tabs of
+// Items of one area. Areas with several groups (catalog/layout.cpp) show collapsible groups like the tabs of
 // a reference app; other categories show one plain list. Column + Repeater instead of ColumnLayout (Qt 6.4).
 Page {
     id: page

@@ -173,8 +173,8 @@ Calculator cableRxz() {
     Calculator c;
     c.id = "cable_rxz";
     c.category = kCat;
-    c.title = {"Kabelwiderstand, Reaktanz und Impedanz", "Cable resistance, reactance and impedance"};
-    c.summary = {"R(θ), X und Z je Leiter und Schleife", "R(θ), X and Z per conductor and loop"};
+    c.title = {"Leiterwiderstand, Reaktanz und Impedanz", "Conductor resistance, reactance and impedance"};
+    c.summary = {"R(θ) = ρ(θ) · L / A, X und Z je Leiter und Schleife, ρ und κ", "R(θ) = ρ(θ) · L / A, X and Z per conductor and loop, ρ and κ"};
     c.description = {
         "R₂₀ = ρ₂₀ · L / A    R(θ) = R₂₀ · (1 + α₂₀ · (θ − 20 °C))    X = X' · L    Z = √(R² + X²)\n"
         "Cu: ρ₂₀ = 0,017241 Ω·mm²/m, α = 0,00393 1/K; Al: 0,028264 Ω·mm²/m, 0,00403 1/K. X' ≈ 0,08 mΩ/m (mehradrige Kabel), "
@@ -195,8 +195,12 @@ Calculator cableRxz() {
                  Out::number("X", {"X je Leiter", "X per conductor"}, "mΩ", 2),
                  Out::number("Z", {"Z je Leiter", "Z per conductor"}, "mΩ", 2).primary(),
                  Out::number("Zloop", {"Z Schleife (Hin + Rück)", "Z loop (go + return)"}, "mΩ", 2),
-                 Out::number("Rkm", {"R(θ) je km", "R(θ) per km"}, "Ω/km", 4)};
-    c.keywords = {"kabelwiderstand", "reaktanz", "impedanz", "leitungswiderstand", "cable impedance"};
+                 Out::number("Rkm", {"R(θ) je km", "R(θ) per km"}, "Ω/km", 4),
+                 Out::number("Rloop", {"R(θ) Schleife (Hin + Rück)", "R(θ) loop (go + return)"}, "mΩ", 2),
+                 Out::number("rho", {"Spez. Widerstand ρ(θ)", "Resistivity ρ(θ)"}, "Ω·mm²/m", 6),
+                 Out::number("kappa", {"Leitfähigkeit κ(θ)", "Conductivity κ(θ)"}, "m/(Ω·mm²)", 2)};
+    c.keywords = {"kabelwiderstand", "reaktanz", "impedanz", "leitungswiderstand", "leiterwiderstand", "widerstand", "kupfer",
+                  "kappa", "cable impedance", "conductor resistance"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const auto mat = parseMaterial(in.choice("mat"));
@@ -212,6 +216,9 @@ Calculator cableRxz() {
         r.set("Z", std::hypot(R, X) * 1e3);
         r.set("Zloop", 2.0 * std::hypot(R, X) * 1e3);
         r.set("Rkm", R / L * 1e3);
+        r.set("Rloop", 2.0 * R * 1e3);
+        r.set("rho", cables::resistivity(mat, in.num("theta")));
+        r.set("kappa", 1.0 / cables::resistivity(mat, in.num("theta")));
         return r;
     };
     return c;

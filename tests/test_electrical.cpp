@@ -220,40 +220,170 @@ TEST_CASE("Thermocouples per NIST ITS-90 (reference tables)", "[electrical]") {
     CHECK_FALSE(temperature(Type::K, 80));
 }
 
-TEST_CASE("Area Elektrotechnik: groups reference existing items, each once, and cover the category", "[electrical]") {
-    const auto groups = categoryGroups("electrical");
-    REQUIRE(groups.size() >= 8);
+TEST_CASE("Layout: every calculator, table and list appears exactly once in exactly one area", "[layout]") {
     std::set<std::string> seen;
-    for (const auto& g : groups) {
-        INFO(g.title.de);
-        CHECK_FALSE(g.title.de.empty());
-        CHECK_FALSE(g.title.en.empty());
-        CHECK_FALSE(g.items.empty());
-        std::set<std::string> inGroup;  // an item may appear in a topic group and in "Ressourcen", but only once per group
-        for (const auto& id : g.items) {
-            INFO(id);
-            CHECK((findCalculator(id) != nullptr || findTable(id) != nullptr || findList(id) != nullptr));
-            CHECK(inGroup.insert(id).second);
-            seen.insert(id);
+    std::set<std::string> areaIds;
+    for (const auto& area : categories()) {
+        INFO(area.id);
+        CHECK(areaIds.insert(area.id).second);
+        CHECK_FALSE(area.title.de.empty());
+        CHECK_FALSE(area.badge.empty());
+        REQUIRE_FALSE(area.groups.empty());
+        CHECK(categoryGroups(area.id).size() == area.groups.size());
+        for (const auto& g : area.groups) {
+            INFO(g.title.de);
+            // several groups need headings; a single group may stay untitled
+            if (area.groups.size() > 1) CHECK_FALSE(g.title.de.empty());
+            CHECK(g.title.de.empty() == g.title.en.empty());
+            CHECK_FALSE(g.items.empty());
+            for (const auto& id : g.items) {
+                INFO(id);
+                CHECK((findCalculator(id) != nullptr || findTable(id) != nullptr || findList(id) != nullptr));
+                CHECK(seen.insert(id).second);  // no topic twice in the app
+            }
         }
     }
-    for (const auto& c : calculators()) {
-        if (c.category == "electrical") {
-            INFO(c.id);
-            CHECK(seen.contains(c.id));
-        }
+    const auto inArea = [&](const std::string& id, const std::string& category) {
+        INFO(id);
+        CHECK(seen.contains(id));
+        // the item's category is the area that lists it
+        const auto groups = categoryGroups(category);
+        CHECK(std::any_of(groups.begin(), groups.end(), [&](const CategoryGroup& g) {
+            return std::find(g.items.begin(), g.items.end(), id) != g.items.end();
+        }));
+    };
+    for (const auto& c : calculators()) inArea(c.id, c.category);
+    for (const auto& t : tables()) inArea(t.id, t.category);
+    for (const auto& l : lists()) inArea(l.id, l.category);
+    CHECK(seen.size() == calculators().size() + tables().size() + lists().size());
+}
+
+TEST_CASE("Layout: domain topics live in their own area", "[layout]") {
+    const auto areaOf = [](const std::string& id) {
+        if (const auto* c = findCalculator(id)) return c->category;
+        if (const auto* t = findTable(id)) return t->category;
+        return std::string{};
+    };
+    for (const auto* id : {"ex_selection", "ex_zones", "ex_groups", "ex_temperature_classes", "ex_protection", "ex_substances"}) {
+        INFO(id);
+        CHECK(areaOf(id) == "atex");
     }
-    for (const auto& t : tables()) {
-        if (t.category == "electrical") {
-            INFO(t.id);
-            CHECK(seen.contains(t.id));
-        }
+    for (const auto* id : {"hx_diagram", "fresh_air", "valve_kv", "heat_flow", "hydraulic_circuits", "heating_curve", "heat_pump", "ahu_sizing"}) {
+        INFO(id);
+        CHECK(areaOf(id) == "hvac");
     }
-    // other categories keep their flat list
-    const auto basics = categoryGroups("basics");
-    REQUIRE(basics.size() == 1);
-    CHECK(basics.front().title.de.empty());
-    CHECK_FALSE(basics.front().items.empty());
+    for (const auto* id : {"pin_rj45", "pin_knx", "pin_usb", "pin_poe", "pin_xlr", "fiber_colours", "rca_colours"}) {
+        INFO(id);
+        CHECK(areaOf(id) == "comms");
+    }
+    for (const auto* id : {"conv_awg", "conv_kvar_uf", "trig_angle", "conv_speed", "si_prefixes"}) {
+        INFO(id);
+        CHECK(areaOf(id) == "converters");
+    }
+    // merged duplicates are gone
+    for (const auto* id : {"humid_air", "current_from_power", "voltage_from_power", "motor_current", "motor_power", "motor_voltage",
+                           "motor_pf", "color_from_value", "rtd_cu", "conductor_resistance", "conv_phase", "led_resistor"}) {
+        INFO(id);
+        CHECK(findCalculator(id) == nullptr);
+    }
+    for (const auto* id : {"resistor_colours", "tuning_rules", "conductor_colours", "mcb_characteristics", "network_systems",
+                           "motor_terminals", "ip_first", "ip_second", "wire_size_compare", "fuse_colours", "fuse_d_nh"}) {
+        INFO(id);
+        CHECK(findTable(id) == nullptr);
+    }
+}
+
+TEST_CASE("Stored favourites and hidden areas of older versions are migrated", "[layout]") {
+    for (const auto* old : {"current_from_power", "voltage_from_power", "motor_current", "motor_power", "motor_voltage", "motor_pf",
+                            "color_from_value", "resistor_colours", "rtd_cu", "conductor_resistance", "humid_air", "conv_phase",
+                            "tuning_rules", "conductor_colours", "mcb_characteristics", "network_systems", "motor_terminals",
+                            "ip_first", "ip_second", "wire_size_compare", "fuse_colours", "fuse_d_nh", "led_resistor"}) {
+        INFO(old);
+        const auto now = currentItemId(old);
+        CHECK(now != old);
+        CHECK((findCalculator(now) != nullptr || findTable(now) != nullptr));
+    }
+    CHECK(currentItemId("voltage_drop") == "voltage_drop");
+    CHECK(currentAreaIds("process") == std::vector<std::string_view>{"pid", "atex"});
+    CHECK(currentAreaIds("hvac") == std::vector<std::string_view>{"hvac"});
+    CHECK(currentAreaIds("tables").empty());
+}
+
+TEST_CASE("Merged calculators: power family, colour code both ways, Cu RTD, dew point", "[layout]") {
+    const auto* p = findCalculator("power");
+    REQUIRE(p);
+    auto in = defaultInputs(*p);
+    // motor 7.5 kW, 400 V, cos φ 0.85, η 90 % → I = 7500 / (√3 · 400 · 0.85 · 0.9) = 14.1507 A
+    in.setChoice("solve", "I");
+    in.setChoice("sys", "ac3");
+    in.set("P", 7.5);
+    in.set("U", 400);
+    in.set("cosphi", 0.85);
+    in.set("eta", 90);
+    auto r = evaluate(*p, in, {});
+    CHECK(r.values.at("I") == Approx(14.1507).epsilon(1e-5));
+    CHECK(r.values.at("Pin") == Approx(8.3333).epsilon(1e-4));
+    CHECK(r.values.at("Ploss") == Approx(0.8333).epsilon(1e-3));
+    // back to the voltage
+    in.setChoice("solve", "U");
+    in.set("I", r.values.at("I"));
+    CHECK(evaluate(*p, in, {}).values.at("U") == Approx(400).epsilon(1e-6));
+    // P, Q, S from U and I: 400 V, 16 A, cos φ 0.9 → S = 11.085 kVA, P = 9.977 kW, Q = 4.832 kvar
+    in.setChoice("solve", "P");
+    in.set("I", 16);
+    in.set("cosphi", 0.9);
+    in.set("eta", 100);
+    r = evaluate(*p, in, {});
+    CHECK(r.values.at("S") == Approx(11.085).epsilon(1e-4));
+    CHECK(r.values.at("P") == Approx(9.977).epsilon(1e-4));
+    CHECK(r.values.at("Q") == Approx(4.832).epsilon(1e-3));
+    // DC: 24 V, 10 A → 240 W
+    in.setChoice("sys", "dc");
+    in.set("U", 24);
+    in.set("I", 10);
+    r = evaluate(*p, in, {});
+    CHECK(r.values.at("P") == Approx(0.24));
+    CHECK_FALSE(r.values.contains("Q"));
+
+    const auto* rc = findCalculator("resistor_color");
+    REQUIRE(rc);
+    auto rin = defaultInputs(*rc);
+    rin.setChoice("dir", "v2c");
+    rin.set("R", 4.7);
+    rin.setChoice("unit", "k");
+    auto rr = evaluate(*rc, rin, {});
+    CHECK(rr.texts.at("colours").de == "Gelb – Violett – Rot – Gold");
+    CHECK(rr.values.at("value") == Approx(4.7));
+    CHECK(rr.units.at("value") == "kΩ");
+    const auto chart = evaluateChart(*rc, rin, {});
+    REQUIRE(chart);
+    CHECK(chart->series.size() >= 7);  // 2 leads, body, 4 bands
+
+    // LED 24 V, U_F 2.1 V, 10 mA → 2190 Ω → E24 2.2 kΩ, 9.95 mA; load 24 V → 12 V at 100 mA → 120 Ω (E12)
+    const auto* sr = findCalculator("series_resistor");
+    REQUIRE(sr);
+    auto sin = defaultInputs(*sr);
+    auto sres = evaluate(*sr, sin, {});
+    CHECK(sres.values.at("R") == Approx(2190));
+    CHECK(sres.values.at("Rn") == Approx(2200));
+    CHECK(sres.values.at("In") == Approx(9.9545).epsilon(1e-4));
+    sin.setChoice("load", "dev");
+    sres = evaluate(*sr, sin, {});
+    CHECK(sres.values.at("Rn") == Approx(120));
+    CHECK(sres.values.at("ULn") == Approx(12));
+    CHECK(sres.values.at("eta") == Approx(50));
+
+    const auto* rtd = findCalculator("rtd");
+    REQUIRE(rtd);
+    auto tin = defaultInputs(*rtd);
+    tin.setChoice("type", "cu100");
+    tin.setChoice("dir", "T");
+    tin.set("T", 50);
+    CHECK(evaluate(*rtd, tin, {}).values.at("R") == Approx(121.4));  // 100 · (1 + 0.00428 · 50)
+    tin.setChoice("type", "cu10");
+    tin.setChoice("dir", "R");
+    tin.set("R", 10.427);
+    CHECK(evaluate(*rtd, tin, {}).values.at("T") == Approx(10.0).epsilon(1e-6));  // 10 · (1 + 0.00427 · 10)
 }
 
 TEST_CASE("Ressourcen: computed tables match the formulas", "[electrical]") {
@@ -270,11 +400,16 @@ TEST_CASE("Ressourcen: computed tables match the formulas", "[electrical]") {
         CHECK(v > 0.06);
         CHECK(v < 0.12);
     }
-    // the Ressourcen group lists every item of the original resources tab
-    const auto groups = categoryGroups("electrical");
-    const auto it = std::find_if(groups.begin(), groups.end(), [](const CategoryGroup& g) { return g.title.de == "Ressourcen"; });
-    REQUIRE(it != groups.end());
-    CHECK(it->items.size() >= 27);
+    // every item of the original "Ressourcen" tab still exists (v1.9: sorted into the matching areas)
+    for (const auto* id : {"fuse_classes", "fuse_d", "fuse_nh", "ul_fuse_classes", "e_series_table", "trip_curves", "trip_characteristics",
+                           "cable_reactance_table", "resistivity_table", "vdrop_per_length", "conductor_data", "earthing_systems",
+                           "ip_codes", "ik_codes", "nema_enclosures", "ex_selection", "ex_zones", "protection_classes", "cctv_resolutions",
+                           "thermocouple_table", "ansi_device_numbers", "device_acronyms", "electrical_symbols", "world_electricity",
+                           "plug_types", "iec60320_connectors", "iec60309_sockets", "nema_connectors", "ev_plugs", "wiring_colours_intl",
+                           "si_prefixes", "units_table", "pipe_dimensions", "cable_glands"}) {
+        INFO(id);
+        CHECK((findCalculator(id) != nullptr || findTable(id) != nullptr));
+    }
 }
 
 TEST_CASE("Tripping curve chart is logarithmic and monotonic", "[electrical]") {

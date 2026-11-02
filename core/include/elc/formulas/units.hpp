@@ -22,6 +22,7 @@ struct Unit {
 [[nodiscard]] std::span<const Unit> flowUnits();      // base m³/s
 [[nodiscard]] std::span<const Unit> areaUnits();      // base m²
 [[nodiscard]] std::span<const Unit> lengthUnits();    // base m
+[[nodiscard]] std::span<const Unit> speedUnits();     // base rad/s
 
 /// Convert between two units of the same table
 [[nodiscard]] double convert(double value, const Unit& from, const Unit& to);

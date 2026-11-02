@@ -73,7 +73,7 @@ erweiterbar sein.
 Calculator myCalculator() {
     Calculator c;
     c.id = "my_calc";                       // eindeutig, wird für Favoriten gespeichert
-    c.category = "automation";              // basics, cables, motors, industry, automation, cleanroom, datacenter, pv, electronics, converters
+    c.category = "automation";              // Vorgabe; maßgeblich ist der Eintrag in catalog/layout.cpp
     c.title = {"Mein Rechner", "My calculator"};
     c.summary = {"Kurzbeschreibung", "Short description"};
     c.description = {"Formel und Norm (DE)", "Formula and standard (EN)"};
@@ -92,10 +92,11 @@ Calculator myCalculator() {
 }
 ```
 
-3. Bauen und `elc_tests` ausführen – die Vertragstests prüfen den neuen Rechner automatisch.
-4. `elcalc markdown > docs/BERECHNUNGEN.md` und `elcalc markdown --lang en > docs/CALCULATIONS.md` neu erzeugen.
+3. Die ID genau einmal in `core/src/catalog/layout.cpp` in Bereich und Gruppe eintragen.
+4. Bauen und `elc_tests` ausführen – die Vertragstests prüfen den neuen Rechner automatisch (auch, dass er im Layout steht).
+5. `elcalc markdown > docs/BERECHNUNGEN.md` und `elcalc markdown --lang en > docs/CALCULATIONS.md` neu erzeugen.
 
-Tabellen: `make(...)` in `core/src/tables/tables.cpp`, in `addTables()` registrieren.
+Tabellen: `make(...)` in `core/src/tables/tables.cpp`, in `addTables()` registrieren und ebenfalls in `layout.cpp` eintragen.
 
 ## Diagramme
 
@@ -152,17 +153,28 @@ Die Ergebniszeilen (`ResultView.qml`) und das Eingabeformular (`InputForm.qml`) 
 aufgebaut (Column + Anker): umbrechende Beschriftungen und Hinweise in `GridLayout`-Zeilen bekamen sonst gelegentlich
 eine falsche Höhe und überlappten.
 
-## Gruppierte Kategorien (ab 1.7)
+## Bereiche und Gruppen (zentrales Layout ab 1.9)
 
-`Category::groups` (Liste von `CategoryGroup{title, items}`) macht aus einer Kategorie einen Bereich mit Gruppen, der
-auch Einträge anderer Kategorien zeigen darf (Bereich „Elektrotechnik“, Gruppen in `catalog/elec_tables.cpp` →
-`electricalGroups()`). `categoryGroups(id)` liefert für alle anderen Kategorien eine unbenannte Gruppe mit ihren eigenen
-Einträgen; `CalcBridge::groups()` und `ListPage.qml` (aufklappbare Gruppen) nutzen das. Test: `tests/test_electrical.cpp`
-(jede ID existiert, keine doppelt, jeder Eintrag der Kategorie steht in einer Gruppe).
+`catalog/layout.cpp` → `areas()` ist die einzige Stelle, die festlegt, **wo** ein Eintrag in der App steht: Liste der
+Bereiche (`Category`: ID, Titel, Kürzel) mit Gruppen (`CategoryGroup{title, items}`) in Anzeigereihenfolge. Die Registry
+setzt beim Aufbau `category` jedes Rechners, jeder Tabelle und Projektliste aus diesem Layout (`assignAreas()`), damit
+ein Thema nur durch Verschieben seiner ID den Bereich wechselt. Bereiche: Projektlisten, Elektrotechnik, Motoren &
+Antriebe, Elektronik & Bauteile, Gebäudeautomation & MSR, HLKS, Explosionsschutz (ATEX), R&I-Kennzeichnung, Reinraum &
+Pharma, Rechenzentrum, Photovoltaik & Speicher, Gebäude/Brandschutz/Akustik, Kommunikation & Pinbelegungen, Umrechnung
+& Einheiten.
 
-Ein Eintrag darf in einer Themengruppe und zusätzlich in der Gruppe „Ressourcen“ stehen (Abbild des Reiters der
-Vorlage); innerhalb einer Gruppe nur einmal. Diagramme können logarithmische Achsen haben (`Chart::xLog/yLog`, z. B.
-Auslösekennlinien); `ChartView.qml` zeichnet dann Dekaden-Teilung und -Gitter.
+Regeln (Test `tests/test_electrical.cpp`, Tag `[layout]`): jede ID existiert, steht **genau einmal** in der ganzen App,
+jeder Eintrag steht in seinem Bereich; Bereiche mit mehreren Gruppen brauchen Gruppentitel. `categoryGroups(id)` liefert
+die Gruppen; `CalcBridge::groups()` und `ListPage.qml` zeigen ab zwei Gruppen aufklappbare Überschriften, sonst eine
+einfache Liste. Die CLI (`elcalc list`, `elcalc markdown`) folgt derselben Reihenfolge.
+
+In 1.9 wurden doppelte Themen zusammengeführt (z. B. Strom/Spannung/Leistung/Motorstrom → `power` mit Auswahl
+„Gesucht“, Farbcode beide Richtungen → `resistor_color`, h,x-Diagramm mit Taupunkt-Eingabe statt „Feuchte Luft“).
+`currentItemId()` bildet alte IDs auf die neuen ab, `currentAreaIds()` alte Kategorien auf neue Bereiche; `CalcBridge`
+migriert damit gespeicherte Favoriten und ausgeblendete Bereiche beim Start.
+
+Diagramme können logarithmische Achsen haben (`Chart::xLog/yLog`, z. B. Auslösekennlinien); `ChartView.qml` zeichnet
+dann Dekaden-Teilung und -Gitter.
 
 Zeichnungen der Elektro-Rechner nutzen die gemeinsame Hilfe `catalog/sketch.hpp` (`Sketch`: Linien, Rechtecke, Spulen-
 /Widerstandskörper `bar`, Kreise, Beschriftungen) und die Stile `fill:#RRGGBB` (Farbringe) und `line:#RRGGBB`

@@ -9,45 +9,6 @@ namespace elc::catalog {
 
 namespace {
 
-Calculator motorCurrent() {
-    Calculator c;
-    c.id = "motor_current";
-    c.category = "motors";
-    c.title = {"Motor-Bemessungsstrom", "Motor rated current"};
-    c.summary = {"I_N aus P_N, U, cos φ und η", "I_N from P_N, U, cos φ and η"};
-    c.description = {"I_N = P_N / (k · U · cos φ · η)    k = √3 (3~) bzw. 1 (1~)\n"
-                     "P_N = abgegebene mechanische Leistung laut Typenschild.\nP_el = P_N / η",
-                     "I_N = P_N / (k · U · cos φ · η)    k = √3 (3~) or 1 (1~)\n"
-                     "P_N = rated mechanical output from the nameplate.\nP_el = P_N / η"};
-    c.inputs = {
-        Num::choice("sys", {"Netz", "System"}, systemOptions(false), "ac3"),
-        Num::number("P", {"Bemessungsleistung P_N", "Rated output P_N"}, "kW", 7.5).positive(),
-        Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive(),
-        cosPhiInput(0.85),
-        Num::number("eta", {"Wirkungsgrad η", "Efficiency η"}, "%", 90).rangeExclusiveMin(0, 100),
-    };
-    c.outputs = {Out::number("I", {"Bemessungsstrom I_N", "Rated current I_N"}, "A", 2).primary(),
-                 Out::number("Pel", {"Aufgenommene Wirkleistung P_el", "Active input power P_el"}, "kW", 2),
-                 Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 2),
-                 Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 2)};
-    c.keywords = {"motor", "nennstrom", "bemessungsstrom", "rated current"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const auto sys = parseSystem(in.choice("sys"));
-        const double eta = in.num("eta") / 100.0;
-        const double cosPhi = in.num("cosphi");
-        const double I = motors::ratedCurrent(sys, in.num("P") * 1e3, in.num("U"), cosPhi, eta);
-        const double Pel = in.num("P") / eta;
-        const double S = Pel / cosPhi;
-        r.set("I", I);
-        r.set("Pel", Pel);
-        r.set("S", S);
-        r.set("Q", S * std::sin(std::acos(cosPhi)));
-        return r;
-    };
-    return c;
-}
-
 Calculator torque() {
     Calculator c;
     c.id = "torque";
@@ -236,7 +197,6 @@ Calculator steinmetz() {
 }  // namespace
 
 void addMotors(std::vector<Calculator>& out) {
-    out.push_back(motorCurrent());
     out.push_back(torque());
     out.push_back(motorSpeed());
     out.push_back(efficiency());

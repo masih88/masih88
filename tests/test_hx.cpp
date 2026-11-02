@@ -143,12 +143,25 @@ TEST_CASE("h,x chart: grid, state points and picking") {
     }
 }
 
-TEST_CASE("Moist air calculator also draws its state in the chart") {
-    const auto* c = findCalculator("humid_air");
+TEST_CASE("h,x diagram accepts the dew point instead of the relative humidity") {
+    const auto* c = findCalculator("hx_diagram");
     REQUIRE(c);
-    const auto chart = evaluateChart(*c, defaultInputs(*c), {});
+    auto in = defaultInputs(*c);
+    in.setChoice("proc", "none");
+    in.set("alt", 0);
+    in.set("t1", 22);
+    in.setChoice("given1", "td");
+    in.set("td1", 9.5);
+    const auto r = evaluate(*c, in, {});
+    REQUIRE_FALSE(r.hasError());
+    CHECK(r.values.at("td1") == Approx(9.5).margin(0.05));
+    CHECK(r.values.at("rh1") == Approx(44.96).margin(0.05));  // Magnus (WMO): p_s(9,5 °C) / p_s(22 °C) = 11,857 / 26,374 hPa
+    CHECK(r.values.at("ps1") == Approx(26.374).margin(0.005));
+    const auto chart = evaluateChart(*c, in, {});
     REQUIRE(chart);
     CHECK_FALSE(chart->markers.empty());
+    in.set("td1", 25);
+    CHECK(evaluate(*c, in, {}).hasError());
 }
 
 TEST_CASE("PUE balance from the consumer breakdown (hand calculation)") {

@@ -179,7 +179,10 @@ std::vector<Option> rtdOptions() {
             {"pt500", "Pt500 (IEC 60751)"},
             {"pt1000", "Pt1000 (IEC 60751)"},
             {"ni1000", "Ni1000 (DIN 43760, TK 6180)"},
-            {"ni1000tk5000", "Ni1000 TK5000 (LG-Ni 1000)"}};
+            {"ni1000tk5000", "Ni1000 TK5000 (LG-Ni 1000)"},
+            {"cu10", {"Cu10 (Kupfer, α = 0,00427)", "Cu10 (copper, α = 0.00427)"}},
+            {"cu50", {"Cu50 (Kupfer, α = 0,00428)", "Cu50 (copper, α = 0.00428)"}},
+            {"cu100", {"Cu100 (Kupfer, α = 0,00428)", "Cu100 (copper, α = 0.00428)"}}};
 }
 
 Rtd parseRtd(const std::string& v) {
@@ -187,6 +190,9 @@ Rtd parseRtd(const std::string& v) {
     if (v == "pt500") return Rtd::Pt500;
     if (v == "ni1000") return Rtd::Ni1000;
     if (v == "ni1000tk5000") return Rtd::Ni1000TK5000;
+    if (v == "cu10") return Rtd::Cu10;
+    if (v == "cu50") return Rtd::Cu50;
+    if (v == "cu100") return Rtd::Cu100;
     return Rtd::Pt1000;
 }
 
@@ -194,17 +200,19 @@ Calculator rtd() {
     Calculator c;
     c.id = "rtd";
     c.category = "automation";
-    c.title = {"Widerstandsthermometer Pt/Ni", "RTD Pt/Ni"};
-    c.summary = {"Temperatur ↔ Widerstand für Pt100/Pt1000/Ni1000", "Temperature ↔ resistance for Pt100/Pt1000/Ni1000"};
+    c.title = {"Widerstandsthermometer Pt/Ni/Cu", "RTD Pt/Ni/Cu"};
+    c.summary = {"Temperatur ↔ Widerstand für Pt100/Pt1000/Ni1000/Cu100", "Temperature ↔ resistance for Pt100/Pt1000/Ni1000/Cu100"};
     c.description = {
         "Pt (IEC 60751): R = R0 · (1 + A·T + B·T² + C·(T − 100)·T³), C nur unter 0 °C\n"
         "A = 3,9083·10⁻³, B = −5,775·10⁻⁷, C = −4,183·10⁻¹²\n"
         "Ni1000 (DIN 43760): R = R0 · (1 + A·T + B·T² + D·T⁴ + F·T⁶)\n"
-        "Ni1000 TK5000: R = R0 · (1 + 4,427·10⁻³·T + 5,172·10⁻⁶·T² + 5,585·10⁻⁹·T³)",
+        "Ni1000 TK5000: R = R0 · (1 + 4,427·10⁻³·T + 5,172·10⁻⁶·T² + 5,585·10⁻⁹·T³)\n"
+        "Cu10/Cu50/Cu100: R = R0 · (1 + α · T), linear −50 … 150 °C; α = 0,00427 1/K (Cu10, US-Praxis), 0,00428 1/K (GOST 6651)",
         "Pt (IEC 60751): R = R0 · (1 + A·T + B·T² + C·(T − 100)·T³), C below 0 °C only\n"
         "A = 3.9083·10⁻³, B = −5.775·10⁻⁷, C = −4.183·10⁻¹²\n"
         "Ni1000 (DIN 43760): R = R0 · (1 + A·T + B·T² + D·T⁴ + F·T⁶)\n"
-        "Ni1000 TK5000: R = R0 · (1 + 4.427·10⁻³·T + 5.172·10⁻⁶·T² + 5.585·10⁻⁹·T³)"};
+        "Ni1000 TK5000: R = R0 · (1 + 4.427·10⁻³·T + 5.172·10⁻⁶·T² + 5.585·10⁻⁹·T³)\n"
+        "Cu10/Cu50/Cu100: R = R0 · (1 + α · T), linear −50 … 150 °C; α = 0.00427 1/K (Cu10, US practice), 0.00428 1/K (GOST 6651)"};
     c.inputs = {
         Num::choice("type", {"Fühlertyp", "Sensor type"}, rtdOptions(), "pt1000"),
         Num::choice("dir", {"Gegeben", "Given"},
@@ -215,7 +223,7 @@ Calculator rtd() {
     c.outputs = {Out::number("R", {"Widerstand R", "Resistance R"}, "Ω", 3),
                  Out::number("T", {"Temperatur T", "Temperature T"}, "°C", 2).primary(),
                  Out::number("S", {"Empfindlichkeit dR/dT", "Sensitivity dR/dT"}, "Ω/K", 4)};
-    c.keywords = {"pt100", "pt1000", "ni1000", "fühler", "temperatur", "rtd", "widerstandsthermometer", "lg-ni"};
+    c.keywords = {"pt100", "pt1000", "ni1000", "cu100", "cu50", "kupfer", "fühler", "temperatur", "rtd", "widerstandsthermometer", "lg-ni"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const auto type = parseRtd(in.choice("type"));

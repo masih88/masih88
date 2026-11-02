@@ -49,111 +49,6 @@ Calculator ohm() {
     return c;
 }
 
-Calculator acPower() {
-    Calculator c;
-    c.id = "power";
-    c.category = "basics";
-    c.title = {"Leistung P, Q, S", "Power P, Q, S"};
-    c.summary = {"Wirk-, Blind-, Scheinleistung aus U, I, cos φ", "Active, reactive, apparent power from U, I, cos φ"};
-    c.description = {
-        "S = k · U · I   (k = 1 bei DC/1~, k = √3 bei 3~ mit Außenleiterspannung)\n"
-        "P = S · cos φ    Q = S · sin φ    φ = arccos(cos φ)",
-        "S = k · U · I   (k = 1 for DC/1~, k = √3 for 3~ with line-to-line voltage)\n"
-        "P = S · cos φ    Q = S · sin φ    φ = arccos(cos φ)"};
-    c.inputs = {
-        Num::choice("sys", {"Netz", "System"}, systemOptions(), "ac3"),
-        Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive(),
-        Num::number("I", {"Strom I", "Current I"}, "A", 16).nonNegative(),
-        cosPhiInput(0.9),
-    };
-    c.outputs = {Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 3),
-                 Out::number("P", {"Wirkleistung P", "Active power P"}, "kW", 3),
-                 Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 3),
-                 Out::number("phi", {"Phasenwinkel φ", "Phase angle φ"}, "°", 2)};
-    c.keywords = {"wirkleistung", "blindleistung", "scheinleistung", "cos phi", "leistungsfaktor", "power factor"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const auto sys = parseSystem(in.choice("sys"));
-        const auto p = basics::powerFromVoltageCurrent(sys, in.num("U"), in.num("I"), in.num("cosphi"));
-        r.set("S", p.S / 1e3);
-        r.set("P", p.P / 1e3);
-        r.set("Q", p.Q / 1e3);
-        r.set("phi", p.phiDeg);
-        return r;
-    };
-    return c;
-}
-
-Calculator currentFromPower() {
-    Calculator c;
-    c.id = "current_from_power";
-    c.category = "basics";
-    c.title = {"Strom aus Leistung", "Current from power"};
-    c.summary = {"I = P / (k · U · cos φ · η)", "I = P / (k · U · cos φ · η)"};
-    c.description = {
-        "I = P / (k · U · cos φ · η)\nk = 1 bei DC/1~, k = √3 bei 3~. P ist die abgegebene Leistung; "
-        "η = 100 % für die aufgenommene Leistung.",
-        "I = P / (k · U · cos φ · η)\nk = 1 for DC/1~, k = √3 for 3~. P is the output power; "
-        "use η = 100 % for input power."};
-    c.inputs = {
-        Num::choice("sys", {"Netz", "System"}, systemOptions(), "ac3"),
-        Num::number("P", {"Leistung P", "Power P"}, "kW", 11).positive(),
-        Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive(),
-        cosPhiInput(0.85),
-        Num::number("eta", {"Wirkungsgrad η", "Efficiency η"}, "%", 100).rangeExclusiveMin(0, 100),
-    };
-    c.outputs = {Out::number("I", {"Strom I", "Current I"}, "A", 2),
-                 Out::number("S", {"Aufgenommene Scheinleistung S", "Apparent input power S"}, "kVA", 3)};
-    c.keywords = {"strom", "leistung", "current", "power"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const auto sys = parseSystem(in.choice("sys"));
-        const double eta = in.num("eta") / 100.0;
-        const double I = basics::currentFromActivePower(sys, in.num("P") * 1e3, in.num("U"), in.num("cosphi"), eta);
-        r.set("I", I);
-        r.set("S", powerFactorK(sys) * in.num("U") * I / 1e3);
-        return r;
-    };
-    return c;
-}
-
-Calculator conductorResistance() {
-    Calculator c;
-    c.id = "conductor_resistance";
-    c.category = "basics";
-    c.title = {"Leiterwiderstand", "Conductor resistance"};
-    c.summary = {"R = ρ(θ) · L / A", "R = ρ(θ) · L / A"};
-    c.description = {
-        "R = ρ(θ) · L / A    ρ(θ) = ρ20 · (1 + α20 · (θ − 20 °C))\n"
-        "Cu: ρ20 = 0,017241 Ω·mm²/m, α20 = 0,00393 1/K (IEC 60028)\n"
-        "Al: ρ20 = 0,028264 Ω·mm²/m, α20 = 0,00403 1/K (IEC 60889)",
-        "R = ρ(θ) · L / A    ρ(θ) = ρ20 · (1 + α20 · (θ − 20 °C))\n"
-        "Cu: ρ20 = 0.017241 Ω·mm²/m, α20 = 0.00393 1/K (IEC 60028)\n"
-        "Al: ρ20 = 0.028264 Ω·mm²/m, α20 = 0.00403 1/K (IEC 60889)"};
-    c.inputs = {
-        Num::choice("mat", {"Leitermaterial", "Conductor material"}, materialOptions(), "cu"),
-        Num::number("L", {"Länge L (einfach)", "Length L (one way)"}, "m", 100).positive(),
-        Num::number("A", {"Querschnitt A", "Cross-section A"}, "mm²", 2.5).positive(),
-        Num::number("T", {"Leitertemperatur θ", "Conductor temperature θ"}, "°C", 20).range(-60, 250),
-    };
-    c.outputs = {Out::number("R", {"Widerstand eines Leiters", "Resistance of one conductor"}, "Ω", 4),
-                 Out::number("Rloop", {"Schleifenwiderstand (Hin + Rück)", "Loop resistance (out + return)"}, "Ω", 4),
-                 Out::number("rho", {"Spez. Widerstand ρ(θ)", "Resistivity ρ(θ)"}, "Ω·mm²/m", 6),
-                 Out::number("kappa", {"Leitfähigkeit κ(θ)", "Conductivity κ(θ)"}, "m/(Ω·mm²)", 2)};
-    c.keywords = {"widerstand", "leitung", "kupfer", "resistance", "copper", "kappa"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const double rho = cables::resistivity(parseMaterial(in.choice("mat")), in.num("T"));
-        const double R = rho * in.num("L") / in.num("A");
-        r.set("R", R);
-        r.set("Rloop", 2.0 * R);
-        r.set("rho", rho);
-        r.set("kappa", 1.0 / rho);
-        return r;
-    };
-    return c;
-}
-
 Calculator seriesParallel(bool capacitors) {
     Calculator c;
     c.id = capacitors ? "capacitors_series_parallel" : "resistors_series_parallel";
@@ -240,9 +135,6 @@ Calculator energyCost() {
 
 void addBasics(std::vector<Calculator>& out) {
     out.push_back(ohm());
-    out.push_back(acPower());
-    out.push_back(currentFromPower());
-    out.push_back(conductorResistance());
     out.push_back(seriesParallel(false));
     out.push_back(seriesParallel(true));
     out.push_back(energyCost());

@@ -75,16 +75,18 @@ const char* severityTag(Severity s) {
 }
 
 int list(const Options& o) {
+    const auto row = [&](const std::string& id, const Text& title) {
+        std::cout << "  " << std::left << std::setw(28) << id << title.in(o.lang) << '\n';
+    };
     for (const auto& cat : categories()) {
         std::cout << "\n== " << cat.title.in(o.lang) << " ==\n";
-        for (const auto& l : lists()) {
-            if (l.category == cat.id) std::cout << "  " << std::left << std::setw(28) << l.id << l.title.in(o.lang) << '\n';
-        }
-        for (const auto& c : calculators()) {
-            if (c.category == cat.id) std::cout << "  " << std::left << std::setw(28) << c.id << c.title.in(o.lang) << '\n';
-        }
-        for (const auto& t : tables()) {
-            if (t.category == cat.id) std::cout << "  " << std::left << std::setw(28) << t.id << t.title.in(o.lang) << '\n';
+        for (const auto& g : categoryGroups(cat.id)) {
+            if (!g.title.de.empty()) std::cout << " -- " << g.title.in(o.lang) << '\n';
+            for (const auto& id : g.items) {
+                if (const auto* l = findList(id)) row(l->id, l->title);
+                else if (const auto* c = findCalculator(id)) row(c->id, c->title);
+                else if (const auto* t = findTable(id)) row(t->id, t->title);
+            }
         }
     }
     return 0;
@@ -230,49 +232,51 @@ int markdown(const Options& o) {
     };
     for (const auto& cat : categories()) {
         std::cout << "## " << cat.title.in(o.lang) << "\n\n";
-        for (const auto& l : lists()) {
-            if (l.category != cat.id) continue;
-            std::cout << "### " << l.title.in(o.lang) << "\n\n*" << l.summary.in(o.lang) << "* — `" << l.id << "`\n\n```text\n"
-                      << l.description.in(o.lang) << "\n```\n\n";
-            std::cout << (de ? "**Projekteinstellungen:** " : "**Project settings:** ");
-            labels(l.settingsInputs);
-            std::cout << (de ? "**Spalten je Zeile:** " : "**Columns per row:** ");
-            labels(l.rowInputs);
-            std::cout << (de ? "**Ergebnisse je Zeile:** " : "**Results per row:** ");
-            labels(l.rowOutputs);
-            std::cout << (de ? "**Summen:** " : "**Totals:** ");
-            labels(l.totalOutputs);
-        }
-        for (const auto& c : calculators()) {
-            if (c.category != cat.id) continue;
-            std::cout << "### " << c.title.in(o.lang) << "\n\n*" << c.summary.in(o.lang) << "* — `" << c.id << "`\n\n```text\n"
-                      << c.description.in(o.lang) << "\n```\n\n"
-                      << (de ? "**Eingaben:** " : "**Inputs:** ");
-            for (std::size_t i = 0; i < c.inputs.size(); ++i) {
-                const auto& in = c.inputs[i];
-                std::cout << (i ? ", " : "") << in.label.in(o.lang) << (in.unit.empty() ? "" : " [" + in.unit + "]");
+        for (const auto& g : categoryGroups(cat.id)) {
+            const bool titled = !g.title.de.empty();
+            if (titled) std::cout << "### " << g.title.in(o.lang) << "\n\n";
+            const std::string h = titled ? "#### " : "### ";
+            for (const auto& id : g.items) {
+                if (const auto* l = findList(id)) {
+                    std::cout << h << l->title.in(o.lang) << "\n\n*" << l->summary.in(o.lang) << "* — `" << l->id << "`\n\n```text\n"
+                              << l->description.in(o.lang) << "\n```\n\n";
+                    std::cout << (de ? "**Projekteinstellungen:** " : "**Project settings:** ");
+                    labels(l->settingsInputs);
+                    std::cout << (de ? "**Spalten je Zeile:** " : "**Columns per row:** ");
+                    labels(l->rowInputs);
+                    std::cout << (de ? "**Ergebnisse je Zeile:** " : "**Results per row:** ");
+                    labels(l->rowOutputs);
+                    std::cout << (de ? "**Summen:** " : "**Totals:** ");
+                    labels(l->totalOutputs);
+                } else if (const auto* c = findCalculator(id)) {
+                    std::cout << h << c->title.in(o.lang) << "\n\n*" << c->summary.in(o.lang) << "* — `" << c->id << "`\n\n```text\n"
+                              << c->description.in(o.lang) << "\n```\n\n"
+                              << (de ? "**Eingaben:** " : "**Inputs:** ");
+                    for (std::size_t i = 0; i < c->inputs.size(); ++i) {
+                        const auto& in = c->inputs[i];
+                        std::cout << (i ? ", " : "") << in.label.in(o.lang) << (in.unit.empty() ? "" : " [" + in.unit + "]");
+                    }
+                    std::cout << "\n\n" << (de ? "**Ergebnisse:** " : "**Results:** ");
+                    for (std::size_t i = 0; i < c->outputs.size(); ++i) {
+                        const auto& out = c->outputs[i];
+                        std::cout << (i ? ", " : "") << out.label.in(o.lang) << (out.unit.empty() ? "" : " [" + out.unit + "]");
+                    }
+                    std::cout << "\n\n";
+                } else if (const auto* t = findTable(id)) {
+                    std::cout << h << t->title.in(o.lang) << "\n\n";
+                    std::cout << '|';
+                    for (const auto& col : t->columns) std::cout << ' ' << mdEscape(col.in(o.lang)) << " |";
+                    std::cout << "\n|";
+                    for (std::size_t i = 0; i < t->columns.size(); ++i) std::cout << "---|";
+                    std::cout << '\n';
+                    for (const auto& r : t->rows) {
+                        std::cout << '|';
+                        for (const auto& cell : r) std::cout << ' ' << mdEscape(cell.in(o.lang)) << " |";
+                        std::cout << '\n';
+                    }
+                    std::cout << "\n*" << t->description.in(o.lang) << "*\n\n";
+                }
             }
-            std::cout << "\n\n" << (de ? "**Ergebnisse:** " : "**Results:** ");
-            for (std::size_t i = 0; i < c.outputs.size(); ++i) {
-                const auto& out = c.outputs[i];
-                std::cout << (i ? ", " : "") << out.label.in(o.lang) << (out.unit.empty() ? "" : " [" + out.unit + "]");
-            }
-            std::cout << "\n\n";
-        }
-        for (const auto& t : tables()) {
-            if (t.category != cat.id) continue;
-            std::cout << "### " << t.title.in(o.lang) << "\n\n";
-            std::cout << '|';
-            for (const auto& col : t.columns) std::cout << ' ' << mdEscape(col.in(o.lang)) << " |";
-            std::cout << "\n|";
-            for (std::size_t i = 0; i < t.columns.size(); ++i) std::cout << "---|";
-            std::cout << '\n';
-            for (const auto& row : t.rows) {
-                std::cout << '|';
-                for (const auto& cell : row) std::cout << ' ' << mdEscape(cell.in(o.lang)) << " |";
-                std::cout << '\n';
-            }
-            std::cout << "\n*" << t.description.in(o.lang) << "*\n\n";
         }
     }
     return 0;

@@ -4,6 +4,24 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.9 – aufgeräumt und nach Fachbereichen geordnet.** Jedes Thema steht jetzt **genau einmal** in der App;
+doppelte Rechner wurden zur jeweils besten Fassung zusammengeführt, und alles ist in 14 Bereiche sortiert
+(ATEX-Themen im Bereich „Explosionsschutz“, HLKS-Themen im Bereich „HLKS“ usw.):
+- **Neu:** Bereich **„Kommunikation & Pinbelegungen“** mit 25 neuen Pinbelegungen (PoE, RJ-11/12/45-Telefon, SCART, VGA,
+  DVI, DisplayPort, Thunderbolt, Lightning, Apple-Dock, FireWire, PS/2, Molex/SATA, SD-/SIM-Karte, Raspberry Pi, LCD 16×2,
+  LED, Autoradio ISO 10487, OBD II, XLR/DMX, MIDI, Klinke, Cinch-Farben, LWL-Farbcode, IO-Link); Umrechnung um
+  **Winkel/Trigonometrie**, **var ↔ µF** und **Drehzahl** ergänzt.
+- **Zusammengeführt:** „Leistung, Strom und Spannung“ (ersetzt Strom aus Leistung, Spannungsberechnung, Leistung P/Q/S,
+  Motorstrom, Motorleistung, Motorspannung), Leistungsfaktor mit η (ersetzt Motor-cos φ), **Farbcode in beide
+  Richtungen** mit Zeichnung, Widerstandsthermometer Pt/Ni/**Cu**, Leiterwiderstand in „Leiterwiderstand, Reaktanz und
+  Impedanz“, **h,x-Diagramm mit Taupunkt-Eingabe** (ersetzt „Feuchte Luft“), Vorwiderstand für LED und Verbraucher,
+  IP-Code als eine Tabelle, D-Sicherungen mit Kennmelderfarben, NH-Größen, AWG-Tabelle mit kcmil, Aderfarben inkl. PEN
+  und Maschinenverdrahtung. Gespeicherte Favoriten werden automatisch auf die neuen Einträge umgestellt.
+
+| 14 Bereiche | Kommunikation & Pinbelegungen | Leistung, Strom und Spannung |
+|---|---|---|
+| ![Bereiche](docs/screenshots/bereiche_v19.png) | ![Pinbelegungen](docs/screenshots/pinbelegungen.png) | ![Leistung, Strom und Spannung](docs/screenshots/leistung_strom_spannung.png) |
+
 **Neu in 1.8 – Kapitel „Ressourcen“** im Bereich Elektrotechnik (alle 27 Punkte des Reiters „Ressourcen“ der App
 „Elektroberechnungen“): Sicherungs-Kennzeichnung und UL/CSA-Klassen, E-Reihen, **Auslösekennlinien** (Diagramm mit
 logarithmischen Achsen), Reaktanzbeläge, spezifische Widerstände, Spannungsfall je A·m, Leiterdaten, **Netzsysteme TN/TT/IT
@@ -122,27 +140,27 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.5)
+## Funktionsumfang (Version 1.9)
 
-**2 Projektlisten, 80 Rechner und 60 Tabellen** in 13 Kategorien. Alle Formeln, Eingaben und Quellen stehen in
-[docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
+**2 Projektlisten, 118 Rechner und 118 Tabellen** in 14 Bereichen – jedes Thema genau einmal. Alle Formeln, Eingaben und
+Quellen stehen in [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
-| Kategorie | Inhalt |
+| Bereich | Inhalt |
 |---|---|
-| **Projektlisten** *(neu)* | **Verbraucherliste & Kabelauslegung**: je Verbraucher S, I_B, Schutzorgan (MSS/SelMod einstellbar, LS B/C, gG mit NH-Größe), F_ges = f1·f2·f3·f4 (f1/f2 manuell oder aus Temperatur/Häufung), Querschnitt nach Belastbarkeit, I_Z, Prüfung I_B ≤ I_N ≤ I_Z (+ I_2 ≤ 1,45·I_Z), Spannungsfall mit R′(70 °C) und X′, optional automatische Querschnittserhöhung; Summen je NN/NEA/USV, ELT/MSR, 400/230/24 V, Vorsicherung. **GA-Datenpunktliste (VDI 3814)**: ~30 Bauteil-Vorlagen → AI/AO/BI/BO/COM, Module mit Reserve, Kostenschätzung, Benutzeradressen (BAS) nach VDI 3814-4.1, Detailliste je Datenpunkt |
-| **Grundlagen** | Ohmsches Gesetz (beliebige 2 von U/I/R/P), Leistung P/Q/S/cos φ, Strom aus Leistung, Leiterwiderstand mit Temperatur, R/L- und C-Reihen-/Parallelschaltung, Energiekosten (€/CHF nach Normprofil) |
-| **Leitungen & Schutz** | Leitungsdimensionierung (Belastbarkeit + Spannungsfall + Schutzorgan in einem Schritt), Spannungsfall mit Grenzwert DE/CH, Strombelastbarkeit I_z (Verlegearten A1–E, PVC/VPE, Temperatur, Häufung), Überlastschutz I_B ≤ I_n ≤ I_z, Abschaltbedingung/L_max (TN), max. Länge für 24-V-Kreise, Kurzschlussfestigkeit I²t, Rohrfüllung |
-| **Motoren & Antriebe** | Bemessungsstrom, Drehmoment/Leistung/Drehzahl, Synchrondrehzahl & Schlupf, Wirkungsgrad, Stern-Dreieck-Anlauf, Steinmetzschaltung, **Pumpe/Ventilator am FU (Proportionalitätsgesetze, Einsparung)** |
-| **Industrie & Netze** | Blindleistungskompensation, Transformator (Ströme, I_k, I_kD, u_k-Richtwerte), Kurzschlussstrom am Leitungsende (I_k3 max / I_k1 min nach IEC 60909, vereinfacht), Schaltschrank-Wärmebilanz (IEC/TR 60890) |
-| **Gebäudeautomation & MSR** | Analogsignal-Skalierung 4–20 mA/0–10 V ↔ Messwert ↔ S7-Rohwert (27648) mit NAMUR NE 43, 4–20-mA-Bürde, Pt100/Pt1000/Ni1000/LG-Ni1000, Leitungsfehler 2-Leiter, NTC, 24-V-Trafo/-Netzteil, Ventil kv/kvs & Autorität (auch aus Leistung/ΔT wie in der Ventilliste VDI 3814-4.1, kleinste regelbare Leistung), Wärmeleistung ↔ Volumenstrom (Wasser/Luft), DALI-Leitung, **h,x-Diagramm (Mollier) mit Zustandsänderungen und Leistung/Kondensat**, feuchte Luft (Taupunkt, x, h) mit Diagramm, **Außenluftvolumenstrom nach EN 16798-1 / CO₂-Bilanz (UBA-Bewertung)**, **Reglereinstellung (Ziegler/Nichols, CHR)**, **KNX-Topologie**, **AMEV-Datenpunktadresse**; Tabellen VDI 3814-4.1 (Gewerke, Anlagen, Bauteile, Funktionskennungen), AMEV-Codes, Einstellregeln, h,x-Höhenkorrektur |
-| **Gebäudetechnik & Energie** *(neu)* | GA-Effizienzklasse EN ISO 52120 (f_BAC thermisch/elektrisch, Einsparung), Heizkennlinie (Steilheit, Parallelverschiebung, Diagramm, Auslegung mit Heizkörperexponent), Wärmepumpe (Carnot-COP, Keymark-Mindest-COP, JAZ), RLT-Gerät & Luftkanal (V-Klasse, SFP-Klasse), Nachhallzeit Sabine/DIN 18041, Schallpegel, Fluchtweg ASR A2.3:2022, Aufzugsschacht-Rauchabzug DE/CH; Tabellen BAC-Faktoren, Wärmepumpen, CO₂-Richtwerte, RLT-Klassen, Fluchtwegbreiten |
-| **R&I-Kennzeichnung & Ex-Schutz** *(neu)* | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814-4.1, IEC 81346) für 78 Sensoren/Wächter, Explosionsschutz (Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub nach IEC 60079-14, Kennzeichnung, Geräteprüfung); Tabellen Kennbuchstaben, T-Klassen, Ex-Gruppen, Zonen, Zündschutzarten, Zündtemperaturen |
-| **Reinraum & Pharma** | ISO 14644-1 Klasse ↔ Grenzwert (beide Richtungen), Messstellenanzahl & Probenvolumen, Luftwechsel & Erholzeit 100:1, FFU-Decke (Anzahl, Luftmenge, Wärmelast, Energiekosten), Überströmung/Druckkaskade; Tabellen ISO-Klassen, EU-GMP Annex 1 Partikel und Keime |
-| **Rechenzentrum** | PUE/DCiE aus Leistung **oder Jahresverbrauch (Zähler)**, **PUE-Bilanz aus Verbrauchern** (pPUE Kühlung/Strom, Jahresverbrauch, Kosten, CO₂, Abwärme, ERF), EnEfG-Prüfung Bestand/Neubau (2023 oder Entwurf 2026), Rack-Kühlung & Kühlgeräte mit Redundanz (N+1/N+2/2N), USV-Module & Batterie-Autonomie, Verfügbarkeit/Ausfallzeit; Tabellen ASHRAE TC 9.9, EN 50600/Tier |
-| **Photovoltaik & Speicher** *(neu)* | String-Auslegung mit Temperaturkorrektur (U_oc bei Kälte, U_mpp bei Hitze, MPP-Bereich, Strangsicherung), Ertrag & Amortisation (€/CHF), DC-Leitungsverluste, Speichergröße mit Faustformeln |
-| **Elektronik** | Farbcode 4/5 Ringe, E-Reihen E6–E96, LED-Vorwiderstand, Spannungsteiler, RC-Glied, LC-Schwingkreis, Impedanz RLC, Akku-/USV-Laufzeit |
-| **Umrechner** | **Währung € ↔ CHF**, Leistung (W, PS, hp, BTU/h, kcal/h, TR), Energie, Temperatur, Druck (bar, psi, mWS), Volumenstrom (m³/h, l/s, CFM), AWG ↔ mm² |
-| **Tabellen & Pinouts** | IP-Schutzarten, Schutzklassen, Netzsysteme, Aderfarben, Spannungsfall-Grenzwerte DE/CH, Strombelastbarkeit (4 Tabellen), Temperatur- und Häufungsfaktoren, LS-Charakteristiken, D-Sicherungen, Kabeltypen, **Feldbusse** (BACnet MS/TP, Modbus, KNX, DALI, LON, PROFIBUS, CAN, IO-Link, Ethernet), Isolierstoffklassen, Betriebsarten, IE-Klassen, **5 Sicherheitsregeln & Schutzabstände**, Klemmbrett Y/Δ, Bauformen, Pinouts RJ45/PoE, RS-485, M12, KNX, RS-232, USB, HDMI, Farbcode, SI-Vorsätze |
+| **Projektlisten** | **Verbraucherliste & Kabelauslegung**: je Verbraucher S, I_B, Schutzorgan (MSS/SelMod einstellbar, LS B/C, gG mit NH-Größe), F_ges = f1·f2·f3·f4, Querschnitt nach Belastbarkeit, Prüfung I_B ≤ I_N ≤ I_Z (+ I_2 ≤ 1,45·I_Z), Spannungsfall mit R′(70 °C) und X′, Summen je NN/NEA/USV, ELT/MSR, 400/230/24 V. **GA-Datenpunktliste (VDI 3814)**: Bauteil-Vorlagen → AI/AO/BI/BO/COM, Module mit Reserve, Kosten, Benutzeradressen (BAS) |
+| **Elektrotechnik** | *Grundlagen:* Leistung/Strom/Spannung (DC, 1~, 3~, Motor mit η), cos φ, Ohm, Impedanz, Betriebsstrom, Joule, Energiekosten, R/C-Schaltungen, Stromteiler, Δ-Y. *Leitungen:* Dimensionierung, Spannungsfall (auch verteilte Lasten), Belastbarkeit (auch MI-Kabel, Sammelschienen), R/X/Z, Temperatur, Verluste, Neutralleiter, I²t, Rohrfüllung; Kabeltabellen und Aderfarben. *Schutz:* Überlast, Abschaltbedingung, Auslösekennlinien, Sicherungen (D, NH, Zylinder, G, Kfz, UL). *Kurzschluss/Erdung/Überspannung, Transformator & Kompensation, Schutzarten (IP/IK/NEMA), Schaltschrank, 5 Sicherheitsregeln, Schaltzeichen, ANSI-Nummern, Netze & Stecker weltweit* |
+| **Motoren & Antriebe** | Wirkungsgrad, Drehmoment, Drehzahl & Schlupf, Pumpe/Ventilator am FU, NEC-Volllaststrom; Stern-Dreieck, Steinmetz, Schaltschemata 6/9/12 Klemmen, Drehrichtung, Klemmenbezeichnung; IE-Klassen, Isolierstoffklassen, Betriebsarten, Bauformen |
+| **Elektronik & Bauteile** | Farbcode beide Richtungen, E-Reihen, SMD/EIA-96, Kondensator- und Induktivitätscode; Spannungsteiler, Vorwiderstand (LED/Verbraucher), Z-Diode, RC, LC, RLC-Impedanz, Akkulaufzeit |
+| **Gebäudeautomation & MSR** | Analogsignal-Skalierung (NAMUR NE 43), Bürde, Pt/Ni/Cu-Fühler, Leitungsfehler, NTC, Thermoelemente (NIST), 24-V-Versorgung; Reglereinstellung (Ziegler/Nichols, CHR), KNX-Topologie, DALI, Feldbusse; AMEV- und VDI-3814-Kennzeichnung; GA-Effizienz EN ISO 52120 |
+| **HLKS** | h,x-Diagramm (Mollier) mit Zustandsänderungen und Taupunkt, Außenluft (EN 16798-1/CO₂), RLT-Gerät & Kanal; Wärmeleistung ↔ Volumenstrom, Heizkennlinie, Wärmepumpe; hydraulische Grundschaltungen, Ventil kv/kvs, Rohrabmessungen |
+| **Explosionsschutz (ATEX)** | Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub, Kennzeichnung; Tabellen Zonen, Gruppen, T-Klassen, Zündschutzarten, Zündtemperaturen |
+| **R&I-Kennzeichnung** | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814) für 78 Sensoren/Wächter; Kennbuchstaben-Tabellen |
+| **Reinraum & Pharma** | ISO 14644-1 Klasse, Messstellen, Luftwechsel & Erholzeit, FFU-Decke, Druckkaskade; ISO- und GMP-Annex-1-Tabellen |
+| **Rechenzentrum** | PUE/DCiE, PUE-Bilanz, EnEfG, Rack-Kühlung mit Redundanz, USV, Verfügbarkeit; ASHRAE TC 9.9, EN 50600/Tier |
+| **Photovoltaik & Speicher** | String-Auslegung, Ertrag & Amortisation, DC-Leitungsverluste, Speichergröße |
+| **Gebäude, Brandschutz & Akustik** | Fluchtweg ASR A2.3, Aufzugsschacht-Rauchabzug DE/CH; Nachhallzeit DIN 18041, Schallpegel |
+| **Kommunikation & Pinbelegungen** | 30 Pinbelegungen (Netzwerk/Telefon, Feldbus/Industrie, Computer/Video, Audio, Fahrzeug, Module), LWL- und Cinch-Farben, Antennenlänge, CCTV-Speicher und -Auflösungen |
+| **Umrechnung & Einheiten** | Spannung (Effektiv/Scheitel/dB), Leistung, Energie/Arbeit, var ↔ µF, Winkel/Trigonometrie; AWG/kcmil/SWG ↔ mm², Querschnitt; Länge, Temperatur, Druck, Volumenstrom, Drehzahl, € ↔ CHF; Einheiten, SI-Vorsätze |
 
 Weitere Funktionen: Live-Berechnung bei jeder Eingabe, Ergebnisleiste mit Ampelstatus, Suche, Favoriten,
 Ergebnis kopieren (für Berichte/E-Mails), dunkles Design, Dezimalkomma oder -punkt.

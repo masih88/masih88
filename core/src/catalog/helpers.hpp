@@ -47,7 +47,8 @@ void addElectricalUnits(std::vector<Calculator>& out);       // elec_units.cpp
 void addElectricalTables(std::vector<Table>& out);           // elec_tables.cpp
 void addElectricalResources(std::vector<Calculator>& out);   // elec_resources.cpp
 void addElectricalResourceTables(std::vector<Table>& out);   // elec_resources.cpp
-std::vector<CategoryGroup> electricalGroups();               // elec_tables.cpp
+void addPinoutTables(std::vector<Table>& out);               // elec_pinouts.cpp
+std::vector<Category> areas();                               // layout.cpp: areas, groups and items of the app
 ListDef consumerList();
 ListDef dataPointList();
 

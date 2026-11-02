@@ -23,30 +23,90 @@ std::vector<Option> acOptions() {
 
 double sinFromCos(double c) { return std::sqrt(std::max(0.0, 1.0 - c * c)); }
 
-Calculator voltageFromPowerCalc() {
+// One calculator for P = k · U · I · cos φ · η solved for P, I or U (v1.9 merges "Leistung P, Q, S", "Strom aus
+// Leistung", "Spannungsberechnung", "Motor-Bemessungsstrom", "Motorleistung" and "Motorspannung").
+Calculator powerCalc() {
     Calculator c;
-    c.id = "voltage_from_power";
+    c.id = "power";
     c.category = kCat;
-    c.title = {"Spannungsberechnung", "Voltage calculation"};
-    c.summary = {"U aus Leistung, Strom und cos φ", "U from power, current and cos φ"};
-    c.description = {"DC: U = P / I    1~: U = P / (I · cos φ)    3~: U = P / (√3 · I · cos φ) (Außenleiterspannung)\n"
-                     "P ist die aufgenommene Wirkleistung.",
-                     "DC: U = P / I    1~: U = P / (I · cos φ)    3~: U = P / (√3 · I · cos φ) (line voltage)\n"
-                     "P is the active input power."};
-    c.inputs = {Num::choice("sys", {"Netz", "System"}, systemOptions(), "ac3"),
-                Num::number("P", {"Wirkleistung P", "Active power P"}, "kW", 10).positive(),
-                Num::number("I", {"Strom I", "Current I"}, "A", 16).positive(), cosPhiInput(0.9)};
-    c.outputs = {Out::number("U", {"Spannung U", "Voltage U"}, "V", 1).primary(),
+    c.title = {"Leistung, Strom und Spannung", "Power, current and voltage"};
+    c.summary = {"P, Q, S, I oder U für DC, 1~ und 3~ – auch Motor mit cos φ und η",
+                 "P, Q, S, I or U for DC, 1~ and 3~ – also motors with cos φ and η"};
+    c.description = {
+        "P_auf = k · U · I · cos φ    P_ab = P_auf · η    k = 1 (DC, 1~), √3 (3~, U = Außenleiterspannung)\n"
+        "Strom: I = P_ab / (k · U · cos φ · η)    Spannung: U = P_ab / (k · I · cos φ · η)\n"
+        "S = k · U · I    Q = S · sin φ    φ = arccos(cos φ)    U₀ = U / √3    1 hp = 745,7 W\n"
+        "Motor: P_ab = Bemessungsleistung vom Typenschild (mechanisch) mit η; sonst η = 100 % (P = aufgenommene Wirkleistung).",
+        "P_in = k · U · I · cos φ    P_out = P_in · η    k = 1 (DC, 1~), √3 (3~, U = line voltage)\n"
+        "Current: I = P_out / (k · U · cos φ · η)    Voltage: U = P_out / (k · I · cos φ · η)\n"
+        "S = k · U · I    Q = S · sin φ    φ = arccos(cos φ)    U₀ = U / √3    1 hp = 745.7 W\n"
+        "Motor: P_out = rated (mechanical) power from the nameplate with η; otherwise η = 100 % (P = active input power)."};
+    c.inputs = {
+        Num::choice("solve", {"Gesucht", "Solve for"},
+                    {{"I", {"Strom I (aus P und U)", "Current I (from P and U)"}},
+                     {"P", {"Leistung P, Q, S (aus U und I)", "Power P, Q, S (from U and I)"}},
+                     {"U", {"Spannung U (aus P und I)", "Voltage U (from P and I)"}}},
+                    "I"),
+        Num::choice("sys", {"Netz", "System"}, systemOptions(), "ac3"),
+        Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive(),
+        Num::number("I", {"Strom I", "Current I"}, "A", 16).positive(),
+        Num::number("P", {"Leistung P (abgegeben)", "Power P (output)"}, "kW", 7.5).positive()
+            .withHint({"Motor: Bemessungsleistung P_N vom Typenschild", "Motor: rated power P_N from the nameplate"}),
+        cosPhiInput(0.85),
+        Num::number("eta", {"Wirkungsgrad η", "Efficiency η"}, "%", 100).rangeExclusiveMin(0, 100)
+            .withHint({"100 % = P ist die aufgenommene Wirkleistung; Motor z. B. 85–95 %",
+                       "100 % = P is the active input power; motors e.g. 85–95 %"}),
+    };
+    c.inputs[2].showIf("solve", {"I", "P"});
+    c.inputs[3].showIf("solve", {"P", "U"});
+    c.inputs[4].showIf("solve", {"I", "U"});
+    c.outputs = {Out::number("I", {"Strom I", "Current I"}, "A", 2).primary(),
+                 Out::number("U", {"Spannung U", "Voltage U"}, "V", 1).primary(),
                  Out::number("U0", {"Strangspannung U₀ (3~)", "Phase voltage U₀ (3~)"}, "V", 1),
-                 Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 3)};
-    c.keywords = {"spannung", "voltage", "leistung", "volt"};
+                 Out::number("P", {"Abgegebene Leistung P_ab", "Output power P_out"}, "kW", 3).primary(),
+                 Out::number("hp", {"Abgegebene Leistung", "Output power"}, "hp", 2),
+                 Out::number("Pin", {"Aufgenommene Wirkleistung P_auf", "Active input power P_in"}, "kW", 3),
+                 Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 3),
+                 Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 3),
+                 Out::number("phi", {"Phasenwinkel φ", "Phase angle φ"}, "°", 1),
+                 Out::number("Ploss", {"Verluste P_auf − P_ab", "Losses P_in − P_out"}, "kW", 3)};
+    c.keywords = {"leistung", "strom", "spannung", "wirkleistung", "blindleistung", "scheinleistung", "cos phi", "motor",
+                  "nennstrom", "bemessungsstrom", "motorleistung", "motorspannung", "power", "current", "voltage", "hp", "ps"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const auto sys = parseSystem(in.choice("sys"));
-        const double U = voltageFromPower(sys, in.num("P") * 1e3, in.num("I"), in.num("cosphi"));
-        r.set("U", U);
+        const double k = powerFactorK(sys);
+        const double cp = sys == System::DC ? 1.0 : in.num("cosphi");
+        const double eta = in.num("eta") / 100.0;
+        const auto& solve = in.choice("solve");
+        double U = 0, I = 0, Pin = 0;
+        if (solve == "P") {
+            U = in.num("U");
+            I = in.num("I");
+            Pin = k * U * I * cp;
+        } else if (solve == "I") {
+            U = in.num("U");
+            Pin = in.num("P") * 1e3 / eta;
+            I = Pin / (k * U * cp);
+        } else {
+            I = in.num("I");
+            Pin = in.num("P") * 1e3 / eta;
+            U = Pin / (k * I * cp);
+        }
+        const double S = k * U * I;
+        const double Pout = Pin * eta;
+        if (solve == "I") r.set("I", I);  // only the unknown, the given values stay in the inputs
+        if (solve == "U") r.set("U", U);
         if (sys == System::AC3) r.set("U0", U / kSqrt3);
-        r.set("S", powerFactorK(sys) * U * in.num("I") / 1e3);
+        r.set("P", Pout / 1e3);
+        r.set("hp", Pout / kWattPerHp);
+        r.set("Pin", Pin / 1e3);
+        r.set("S", S / 1e3);
+        if (sys != System::DC) {
+            r.set("Q", S * sinFromCos(cp) / 1e3);
+            r.set("phi", std::acos(cp) * 180.0 / std::numbers::pi);
+        }
+        if (eta < 1.0) r.set("Ploss", (Pin - Pout) / 1e3);
         return r;
     };
     return c;
@@ -59,9 +119,9 @@ Calculator powerFactorCalc() {
     c.title = {"Leistungsfaktorberechnung", "Power factor calculation"};
     c.summary = {"cos φ aus P und U·I, aus P und S oder aus P und Q", "cos φ from P and U·I, from P and S or from P and Q"};
     c.description = {"cos φ = P / S    S = k · U · I (k = 1 bei 1~, √3 bei 3~)    S = √(P² + Q²)\n"
-                     "φ = arccos(cos φ), Q = P · tan φ. Der Leistungsfaktor λ = P/S ist bei Oberschwingungen kleiner als cos φ₁.",
+                     "Motor: P_auf = P_ab / η. φ = arccos(cos φ), Q = P · tan φ. Der Leistungsfaktor λ = P/S ist bei Oberschwingungen kleiner als cos φ₁.",
                      "cos φ = P / S    S = k · U · I (k = 1 for 1~, √3 for 3~)    S = √(P² + Q²)\n"
-                     "φ = arccos(cos φ), Q = P · tan φ. With harmonics the power factor λ = P/S is smaller than cos φ₁."};
+                     "Motor: P_in = P_out / η. φ = arccos(cos φ), Q = P · tan φ. With harmonics the power factor λ = P/S is smaller than cos φ₁."};
     c.inputs = {
         Num::choice("mode", {"Bekannt", "Known"},
                     {{"pui", {"P, U und I", "P, U and I"}}, {"ps", {"P und S", "P and S"}}, {"pq", {"P und Q", "P and Q"}}}, "pui"),
@@ -71,8 +131,12 @@ Calculator powerFactorCalc() {
         Num::number("I", {"Strom I", "Current I"}, "A", 16).positive(),
         Num::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 11).positive(),
         Num::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 5).nonNegative(),
+        Num::number("eta", {"Wirkungsgrad η", "Efficiency η"}, "%", 100).rangeExclusiveMin(0, 100)
+            .withHint({"Motor: P = abgegebene Leistung vom Typenschild mit η; sonst 100 %",
+                       "Motor: P = rated output from the nameplate with η; otherwise 100 %"}),
     };
     c.inputs[1].showIf("mode", {"pui"});
+    c.inputs[7].showIf("mode", {"pui"});
     c.inputs[3].showIf("mode", {"pui"});
     c.inputs[4].showIf("mode", {"pui"});
     c.inputs[5].showIf("mode", {"ps"});
@@ -82,13 +146,14 @@ Calculator powerFactorCalc() {
                  Out::number("sinphi", {"sin φ", "sin φ"}, "", 3),
                  Out::number("tanphi", {"tan φ", "tan φ"}, "", 3),
                  Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 3),
-                 Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 3)};
-    c.keywords = {"cos phi", "leistungsfaktor", "power factor", "phasenwinkel"};
+                 Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 3),
+                 Out::number("Pin", {"Aufgenommene Wirkleistung P / η", "Active input power P / η"}, "kW", 3)};
+    c.keywords = {"cos phi", "leistungsfaktor", "power factor", "phasenwinkel", "motor"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
-        const double P = in.num("P");
-        double S = 0;
         const auto& mode = in.choice("mode");
+        const double P = mode == "pui" ? in.num("P") / (in.num("eta") / 100.0) : in.num("P");
+        double S = 0;
         if (mode == "ps") S = in.num("S");
         else if (mode == "pq") S = std::hypot(P, in.num("Q"));
         else S = powerFactorK(parseSystem(in.choice("sys"))) * in.num("U") * in.num("I") / 1e3;
@@ -101,6 +166,7 @@ Calculator powerFactorCalc() {
         r.set("tanphi", sinFromCos(cp) / cp);
         r.set("S", S);
         r.set("Q", std::sqrt(std::max(0.0, S * S - P * P)));
+        if (mode == "pui" && in.num("eta") < 100) r.set("Pin", P);
         if (cp < 0.9) r.warn({"cos φ < 0,9: Blindleistungskompensation prüfen (Netzbetreiber fordern meist ≥ 0,9).",
                               "cos φ < 0.9: consider power factor correction (utilities usually require ≥ 0.9)."});
         return r;
@@ -485,7 +551,7 @@ Calculator capacitorVoltageCalc() {
 }  // namespace
 
 void addElectricalPower(std::vector<Calculator>& out) {
-    out.push_back(voltageFromPowerCalc());
+    out.push_back(powerCalc());
     out.push_back(powerFactorCalc());
     out.push_back(impedanceCalc());
     out.push_back(operatingCurrentCalc());

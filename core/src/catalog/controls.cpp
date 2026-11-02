@@ -110,38 +110,6 @@ Calculator controllerTuning() {
     return c;
 }
 
-Table tuningRules() {
-    Table t;
-    t.id = "tuning_rules";
-    t.category = "automation";
-    t.title = {"Einstellregeln Ziegler/Nichols & CHR", "Tuning rules Ziegler/Nichols & CHR"};
-    t.summary = {"Kp, Tn, Tv für P, PI, PD, PID", "Kp, Tn, Tv for P, PI, PD, PID"};
-    t.description = {"Quelle: Siemens „Regeltechnik – Grundlagen“ (08/2022), Fig. 6-15 und 6-18, S. 82–83. CHR: V0 = Ks · Kp. "
-                     "ZN in der Xp-Form: P Xp = Xh·S, PI 1,25·Xh·S / Tn 3·Tt, PD 0,83·Xh·S, PID 0,83·Xh·S.",
-                     "Source: Siemens “Regeltechnik – Grundlagen” (08/2022), Fig. 6-15 and 6-18, p. 82–83. CHR: V0 = Ks · Kp. "
-                     "ZN in Xp form: P Xp = Xh·S, PI 1.25·Xh·S / Tn 3·Tt, PD 0.83·Xh·S, PID 0.83·Xh·S."};
-    t.columns = {{"Regel", "Rule"}, {"Regler", "Controller"}, "Kp / V0", "Tn", "Tv"};
-    t.rows = {
-        {"ZN", "P", "T/(Ks·Tt)", "–", "–"},
-        {"ZN", "PI", "0,9·T/(Ks·Tt)", "3,3·Tt", "–"},
-        {"ZN", "PD", "1,2·T/(Ks·Tt)", "–", "0,25·Tt"},
-        {"ZN", "PID", "1,2·T/(Ks·Tt)", "2·Tt", "0,42·Tt"},
-        {{"CHR aperiodisch, Störung", "CHR aperiodic, disturbance"}, "P", "V0 = 0,3·Tg/Tu", "–", "–"},
-        {{"CHR aperiodisch, Störung", "CHR aperiodic, disturbance"}, "PI", "V0 = 0,6·Tg/Tu", "4·Tu", "–"},
-        {{"CHR aperiodisch, Störung", "CHR aperiodic, disturbance"}, "PID", "V0 = 0,95·Tg/Tu", "2,4·Tu", "0,42·Tu"},
-        {{"CHR aperiodisch, Führung", "CHR aperiodic, set point"}, "P", "V0 = 0,3·Tg/Tu", "–", "–"},
-        {{"CHR aperiodisch, Führung", "CHR aperiodic, set point"}, "PI", "V0 = 0,35·Tg/Tu", "1,2·Tg", "–"},
-        {{"CHR aperiodisch, Führung", "CHR aperiodic, set point"}, "PID", "V0 = 0,6·Tg/Tu", "Tg", "0,5·Tu"},
-        {{"CHR 20 %, Störung", "CHR 20 %, disturbance"}, "P", "V0 = 0,7·Tg/Tu", "–", "–"},
-        {{"CHR 20 %, Störung", "CHR 20 %, disturbance"}, "PI", "V0 = 0,7·Tg/Tu", "2,3·Tu", "–"},
-        {{"CHR 20 %, Störung", "CHR 20 %, disturbance"}, "PID", "V0 = 1,2·Tg/Tu", "2·Tu", "0,42·Tu"},
-        {{"CHR 20 %, Führung", "CHR 20 %, set point"}, "P", "V0 = 0,7·Tg/Tu", "–", "–"},
-        {{"CHR 20 %, Führung", "CHR 20 %, set point"}, "PI", "V0 = 0,6·Tg/Tu", "Tg", "–"},
-        {{"CHR 20 %, Führung", "CHR 20 %, set point"}, "PID", "V0 = 0,95·Tg/Tu", "1,35·Tg", "0,47·Tu"},
-    };
-    return t;
-}
-
 // ------------------------------------------------------------------ KNX topology
 
 Calculator knxTopology() {
@@ -743,7 +711,6 @@ void addControls(std::vector<Calculator>& out) {
 }
 
 void addControlTables(std::vector<Table>& out) {
-    out.push_back(tuningRules());
     out.push_back(hxAltitude());
     out.push_back(codeTable("amev_trades", {"AMEV: Gewerke", "AMEV: trades"}, {"Stelle 9 der Datenpunktadresse", "Position 9 of the address"}, kTrades));
     out.push_back(codeTable("amev_plants", {"AMEV: Anlagen", "AMEV: plants"}, {"Stellen 10–12", "Positions 10–12"}, kPlants));

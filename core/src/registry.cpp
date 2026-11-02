@@ -1,6 +1,9 @@
 #include "elc/registry.hpp"
 
 #include <algorithm>
+#include <array>
+#include <map>
+#include <string>
 
 #include "catalog/helpers.hpp"
 #include "elc/lists.hpp"
@@ -12,25 +15,36 @@
 namespace elc {
 
 const std::vector<Category>& categories() {
-    static const std::vector<Category> list{
-        {"projects", {"Projektlisten", "Project lists"}, "Σ", {}},
-        {"electrical", {"Elektrotechnik", "Electrical engineering"}, "ET", catalog::electricalGroups()},
-        {"basics", {"Grundlagen", "Basics"}, "Ω", {}},
-        {"cables", {"Leitungen & Schutz", "Cables & protection"}, "mm²", {}},
-        {"motors", {"Motoren & Antriebe", "Motors & drives"}, "M~", {}},
-        {"industry", {"Industrie & Netze", "Industry & power"}, "kVA", {}},
-        {"automation", {"Gebäudeautomation & MSR", "Building automation & I&C"}, "mA", {}},
-        {"building", {"Gebäudetechnik & Energie", "Building services & energy"}, "GT", {}},
-        {"process", {"R&I-Kennzeichnung & Ex-Schutz", "P&ID tags & Ex protection"}, "Ex", {}},
-        {"cleanroom", {"Reinraum & Pharma", "Cleanroom & pharma"}, "ISO", {}},
-        {"datacenter", {"Rechenzentrum", "Data centre"}, "IT", {}},
-        {"pv", {"Photovoltaik & Speicher", "PV & storage"}, "PV", {}},
-        {"electronics", {"Elektronik", "Electronics"}, "RC", {}},
-        {"converters", {"Umrechner", "Converters"}, "⇄", {}},
-        {"tables", {"Tabellen & Pinouts", "Tables & pinouts"}, "≡", {}},
-    };
+    static const std::vector<Category> list = catalog::areas();
     return list;
 }
+
+namespace {
+
+/// item id → area id from the central layout (catalog/layout.cpp)
+const std::map<std::string, std::string, std::less<>>& areaOfItem() {
+    static const std::map<std::string, std::string, std::less<>> m = [] {
+        std::map<std::string, std::string, std::less<>> out;
+        for (const auto& c : categories()) {
+            for (const auto& g : c.groups) {
+                for (const auto& id : g.items) out.emplace(id, c.id);
+            }
+        }
+        return out;
+    }();
+    return m;
+}
+
+/// Sets each item's category from the layout; items missing there keep theirs (the layout test reports them).
+template <typename T>
+void assignAreas(std::vector<T>& items) {
+    const auto& m = areaOfItem();
+    for (auto& i : items) {
+        if (const auto it = m.find(i.id); it != m.end()) i.category = it->second;
+    }
+}
+
+}  // namespace
 
 const std::vector<Calculator>& calculators() {
     static const std::vector<Calculator> list = [] {
@@ -57,6 +71,7 @@ const std::vector<Calculator>& calculators() {
         catalog::addElectricalMotors(v);
         catalog::addElectricalUnits(v);
         catalog::addElectricalResources(v);
+        assignAreas(v);
         return v;
     }();
     return list;
@@ -76,6 +91,8 @@ const std::vector<Table>& tables() {
         catalog::addProcessTables(v);
         catalog::addElectricalTables(v);
         catalog::addElectricalResourceTables(v);
+        catalog::addPinoutTables(v);
+        assignAreas(v);
         return v;
     }();
     return list;
@@ -111,7 +128,11 @@ const Table* findTable(std::string_view id) {
 }
 
 const std::vector<ListDef>& lists() {
-    static const std::vector<ListDef> list{catalog::consumerList(), catalog::dataPointList()};
+    static const std::vector<ListDef> list = [] {
+        std::vector<ListDef> v{catalog::consumerList(), catalog::dataPointList()};
+        assignAreas(v);
+        return v;
+    }();
     return list;
 }
 
@@ -119,6 +140,46 @@ const ListDef* findList(std::string_view id) {
     const auto& all = lists();
     const auto it = std::find_if(all.begin(), all.end(), [&](const ListDef& l) { return l.id == id; });
     return it == all.end() ? nullptr : &*it;
+}
+
+std::string_view currentItemId(std::string_view id) {
+    static const std::array<std::pair<std::string_view, std::string_view>, 23> merged{{
+        {"current_from_power", "power"},
+        {"voltage_from_power", "power"},
+        {"motor_current", "power"},
+        {"motor_power", "power"},
+        {"motor_voltage", "power"},
+        {"motor_pf", "power_factor_calc"},
+        {"color_from_value", "resistor_color"},
+        {"resistor_colours", "resistor_color"},
+        {"rtd_cu", "rtd"},
+        {"conductor_resistance", "cable_rxz"},
+        {"humid_air", "hx_diagram"},
+        {"conv_phase", "trig_angle"},
+        {"tuning_rules", "controller_tuning"},
+        {"conductor_colours", "wiring_colours_intl"},
+        {"mcb_characteristics", "trip_characteristics"},
+        {"network_systems", "earthing_systems"},
+        {"motor_terminals", "motor_wiring_6"},
+        {"ip_first", "ip_codes"},
+        {"ip_second", "ip_codes"},
+        {"wire_size_compare", "awg_table"},
+        {"fuse_colours", "fuse_d"},
+        {"fuse_d_nh", "fuse_d"},
+        {"led_resistor", "series_resistor"},
+    }};
+    for (const auto& [from, to] : merged) {
+        if (from == id) return to;
+    }
+    return id;
+}
+
+std::vector<std::string_view> currentAreaIds(std::string_view id) {
+    for (const auto& c : categories()) {
+        if (c.id == id) return {c.id};
+    }
+    if (id == "process") return {"pid", "atex"};  // "R&I-Kennzeichnung & Ex-Schutz" was split in v1.9
+    return {};
 }
 
 std::string_view version() { return ELC_VERSION; }

@@ -20,23 +20,6 @@ namespace {
 
 constexpr const char* kCat = "electrical";
 
-struct BandColour {
-    Text name;
-    const char* hex;
-};
-const std::array<BandColour, 12>& bandColours() {
-    static const std::array<BandColour, 12> c{{
-        {{"Schwarz", "Black"}, "#1A1A1A"}, {{"Braun", "Brown"}, "#8B4513"},  {{"Rot", "Red"}, "#E53935"},
-        {{"Orange", "Orange"}, "#FB8C00"}, {{"Gelb", "Yellow"}, "#FDD835"},  {{"Grün", "Green"}, "#43A047"},
-        {{"Blau", "Blue"}, "#1E88E5"},     {{"Violett", "Violet"}, "#8E24AA"}, {{"Grau", "Grey"}, "#9E9E9E"},
-        {{"Weiß", "White"}, "#FFFFFF"},    {{"Gold", "Gold"}, "#C9A227"},    {{"Silber", "Silver"}, "#C0C0C0"},
-    }};
-    return c;
-}
-
-/// colour index for a multiplier exponent: 0…9 = black…white, −1 = gold, −2 = silver
-int multiplierColour(int exp) { return exp >= 0 ? exp : exp == -1 ? 10 : 11; }
-
 /// Ω, kΩ, MΩ with a readable value
 std::pair<double, std::string> ohmPrefix(double v) {
     if (v >= 1e6) return {v / 1e6, "MΩ"};
@@ -49,94 +32,6 @@ std::pair<double, std::string> faradPrefix(double pF) {
     if (pF >= 1e6) return {pF / 1e6, "µF"};
     if (pF >= 1e3) return {pF / 1e3, "nF"};
     return {pF, "pF"};
-}
-
-// ------------------------------------------------------------------ colour bands from a value
-
-Calculator colourFromValue() {
-    Calculator c;
-    c.id = "color_from_value";
-    c.category = kCat;
-    c.title = {"Widerstandsfarbcode aus Wert bestimmen", "Resistor colour code from value"};
-    c.summary = {"Wert → Farbringe (4 oder 5 Ringe) mit Zeichnung", "Value → colour bands (4 or 5 bands) with drawing"};
-    c.description = {"IEC 60062: 4 Ringe = 2 Ziffern, Multiplikator, Toleranz (E6–E24); 5 Ringe = 3 Ziffern, Multiplikator, "
-                     "Toleranz (E48–E192). Multiplikator Gold = ×0,1, Silber = ×0,01. Der Wert wird auf 2 bzw. 3 gültige "
-                     "Ziffern gerundet; geprüft wird, ob er in der E24- bzw. E96-Reihe liegt.",
-                     "IEC 60062: 4 bands = 2 digits, multiplier, tolerance (E6–E24); 5 bands = 3 digits, multiplier, "
-                     "tolerance (E48–E192). Multiplier gold = ×0.1, silver = ×0.01. The value is rounded to 2 or 3 significant "
-                     "digits and checked against the E24 or E96 series."};
-    c.inputs = {Num::number("R", {"Widerstandswert", "Resistance"}, "", 4.7).positive(),
-                Num::choice("unit", {"Einheit", "Unit"}, {{"ohm", "Ω"}, {"k", "kΩ"}, {"M", "MΩ"}}, "k"),
-                Num::choice("bands", {"Anzahl Ringe", "Number of bands"}, {{"4", {"4 Ringe", "4 bands"}}, {"5", {"5 Ringe", "5 bands"}}}, "4"),
-                Num::choice("tol", {"Toleranz", "Tolerance"},
-                            {{"10", {"±1 % – Braun", "±1 % – Brown"}}, {"20", {"±2 % – Rot", "±2 % – Red"}},
-                             {"05", {"±0,5 % – Grün", "±0.5 % – Green"}}, {"025", {"±0,25 % – Blau", "±0.25 % – Blue"}},
-                             {"01", {"±0,1 % – Violett", "±0.1 % – Violet"}}, {"50", {"±5 % – Gold", "±5 % – Gold"}},
-                             {"100", {"±10 % – Silber", "±10 % – Silver"}}},
-                            "50")};
-    c.outputs = {Out::text("colours", {"Farbringe", "Colour bands"}).primary(),
-                 Out::number("value", {"Codierter Wert", "Coded value"}, "Ω", 3),
-                 Out::number("nearest", {"Nächster Normwert", "Nearest standard value"}, "Ω", 3),
-                 Out::text("series", {"Normreihe", "Standard series"})};
-    c.keywords = {"farbcode", "farbringe", "widerstand", "colour code", "color code", "bands"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const double mult = in.choice("unit") == "M" ? 1e6 : in.choice("unit") == "k" ? 1e3 : 1.0;
-        const double R = in.num("R") * mult;
-        const bool five = in.choice("bands") == "5";
-        const auto b = bandsFor(R, five ? 3 : 2);
-        if (!b) throw CalcError({"Wert mit Farbringen nicht darstellbar (0,1 Ω … 99 GΩ).", "Value cannot be shown with colour bands (0.1 Ω … 99 GΩ)."});
-        Text names{"", ""};
-        for (const int d : b->digits) {
-            names.de += bandColours()[static_cast<std::size_t>(d)].name.de + " – ";
-            names.en += bandColours()[static_cast<std::size_t>(d)].name.en + " – ";
-        }
-        const auto& m = bandColours()[static_cast<std::size_t>(multiplierColour(b->exponent))];
-        const std::string tol = in.choice("tol");
-        const int tolIdx = tol == "10" ? 1 : tol == "20" ? 2 : tol == "05" ? 5 : tol == "025" ? 6 : tol == "01" ? 7 : tol == "100" ? 11 : 10;
-        const auto& t = bandColours()[static_cast<std::size_t>(tolIdx)];
-        names.de += m.name.de + " – " + t.name.de;
-        names.en += m.name.en + " – " + t.name.en;
-        r.setText("colours", names);
-        const auto [v, unit] = ohmPrefix(b->value);
-        r.set("value", v, unit);
-        const auto series = five ? electronics::ESeries::E96 : electronics::ESeries::E24;
-        const auto match = electronics::eSeriesMatch(series, b->value);
-        const auto [nv, nunit] = ohmPrefix(match.nearest);
-        r.set("nearest", nv, nunit);
-        const bool exact = std::fabs(match.nearest - b->value) <= 1e-6 * b->value;
-        r.setText("series", exact ? Text{five ? "E96 ✓" : "E24 ✓", five ? "E96 ✓" : "E24 ✓"}
-                                  : Text{five ? "kein E96-Wert" : "kein E24-Wert", five ? "not an E96 value" : "not an E24 value"});
-        if (std::fabs(b->value - R) > 1e-9 * R)
-            r.warn({"Wert auf die darstellbaren Ziffern gerundet.", "Value rounded to the digits the bands can show."});
-        return r;
-    };
-    c.chart = [](const Inputs& in, const Result&, const Context&) {
-        Sketch s;
-        s.frame(100, 40, 0.4);
-        const double mult = in.choice("unit") == "M" ? 1e6 : in.choice("unit") == "k" ? 1e3 : 1.0;
-        const bool five = in.choice("bands") == "5";
-        const auto b = bandsFor(in.num("R") * mult, five ? 3 : 2);
-        s.line("ink", {{2, 20}, {22, 20}});
-        s.line("ink", {{78, 20}, {98, 20}});
-        s.rect(five ? "fill:#A9CCE3" : "fill:#E8D5A9", 22, 9, 78, 31);
-        if (!b) return s.ch;
-        std::vector<int> idx(b->digits.begin(), b->digits.end());
-        idx.push_back(multiplierColour(b->exponent));
-        const std::string tol = in.choice("tol");
-        idx.push_back(tol == "10" ? 1 : tol == "20" ? 2 : tol == "05" ? 5 : tol == "025" ? 6 : tol == "01" ? 7 : tol == "100" ? 11 : 10);
-        const std::vector<double> xs = five ? std::vector<double>{28, 35, 42, 49, 68} : std::vector<double>{30, 38, 46, 68};
-        const std::vector<const char*> tags = five ? std::vector<const char*>{"1", "2", "3", "×", "±"}
-                                                   : std::vector<const char*>{"1", "2", "×", "±"};
-        for (std::size_t i = 0; i < xs.size(); ++i) {
-            s.rect(std::string("fill:") + bandColours()[static_cast<std::size_t>(idx[i])].hex, xs[i] - 2.2, 9, xs[i] + 2.2, 31);
-            s.label(xs[i], 4, tags[i]);
-        }
-        s.ch.note = {"Ringe von links lesen; der Toleranzring hat den größeren Abstand.",
-                     "Read the bands from the left; the tolerance band has the larger gap."};
-        return s.ch;
-    };
-    return c;
 }
 
 // ------------------------------------------------------------------ codes
@@ -327,38 +222,75 @@ Calculator zenerCalc() {
     return c;
 }
 
+// v1.9: one calculator for LED series resistors and dropping resistors (merges "LED-Vorwiderstand")
 Calculator seriesResistor() {
     Calculator c;
     c.id = "series_resistor";
     c.category = kCat;
-    c.title = {"Vorwiderstand zur Spannungsreduzierung", "Series resistor for voltage reduction"};
-    c.summary = {"R = (U − U_L) / I, Leistung und Normwert", "R = (U − U_L) / I, power and standard value"};
-    c.description = {"R_v = (U − U_L) / I_L    P_R = (U − U_L) · I_L    Wirkungsgrad η = U_L / U\n"
-                     "Nur für konstante Last geeignet – bei schwankendem Strom ändert sich U_L (dann Spannungsregler verwenden).",
-                     "R_v = (U − U_L) / I_L    P_R = (U − U_L) · I_L    Efficiency η = U_L / U\n"
-                     "Only for a constant load – with varying current U_L changes (use a voltage regulator instead)."};
-    c.inputs = {Num::number("U", {"Versorgungsspannung U", "Supply voltage U"}, "V", 24).positive(),
+    c.title = {"Vorwiderstand (LED und Verbraucher)", "Series resistor (LED and load)"};
+    c.summary = {"R = (U − n · U_F) / I_F bzw. (U − U_L) / I_L mit Normwert und Leistung",
+                 "R = (U − n · U_F) / I_F or (U − U_L) / I_L with standard value and power"};
+    c.description = {"LED: R = (U − n · U_F) / I_F, gewählt wird der nächstgrößere E24-Wert (Strom bleibt ≤ I_F). "
+                     "Typ. U_F: rot 1,8–2,1 V, grün 2,0–3,2 V, blau/weiß 2,8–3,4 V.\n"
+                     "Verbraucher: R_v = (U − U_L) / I_L, nächster E12-Wert; U_L mit diesem Wert bei ohmscher Last. Nur für "
+                     "konstante Last geeignet – bei schwankendem Strom Spannungsregler verwenden.\n"
+                     "P_R = I² · R, Belastbarkeit ≥ 2 · P_R wählen. Wirkungsgrad η = U_Last / U.",
+                     "LED: R = (U − n · U_F) / I_F, the next higher E24 value is selected (current stays ≤ I_F). "
+                     "Typ. U_F: red 1.8–2.1 V, green 2.0–3.2 V, blue/white 2.8–3.4 V.\n"
+                     "Load: R_v = (U − U_L) / I_L, nearest E12 value; U_L with this value for a resistive load. Only for a "
+                     "constant load – with varying current use a voltage regulator.\n"
+                     "P_R = I² · R, choose a rating ≥ 2 · P_R. Efficiency η = U_load / U."};
+    c.inputs = {Num::choice("load", {"Last", "Load"},
+                            {{"led", {"LED (eine oder mehrere in Reihe)", "LED (one or several in series)"}},
+                             {"dev", {"Verbraucher mit U_L und I_L", "Load with U_L and I_L"}}},
+                            "led"),
+                Num::number("U", {"Versorgungsspannung U", "Supply voltage U"}, "V", 24).positive(),
+                Num::number("Uf", {"Durchlassspannung U_F", "Forward voltage U_F"}, "V", 2.1).positive(),
+                Num::number("If", {"LED-Strom I_F", "LED current I_F"}, "mA", 10).positive(),
+                Num::number("n", {"LEDs in Reihe", "LEDs in series"}, "", 1).range(1, 100),
                 Num::number("UL", {"Spannung am Verbraucher U_L", "Voltage at the load U_L"}, "V", 12).positive(),
                 Num::number("I", {"Strom des Verbrauchers I_L", "Load current I_L"}, "mA", 100).positive()};
-    c.outputs = {Out::number("R", {"Vorwiderstand R_v", "Series resistor R_v"}, "Ω", 1).primary(),
-                 Out::number("Rn", {"Nächster E12-Wert", "Nearest E12 value"}, "Ω", 1),
-                 Out::number("ULn", {"U_L mit E12-Wert", "U_L with E12 value"}, "V", 2),
+    for (const int i : {2, 3, 4}) c.inputs[static_cast<std::size_t>(i)].showIf("load", {"led"});
+    for (const int i : {5, 6}) c.inputs[static_cast<std::size_t>(i)].showIf("load", {"dev"});
+    c.outputs = {Out::number("R", {"Berechneter Widerstand", "Calculated resistance"}, "Ω", 1),
+                 Out::number("Rn", {"Gewählter Normwert", "Selected standard value"}, "Ω", 1).primary(),
+                 Out::number("In", {"Strom mit Normwert", "Current with standard value"}, "mA", 2),
+                 Out::number("ULn", {"Spannung an der Last mit Normwert", "Load voltage with standard value"}, "V", 2),
                  Out::number("P", {"Verlustleistung P_R", "Power P_R"}, "W", 3),
+                 Out::number("Prated", {"Empfohlene Belastbarkeit ≥", "Recommended rating ≥"}, "W", 3),
                  Out::number("eta", {"Wirkungsgrad", "Efficiency"}, "%", 1)};
-    c.keywords = {"vorwiderstand", "spannung reduzieren", "series resistor", "dropping resistor"};
+    c.keywords = {"vorwiderstand", "led", "spannung reduzieren", "series resistor", "dropping resistor"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
-        const double U = in.num("U"), UL = in.num("UL"), I = in.num("I") / 1e3;
+        const double U = in.num("U");
+        if (in.choice("load") == "led") {
+            const double Uload = std::round(in.num("n")) * in.num("Uf");
+            const double Ur = U - Uload;
+            if (Ur <= 0) throw CalcError({"Versorgungsspannung zu klein für die LED-Reihe.", "Supply voltage too low for the LED string."});
+            const double R = Ur / (in.num("If") / 1e3);
+            const double Rn = electronics::eSeriesMatch(electronics::ESeries::E24, R).upper;
+            const double In = Ur / Rn;
+            r.set("R", R);
+            r.set("Rn", Rn);
+            r.set("In", In * 1e3);
+            r.set("P", In * In * Rn);
+            r.set("Prated", 2.0 * In * In * Rn);
+            r.set("eta", Uload / U * 100.0);
+            return r;
+        }
+        const double UL = in.num("UL"), I = in.num("I") / 1e3;
         if (UL >= U) throw CalcError({"U_L muss kleiner als U sein.", "U_L must be smaller than U."});
         const double R = (U - UL) / I;
         const double Rn = nearestLog(electronics::eSeriesValues(electronics::ESeries::E12), R);
         const double Rload = UL / I;
+        const double In = U / (Rload + Rn);
         r.set("R", R);
         r.set("Rn", Rn);
-        r.set("ULn", U * Rload / (Rload + Rn));
-        r.set("P", (U - UL) * I);
+        r.set("In", In * 1e3);
+        r.set("ULn", In * Rload);
+        r.set("P", In * In * Rn);
+        r.set("Prated", 2.0 * In * In * Rn);
         r.set("eta", UL / U * 100.0);
-        r.info({"Belastbarkeit des Widerstands mit Reserve wählen (≥ 2 · P_R).", "Choose the resistor rating with margin (≥ 2 · P_R)."});
         return r;
     };
     return c;
@@ -496,46 +428,6 @@ Calculator cctvStorage() {
 
 // ------------------------------------------------------------------ temperature sensors
 
-Calculator rtdCopper() {
-    Calculator c;
-    c.id = "rtd_cu";
-    c.category = kCat;
-    c.title = {"Kupfer-Widerstandsthermometer (Cu10/Cu50/Cu100)", "Copper RTD (Cu10/Cu50/Cu100)"};
-    c.summary = {"R = R₀ · (1 + α · θ), linear", "R = R₀ · (1 + α · θ), linear"};
-    c.description = {"Kupfer-Messwiderstände sind im Bereich −50 … +150 °C nahezu linear: R = R₀ · (1 + α · θ).\n"
-                     "α = 0,00427 1/K (Cu10 nach US-Praxis), 0,00428 1/K (GOST 6651). Pt- und Ni-Fühler: eigener Rechner.",
-                     "Copper RTDs are nearly linear from −50 to +150 °C: R = R₀ · (1 + α · θ).\n"
-                     "α = 0.00427 1/K (Cu10, US practice), 0.00428 1/K (GOST 6651). Pt and Ni sensors: separate calculator."};
-    c.inputs = {Num::choice("R0", {"Fühler", "Sensor"}, {{"10", "Cu10"}, {"50", "Cu50"}, {"100", "Cu100"}}, "100"),
-                Num::choice("alpha", {"Temperaturkoeffizient α", "Temperature coefficient α"},
-                            {{"0.00427", "0,00427 1/K"}, {"0.00428", "0,00428 1/K"}}, "0.00428"),
-                Num::choice("mode", {"Gesucht", "Find"}, {{"R", {"Widerstand aus Temperatur", "Resistance from temperature"}},
-                                                          {"T", {"Temperatur aus Widerstand", "Temperature from resistance"}}}, "R"),
-                Num::number("T", {"Temperatur θ", "Temperature θ"}, "°C", 50).range(-50, 150),
-                Num::number("R", {"Widerstand R", "Resistance R"}, "Ω", 121.4).positive()};
-    c.inputs[3].showIf("mode", {"R"});
-    c.inputs[4].showIf("mode", {"T"});
-    c.outputs = {Out::number("Rout", {"Widerstand R", "Resistance R"}, "Ω", 3).primary(),
-                 Out::number("Tout", {"Temperatur θ", "Temperature θ"}, "°C", 2).primary(),
-                 Out::number("sens", {"Empfindlichkeit", "Sensitivity"}, "Ω/K", 4)};
-    c.keywords = {"cu100", "cu50", "kupfer", "rtd", "temperaturfühler", "copper"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const double R0 = parseDouble(in.choice("R0"));
-        const double a = parseDouble(in.choice("alpha"));
-        r.set("sens", R0 * a);
-        if (in.choice("mode") == "R") {
-            r.set("Rout", R0 * (1.0 + a * in.num("T")));
-        } else {
-            const double T = (in.num("R") / R0 - 1.0) / a;
-            if (T < -50 || T > 150) r.warn({"Außerhalb −50 … 150 °C (linearer Bereich).", "Outside −50 … 150 °C (linear range)."});
-            r.set("Tout", T);
-        }
-        return r;
-    };
-    return c;
-}
-
 Calculator thermocoupleCalc() {
     Calculator c;
     c.id = "thermocouple";
@@ -627,7 +519,6 @@ Calculator thermocoupleCalc() {
 }  // namespace
 
 void addElectricalComponents(std::vector<Calculator>& out) {
-    out.push_back(colourFromValue());
     out.push_back(smdCode());
     out.push_back(capacitorCodeCalc());
     out.push_back(inductorCodeCalc());
@@ -637,7 +528,6 @@ void addElectricalComponents(std::vector<Calculator>& out) {
     out.push_back(transformerWindings());
     out.push_back(antennaLength());
     out.push_back(cctvStorage());
-    out.push_back(rtdCopper());
     out.push_back(thermocoupleCalc());
 }
 

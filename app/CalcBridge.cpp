@@ -23,19 +23,43 @@ QString q(const std::string& s) { return QString::fromStdString(s); }
 QString categoryColor(const std::string& id) {
     if (id == "projects") return QStringLiteral("#1F6F5C");
     if (id == "electrical") return QStringLiteral("#2B4C9B");
-    if (id == "process") return QStringLiteral("#7B5E3C");
-    if (id == "building") return QStringLiteral("#B04A7A");
-    if (id == "basics") return QStringLiteral("#3D7EDB");
-    if (id == "cables") return QStringLiteral("#E08A1E");
     if (id == "motors") return QStringLiteral("#2E9E6B");
-    if (id == "industry") return QStringLiteral("#8A5CD1");
-    if (id == "automation") return QStringLiteral("#D9534F");
     if (id == "electronics") return QStringLiteral("#1BA3A6");
-    if (id == "converters") return QStringLiteral("#6C7A89");
+    if (id == "automation") return QStringLiteral("#D9534F");
+    if (id == "hvac") return QStringLiteral("#E08A1E");
+    if (id == "atex") return QStringLiteral("#7B5E3C");
+    if (id == "pid") return QStringLiteral("#8A5CD1");
     if (id == "cleanroom") return QStringLiteral("#2A8BBF");
     if (id == "datacenter") return QStringLiteral("#4B5BA8");
     if (id == "pv") return QStringLiteral("#D9A21B");
+    if (id == "building") return QStringLiteral("#B04A7A");
+    if (id == "comms") return QStringLiteral("#3D7EDB");
+    if (id == "converters") return QStringLiteral("#6C7A89");
     return QStringLiteral("#B5873A");
+}
+
+/// Favourites stored by older versions: merged items point to their new id, duplicates and unknown ids are dropped.
+QStringList migrateFavorites(const QStringList& stored) {
+    QStringList out;
+    for (const auto& id : stored) {
+        const auto now = QString::fromStdString(std::string(elc::currentItemId(id.toStdString())));
+        const auto s = now.toStdString();
+        const bool known = elc::findCalculator(s) || elc::findTable(s) || elc::findList(s);
+        if (known && !out.contains(now)) out.append(now);
+    }
+    return out;
+}
+
+/// Hidden areas of older versions: removed categories map to their successors, unknown ids are dropped.
+QStringList migrateHidden(const QStringList& stored) {
+    QStringList out;
+    for (const auto& id : stored) {
+        for (const auto a : elc::currentAreaIds(id.toStdString())) {
+            const auto qa = QString::fromStdString(std::string(a));
+            if (!out.contains(qa)) out.append(qa);
+        }
+    }
+    return out;
 }
 
 const elc::Category* findCategory(const std::string& id) {
@@ -106,8 +130,16 @@ CalcBridge::CalcBridge(QObject* parent) : QObject(parent) {
     lang_ = lang == "en" ? elc::Lang::En : elc::Lang::De;
     norm_ = settings_.value("norm", "de").toString() == "ch" ? elc::NormProfile::CH : elc::NormProfile::DE;
     dark_ = qEnvironmentVariable("ELC_THEME", settings_.value("dark", false).toBool() ? "dark" : "light") == "dark";
-    favorites_ = settings_.value("favorites").toStringList();
-    hiddenCategories_ = settings_.value("hiddenCategories").toStringList();
+    const QStringList storedFavorites = settings_.value("favorites").toStringList();
+    favorites_ = migrateFavorites(storedFavorites);
+    if (favorites_ != storedFavorites) {
+        if (favorites_.isEmpty()) settings_.remove("favorites"); else settings_.setValue("favorites", favorites_);
+    }
+    const QStringList storedHidden = settings_.value("hiddenCategories").toStringList();
+    hiddenCategories_ = migrateHidden(storedHidden);
+    if (hiddenCategories_ != storedHidden) {
+        if (hiddenCategories_.isEmpty()) settings_.remove("hiddenCategories"); else settings_.setValue("hiddenCategories", hiddenCategories_);
+    }
     // currency: stored choice, otherwise from the norm profile; exchange rate editable in the settings
     const QString cur = settings_.value("currency", norm_ == elc::NormProfile::CH ? "CHF" : "EUR").toString();
     currency_ = cur == "CHF" ? elc::Currency::CHF : elc::Currency::EUR;

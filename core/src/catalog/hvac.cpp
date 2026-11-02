@@ -113,75 +113,13 @@ std::pair<double, double> pickState(double xG, double y, double p) {
     return {std::round(t * 10.0) / 10.0, std::round(rh * 10.0) / 10.0};
 }
 
-Calculator humidAir() {
-    Calculator c;
-    c.id = "humid_air";
-    c.category = "automation";
-    c.title = {"Feuchte Luft (h-x)", "Moist air (psychrometrics)"};
-    c.summary = {"Taupunkt, absolute Feuchte, Enthalpie", "Dew point, humidity ratio, enthalpy"};
-    c.description = {
-        "Sättigungsdampfdruck (Magnus, WMO, über Wasser, −45…60 °C): p_s = 6,112 · e^(17,62·t / (243,12 + t)) hPa\n"
-        "p_D = φ · p_s    x = 0,622 · p_D / (p − p_D)    h = 1,006 · t + x · (2501 + 1,86 · t) kJ/kg\n"
-        "Taupunkt: τ = 243,12 · γ / (17,62 − γ), γ = ln(φ) + 17,62 · t / (243,12 + t). Luftdruck nach Höhe anpassen "
-        "(Basel ≈ 980 hPa).",
-        "Saturation pressure (Magnus, WMO, over water, −45…60 °C): p_s = 6.112 · e^(17.62·t / (243.12 + t)) hPa\n"
-        "p_v = φ · p_s    x = 0.622 · p_v / (p − p_v)    h = 1.006 · t + x · (2501 + 1.86 · t) kJ/kg\n"
-        "Dew point: τ = 243.12 · γ / (17.62 − γ), γ = ln(φ) + 17.62 · t / (243.12 + t). Adjust pressure for altitude "
-        "(Basel ≈ 980 hPa)."};
-    c.inputs = {
-        Num::number("t", {"Lufttemperatur t", "Air temperature t"}, "°C", 22).range(-40, 60),
-        Num::choice("dir", {"Gegeben", "Given"},
-                    {{"rh", {"Relative Feuchte", "Relative humidity"}}, {"td", {"Taupunkt", "Dew point"}}}, "rh"),
-        Num::number("rh", {"Relative Feuchte φ", "Relative humidity φ"}, "%", 45).rangeExclusiveMin(0, 100).showIf("dir", {"rh"}),
-        Num::number("td", {"Taupunkt τ", "Dew point τ"}, "°C", 9.5).range(-60, 60).showIf("dir", {"td"}),
-        Num::number("p", {"Luftdruck", "Air pressure"}, "hPa", 1013.25).range(500, 1100),
-    };
-    c.outputs = {Out::number("td", {"Taupunkt τ", "Dew point τ"}, "°C", 2).primary(),
-                 Out::number("rh", {"Relative Feuchte φ", "Relative humidity φ"}, "%", 1),
-                 Out::number("x", {"Absolute Feuchte x", "Humidity ratio x"}, "g/kg", 2).primary(),
-                 Out::number("h", {"Enthalpie h", "Enthalpy h"}, "kJ/kg", 2),
-                 Out::number("pd", {"Dampfdruck p_D", "Vapour pressure p_v"}, "hPa", 2),
-                 Out::number("ps", {"Sättigungsdampfdruck p_s", "Saturation pressure p_s"}, "hPa", 2),
-                 Out::number("rho", {"Dichte", "Density"}, "kg/m³", 3)};
-    c.keywords = {"taupunkt", "feuchte", "enthalpie", "h-x", "mollier", "psychrometrie", "dew point", "humidity"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const double t = in.num("t");
-        double rh = 0, td = 0;
-        if (in.choice("dir") == "td") {
-            td = in.num("td");
-            if (td > t) throw CalcError({"Taupunkt kann nicht über der Lufttemperatur liegen.", "Dew point cannot exceed air temperature."});
-            rh = air::relativeHumidity(t, td);
-        } else {
-            rh = in.num("rh");
-            td = air::dewPoint(t, rh);
-        }
-        const double ps = air::saturationPressure(t);
-        const double pd = ps * rh / 100.0;
-        const double x = air::humidityRatio(pd, in.num("p"));
-        r.set("td", td);
-        r.set("rh", rh);
-        r.set("x", x * 1000.0);
-        r.set("h", air::enthalpy(t, x));
-        r.set("pd", pd);
-        r.set("ps", ps);
-        r.set("rho", air::density(t, pd, in.num("p")));
-        return r;
-    };
-    c.chart = [](const Inputs& in, const Result& r, const Context&) {
-        const double p = in.num("p");
-        std::vector<StatePoint> pts;
-        if (!r.hasError()) pts.push_back({"1", in.num("t"), r.values.at("x") / 1000.0});
-        Chart ch = hxGrid(p, pts);
-        addStates(ch, pts, p, true);
-        ch.note = pressureNote(p, std::nullopt);
-        return ch;
-    };
-    c.pick = [](const Inputs& in, double x, double y, const Context&) {
-        const auto s = pickState(x, y, in.num("p"));
-        return std::vector<PickValue>{{"t", s.first, {}}, {"dir", 0, "rh"}, {"rh", s.second, {}}};
-    };
-    return c;
+/// relative humidity of state 1 – entered directly or from the dew point
+double rh1Of(const Inputs& in) {
+    if (in.choice("given1") != "td") return in.num("rh1");
+    const double t = in.num("t1");
+    const double td = in.num("td1");
+    if (td > t) throw CalcError({"Taupunkt kann nicht über der Lufttemperatur liegen.", "Dew point cannot exceed air temperature."});
+    return air::relativeHumidity(t, td);
 }
 
 Calculator hxDiagram() {
@@ -214,7 +152,11 @@ Calculator hxDiagram() {
             .withHint({"Basel ≈ 260–300 m, Zürich ≈ 410 m; ergibt den Luftdruck", "Sets the air pressure"}),
         Num::number("t1", {"Temperatur t₁", "Temperature t₁"}, "°C", 32).range(-30, 60)
             .startsSection({"Zustand 1 (z. B. Außenluft)", "State 1 (e.g. outdoor air)"}),
-        Num::number("rh1", {"Relative Feuchte φ₁", "Relative humidity φ₁"}, "%", 40).rangeExclusiveMin(0, 100),
+        Num::choice("given1", {"Gegeben", "Given"},
+                    {{"rh", {"Relative Feuchte", "Relative humidity"}}, {"td", {"Taupunkt", "Dew point"}}}, "rh"),
+        Num::number("rh1", {"Relative Feuchte φ₁", "Relative humidity φ₁"}, "%", 40).rangeExclusiveMin(0, 100)
+            .showIf("given1", {"rh"}),
+        Num::number("td1", {"Taupunkt τ₁", "Dew point τ₁"}, "°C", 16.7).range(-60, 60).showIf("given1", {"td"}),
         Num::choice("proc", {"Art", "Type"},
                     {{"none", {"keine (nur Zustand 1)", "none (state 1 only)"}},
                      {"heat", {"Erwärmen (Heizregister)", "Heating (heating coil)"}},
@@ -241,6 +183,9 @@ Calculator hxDiagram() {
         Out::number("td1", {"Taupunkt τ₁", "Dew point τ₁"}, "°C", 1).primary().abbrev({"Taupunkt τ₁", "Dew point τ₁"}),
         Out::number("h1", {"Enthalpie h₁", "Enthalpy h₁"}, "kJ/kg", 1),
         Out::number("twb1", {"Kühlgrenztemperatur t_f,1", "Wet-bulb temperature t_wb,1"}, "°C", 1),
+        Out::number("rh1", {"Relative Feuchte φ₁", "Relative humidity φ₁"}, "%", 1),
+        Out::number("pd1", {"Dampfdruck p_D,1", "Vapour pressure p_v,1"}, "hPa", 2),
+        Out::number("ps1", {"Sättigungsdampfdruck p_s,1", "Saturation pressure p_s,1"}, "hPa", 2),
         Out::number("rho1", {"Dichte ρ₁", "Density ρ₁"}, "kg/m³", 3),
         Out::number("t2", {"Temperatur t₂", "Temperature t₂"}, "°C", 1),
         Out::number("rh2", {"Relative Feuchte φ₂", "Relative humidity φ₂"}, "%", 1),
@@ -252,14 +197,20 @@ Calculator hxDiagram() {
         Out::number("water", {"Wasser (+ Befeuchtung / − Kondensat)", "Water (+ humidifying / − condensate)"}, "kg/h", 1),
     };
     c.keywords = {"mollier", "h-x", "hx", "taupunkt", "feuchte", "enthalpie", "kühlgrenze", "entfeuchtung", "befeuchtung",
-                  "mischluft", "rlt", "psychrometric", "dew point", "kondensat"};
+                  "mischluft", "rlt", "psychrometric", "dew point", "kondensat", "feuchte luft", "dampfdruck", "absolute feuchte",
+                  "humidity"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const double p = air::pressureAtAltitude(in.num("alt"));
-        const air::AirState s1{in.num("t1"), air::ratioFromRh(in.num("t1"), in.num("rh1"), p)};
+        const double rh1 = rh1Of(in);
+        const air::AirState s1{in.num("t1"), air::ratioFromRh(in.num("t1"), rh1, p)};
         const double h1 = air::enthalpy(s1.t, s1.x);
-        const double rho1 = air::density(s1.t, air::saturationPressure(s1.t) * in.num("rh1") / 100.0, p);
+        const double ps1 = air::saturationPressure(s1.t);
+        const double rho1 = air::density(s1.t, ps1 * rh1 / 100.0, p);
         r.set("p", p);
+        r.set("rh1", rh1);
+        r.set("pd1", ps1 * rh1 / 100.0);
+        r.set("ps1", ps1);
         r.set("x1", s1.x * 1000.0);
         r.set("td1", air::dewPointFromRatio(s1.x, p));
         r.set("h1", h1);
@@ -284,7 +235,7 @@ Calculator hxDiagram() {
             }
         } else if (proc == "steam" || proc == "adiabatic") {
             const double rhT = in.num("rhT");
-            if (rhT <= in.num("rh1")) {
+            if (rhT <= rh1) {
                 r.warn({"Ziel-Feuchte ≤ φ₁ – keine Befeuchtung nötig.", "Target humidity ≤ φ₁ – no humidification needed."});
             }
             if (proc == "adiabatic" && rhT > 95) {
@@ -353,7 +304,7 @@ Calculator hxDiagram() {
     };
     c.pick = [](const Inputs& in, double x, double y, const Context&) {
         const auto s = pickState(x, y, air::pressureAtAltitude(in.num("alt")));
-        return std::vector<PickValue>{{"t1", s.first, {}}, {"rh1", s.second, {}}};
+        return std::vector<PickValue>{{"t1", s.first, {}}, {"given1", 0, "rh"}, {"rh1", s.second, {}}};
     };
     return c;
 }
@@ -445,7 +396,6 @@ Calculator freshAir() {
 
 void addHvac(std::vector<Calculator>& out) {
     out.push_back(hxDiagram());
-    out.push_back(humidAir());
     out.push_back(freshAir());
 }
 

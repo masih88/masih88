@@ -21,97 +21,6 @@ namespace {
 constexpr const char* kCat = "electrical";
 using P = Sketch::P;
 
-std::vector<Option> acOptions() {
-    return {{"ac1", {"Wechselstrom 1~", "Single-phase AC"}}, {"ac3", {"Drehstrom 3~", "Three-phase AC"}}};
-}
-
-// ------------------------------------------------------------------ power, voltage, power factor
-
-enum class Solve { Power, Voltage, PowerFactor };
-
-Calculator motorValues(Solve what) {
-    Calculator c;
-    c.category = kCat;
-    const Text formula{"P_ab = k · U · I · cos φ · η    k = 1 (1~), √3 (3~); P_auf = P_ab / η; 1 hp = 745,7 W.",
-                       "P_out = k · U · I · cos φ · η    k = 1 (1~), √3 (3~); P_in = P_out / η; 1 hp = 745.7 W."};
-    c.description = formula;
-    std::vector<InputDef> defs{Num::choice("sys", {"Netz", "System"}, acOptions(), "ac3")};
-    if (what != Solve::Voltage) defs.push_back(Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive());
-    if (what != Solve::Power) defs.push_back(Num::number("P", {"Abgegebene Leistung P_ab", "Output power P_out"}, "kW", 7.5).positive());
-    defs.push_back(Num::number("I", {"Strom I", "Current I"}, "A", 14.5).positive());
-    if (what != Solve::PowerFactor)
-        defs.push_back(Num::number("cosphi", {"Leistungsfaktor cos φ", "Power factor cos φ"}, "", 0.84).rangeExclusiveMin(0, 1));
-    defs.push_back(Num::number("eta", {"Wirkungsgrad η", "Efficiency η"}, "%", 90).rangeExclusiveMin(0, 100));
-    c.inputs = defs;
-    switch (what) {
-        case Solve::Power:
-            c.id = "motor_power";
-            c.title = {"Motorleistung", "Motor power"};
-            c.summary = {"Abgegebene und aufgenommene Leistung aus U, I, cos φ, η", "Output and input power from U, I, cos φ, η"};
-            c.outputs = {Out::number("Pout", {"Abgegebene Leistung P_ab", "Output power P_out"}, "kW", 2).primary(),
-                         Out::number("hp", {"Abgegebene Leistung", "Output power"}, "hp", 2),
-                         Out::number("Pin", {"Aufgenommene Leistung P_auf", "Input power P_in"}, "kW", 2),
-                         Out::number("S", {"Scheinleistung S", "Apparent power S"}, "kVA", 2),
-                         Out::number("Ploss", {"Verluste", "Losses"}, "kW", 2)};
-            c.keywords = {"motorleistung", "motor power", "kw", "hp", "ps"};
-            break;
-        case Solve::Voltage:
-            c.id = "motor_voltage";
-            c.title = {"Motorspannung", "Motor voltage"};
-            c.summary = {"Spannung aus Leistung, Strom, cos φ und η", "Voltage from power, current, cos φ and η"};
-            c.outputs = {Out::number("U", {"Spannung U", "Voltage U"}, "V", 1).primary(),
-                         Out::number("Pin", {"Aufgenommene Leistung P_auf", "Input power P_in"}, "kW", 2)};
-            c.keywords = {"motorspannung", "motor voltage"};
-            break;
-        case Solve::PowerFactor:
-            c.id = "motor_pf";
-            c.title = {"Leistungsfaktor (Motor)", "Power factor (motor)"};
-            c.summary = {"cos φ aus Leistung, Spannung, Strom und η", "cos φ from power, voltage, current and η"};
-            c.outputs = {Out::number("cosphi", {"Leistungsfaktor cos φ", "Power factor cos φ"}, "", 3).primary(),
-                         Out::number("phi", {"Phasenwinkel φ", "Phase angle φ"}, "°", 1),
-                         Out::number("Pin", {"Aufgenommene Leistung P_auf", "Input power P_in"}, "kW", 2),
-                         Out::number("Q", {"Blindleistung Q", "Reactive power Q"}, "kvar", 2)};
-            c.keywords = {"cos phi", "leistungsfaktor", "motor power factor"};
-            break;
-    }
-    c.compute = [what](const Inputs& in, const Context&) {
-        Result r;
-        const double k = powerFactorK(parseSystem(in.choice("sys")));
-        const double eta = in.num("eta") / 100.0;
-        switch (what) {
-            case Solve::Power: {
-                const double S = k * in.num("U") * in.num("I");
-                const double Pin = S * in.num("cosphi");
-                r.set("S", S / 1e3);
-                r.set("Pin", Pin / 1e3);
-                r.set("Pout", Pin * eta / 1e3);
-                r.set("hp", Pin * eta / kWattPerHp);
-                r.set("Ploss", Pin * (1 - eta) / 1e3);
-                break;
-            }
-            case Solve::Voltage: {
-                const double Pin = in.num("P") * 1e3 / eta;
-                r.set("Pin", Pin / 1e3);
-                r.set("U", Pin / (k * in.num("I") * in.num("cosphi")));
-                break;
-            }
-            case Solve::PowerFactor: {
-                const double Pin = in.num("P") * 1e3 / eta;
-                const double S = k * in.num("U") * in.num("I");
-                const double cp = Pin / S;
-                if (cp > 1.0 + 1e-9)
-                    throw CalcError({"cos φ > 1 – Leistung, Strom oder Wirkungsgrad prüfen.", "cos φ > 1 – check power, current or efficiency."});
-                r.set("cosphi", cp);
-                r.set("phi", std::acos(std::min(1.0, cp)) * 180.0 / std::numbers::pi);
-                r.set("Pin", Pin / 1e3);
-                r.set("Q", std::sqrt(std::max(0.0, S * S - Pin * Pin)) / 1e3);
-                break;
-            }
-        }
-        return r;
-    };
-    return c;
-}
 
 // ------------------------------------------------------------------ NEC full-load current
 
@@ -602,9 +511,6 @@ Calculator motorConnections() {
 }  // namespace
 
 void addElectricalMotors(std::vector<Calculator>& out) {
-    out.push_back(motorValues(Solve::Power));
-    out.push_back(motorValues(Solve::Voltage));
-    out.push_back(motorValues(Solve::PowerFactor));
     out.push_back(necFlc());
     out.push_back(wiring6());
     out.push_back(wiringNema(9));

@@ -146,7 +146,7 @@ void addConverters(std::vector<Calculator>& out) {
     out.push_back(currency());
     out.push_back(tableConverter("conv_power", {"Leistung", "Power"}, {"W, kW, PS, hp, BTU/h, kcal/h, TR", "W, kW, PS, hp, BTU/h, kcal/h, TR"},
                                  units::powerUnits(), "kW", 1, {"leistung", "ps", "hp", "btu", "kälteleistung", "power"}));
-    out.push_back(tableConverter("conv_energy", {"Energie", "Energy"}, {"J, Wh, kWh, kcal, BTU", "J, Wh, kWh, kcal, BTU"},
+    out.push_back(tableConverter("conv_energy", {"Energie / Arbeit", "Energy / work"}, {"J, Wh, kWh, kcal, BTU", "J, Wh, kWh, kcal, BTU"},
                                  units::energyUnits(), "kWh", 1, {"energie", "kwh", "joule", "energy"}));
     out.push_back(temperature());
     out.push_back(tableConverter("conv_pressure", {"Druck", "Pressure"}, {"Pa, kPa, bar, mbar, psi, mWS", "Pa, kPa, bar, mbar, psi, mWS"},
@@ -161,6 +161,12 @@ void addConverters(std::vector<Calculator>& out) {
                                   "Durchmesser = π/4 · (25,4 µm)² = 5,0671 · 10⁻⁴ mm²; 1 kcmil (MCM) = 1000 cmil = 0,5067 mm².",
                                   "Conversion via m². 1 in = 25.4 mm (exact); 1 cmil = area of a circle of 1 mil (0.001 in) "
                                   "diameter = π/4 · (25.4 µm)² = 5.0671 · 10⁻⁴ mm²; 1 kcmil (MCM) = 1000 cmil = 0.5067 mm²."}));
+    out.push_back(tableConverter("conv_speed", {"Drehzahl", "Rotational speed"}, {"1/min, 1/s, rad/s, °/s", "rpm, 1/s, rad/s, °/s"},
+                                 units::speedUnits(), "rpm", 1500, {"drehzahl", "rpm", "umdrehungen", "winkelgeschwindigkeit", "rotational speed"},
+                                 {"Umrechnung über rad/s: ω = 2π · n/60 (n in 1/min); 1/s = Hz. Synchrondrehzahl n_s = 60 · f / p "
+                                  "(p = Polpaarzahl) siehe Rechner Drehzahl & Schlupf.",
+                                  "Conversion via rad/s: ω = 2π · n/60 (n in rpm); 1/s = Hz. Synchronous speed n_s = 60 · f / p (p = pole pairs) "
+                                  "see calculator speed & slip."}));
     out.push_back(tableConverter("conv_length", {"Länge", "Length"}, {"mm, m, km, mil, in, ft, yd, mi, sm", "mm, m, km, mil, in, ft, yd, mi, nmi"},
                                  units::lengthUnits(), "m", 1, {"länge", "zoll", "inch", "fuß", "meile", "length"},
                                  {"Umrechnung über Meter. Zoll 25,4 mm, Fuß 0,3048 m, Yard 0,9144 m, Meile 1609,344 m, "

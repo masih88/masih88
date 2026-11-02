@@ -1,9 +1,13 @@
 // Calculators: Elektronik / Electronics
+#include <algorithm>
 #include <array>
+#include <string>
 #include <cmath>
 #include <vector>
 
 #include "catalog/helpers.hpp"
+#include "catalog/sketch.hpp"
+#include "elc/formulas/electrical.hpp"
 #include "elc/formulas/basics.hpp"
 #include "elc/formulas/electronics.hpp"
 
@@ -17,21 +21,30 @@ struct Colour {
     const char* id;
     const char* de;
     const char* en;
+    const char* hex;
 };
 constexpr std::array<Colour, 12> kColours{{
-    {"black", "Schwarz", "Black"},
-    {"brown", "Braun", "Brown"},
-    {"red", "Rot", "Red"},
-    {"orange", "Orange", "Orange"},
-    {"yellow", "Gelb", "Yellow"},
-    {"green", "Grün", "Green"},
-    {"blue", "Blau", "Blue"},
-    {"violet", "Violett", "Violet"},
-    {"grey", "Grau", "Grey"},
-    {"white", "Weiß", "White"},
-    {"gold", "Gold", "Gold"},
-    {"silver", "Silber", "Silver"},
+    {"black", "Schwarz", "Black", "#1A1A1A"},
+    {"brown", "Braun", "Brown", "#8B4513"},
+    {"red", "Rot", "Red", "#E53935"},
+    {"orange", "Orange", "Orange", "#FB8C00"},
+    {"yellow", "Gelb", "Yellow", "#FDD835"},
+    {"green", "Grün", "Green", "#43A047"},
+    {"blue", "Blau", "Blue", "#1E88E5"},
+    {"violet", "Violett", "Violet", "#8E24AA"},
+    {"grey", "Grau", "Grey", "#9E9E9E"},
+    {"white", "Weiß", "White", "#FFFFFF"},
+    {"gold", "Gold", "Gold", "#C9A227"},
+    {"silver", "Silber", "Silver", "#C0C0C0"},
 }};
+
+/// index in kColours (−1 = none)
+int colourIndex(const std::string& id) {
+    for (std::size_t i = 0; i < kColours.size(); ++i) {
+        if (id == kColours[i].id) return static_cast<int>(i);
+    }
+    return -1;
+}
 
 std::vector<Option> digitOptions() {
     std::vector<Option> o;
@@ -101,19 +114,51 @@ std::pair<double, std::string> withPrefix(double v, bool henry) {
     return {v, "Ω"};
 }
 
+/// colour ids of the bands (digits, multiplier, tolerance; tolerance "none" is left out)
+std::vector<std::string> bandIds(const Inputs& in) {
+    std::vector<std::string> ids;
+    if (in.choice("dir") == "v2c") {
+        const double mult = in.choice("unit") == "M" ? 1e6 : in.choice("unit") == "k" ? 1e3 : 1.0;
+        const auto b = electrical::bandsFor(in.num("R") * mult, in.choice("bands") == "5" ? 3 : 2);
+        if (!b) return {};
+        for (const int d : b->digits) ids.emplace_back(kColours[static_cast<std::size_t>(d)].id);
+        ids.emplace_back(b->exponent >= 0 ? kColours[static_cast<std::size_t>(b->exponent)].id : b->exponent == -1 ? "gold" : "silver");
+    } else {
+        ids = {in.choice("b1"), in.choice("b2")};
+        if (in.choice("bands") == "5") ids.push_back(in.choice("b3"));
+        ids.push_back(in.choice("mult"));
+    }
+    if (in.choice("tol") != "none") ids.push_back(in.choice("tol"));
+    return ids;
+}
+
 Calculator colourCode() {
     Calculator c;
     c.id = "resistor_color";
     c.category = "electronics";
     c.title = {"Farbcode Widerstand / Spule", "Colour code resistor / inductor"};
-    c.summary = {"4- und 5-Ring-Code nach IEC 60062", "4- and 5-band code per IEC 60062"};
-    c.description = {"4 Ringe: Ziffer, Ziffer, Multiplikator, Toleranz\n5 Ringe: Ziffer, Ziffer, Ziffer, Multiplikator, Toleranz\n"
-                     "Induktivitäten: gleiche Codierung, Grundeinheit µH.",
-                     "4 bands: digit, digit, multiplier, tolerance\n5 bands: digit, digit, digit, multiplier, tolerance\n"
-                     "Inductors: same code, base unit µH."};
+    c.summary = {"Farbringe → Wert und Wert → Farbringe (4 und 5 Ringe, IEC 60062) mit Zeichnung",
+                 "Colour bands → value and value → colour bands (4 and 5 bands, IEC 60062) with drawing"};
+    c.description = {
+        "4 Ringe: Ziffer, Ziffer, Multiplikator, Toleranz (E6–E24)\n5 Ringe: Ziffer, Ziffer, Ziffer, Multiplikator, Toleranz (E48–E192)\n"
+        "Schwarz 0 ×1 · Braun 1 ×10 ±1 % · Rot 2 ×100 ±2 % · Orange 3 ×1 k · Gelb 4 ×10 k · Grün 5 ×100 k ±0,5 % · "
+        "Blau 6 ×1 M ±0,25 % · Violett 7 ×10 M ±0,1 % · Grau 8 ×100 M ±0,05 % · Weiß 9 ×1 G · Gold ×0,1 ±5 % · "
+        "Silber ×0,01 ±10 % · kein Ring ±20 %\n"
+        "Wert → Farbringe: auf 2 bzw. 3 gültige Ziffern gerundet und gegen E24 bzw. E96 geprüft. "
+        "Induktivitäten: gleiche Codierung, Grundeinheit µH.",
+        "4 bands: digit, digit, multiplier, tolerance (E6–E24)\n5 bands: digit, digit, digit, multiplier, tolerance (E48–E192)\n"
+        "Black 0 ×1 · brown 1 ×10 ±1 % · red 2 ×100 ±2 % · orange 3 ×1 k · yellow 4 ×10 k · green 5 ×100 k ±0.5 % · "
+        "blue 6 ×1 M ±0.25 % · violet 7 ×10 M ±0.1 % · grey 8 ×100 M ±0.05 % · white 9 ×1 G · gold ×0.1 ±5 % · "
+        "silver ×0.01 ±10 % · no band ±20 %\n"
+        "Value → colour bands: rounded to 2 or 3 significant digits and checked against E24 or E96. "
+        "Inductors: same code, base unit µH."};
     c.inputs = {
+        Num::choice("dir", {"Richtung", "Direction"},
+                    {{"c2v", {"Farbringe → Wert", "Colour bands → value"}}, {"v2c", {"Wert → Farbringe", "Value → colour bands"}}}, "c2v"),
         Num::choice("part", {"Bauteil", "Component"},
                     {{"r", {"Widerstand (Ω)", "Resistor (Ω)"}}, {"l", {"Induktivität (µH)", "Inductor (µH)"}}}, "r"),
+        Num::number("R", {"Widerstandswert", "Resistance"}, "", 4.7).positive(),
+        Num::choice("unit", {"Einheit", "Unit"}, {{"ohm", "Ω"}, {"k", "kΩ"}, {"M", "MΩ"}}, "k"),
         Num::choice("bands", {"Anzahl Ringe", "Number of bands"}, {{"4", {"4 Ringe", "4 bands"}}, {"5", {"5 Ringe", "5 bands"}}}, "4"),
         Num::choice("b1", {"1. Ring (Ziffer)", "1st band (digit)"}, digitOptions(), "yellow"),
         Num::choice("b2", {"2. Ring (Ziffer)", "2nd band (digit)"}, digitOptions(), "violet"),
@@ -121,26 +166,89 @@ Calculator colourCode() {
         Num::choice("mult", {"Multiplikator", "Multiplier"}, multiplierOptions(), "red"),
         Num::choice("tol", {"Toleranz", "Tolerance"}, toleranceOptions(), "gold"),
     };
-    c.inputs[4].showIf("bands", {"5"});
+    c.inputs[1].showIf("dir", {"c2v"});
+    c.inputs[2].showIf("dir", {"v2c"});
+    c.inputs[3].showIf("dir", {"v2c"});
+    c.inputs[5].showIf("dir", {"c2v"});
+    c.inputs[6].showIf("dir", {"c2v"});
+    c.inputs[7].showIf("bands", {"5"});
+    c.inputs[8].showIf("dir", {"c2v"});
     c.outputs = {Out::number("value", {"Nennwert", "Nominal value"}, "Ω", 3).primary(),
+                 Out::text("colours", {"Farbringe", "Colour bands"}).primary(),
                  Out::number("tol", {"Toleranz", "Tolerance"}, "%", 2),
                  Out::number("min", {"Minimalwert", "Minimum"}, "Ω", 3),
-                 Out::number("max", {"Maximalwert", "Maximum"}, "Ω", 3)};
-    c.keywords = {"farbcode", "farbring", "widerstand", "colour code", "color code", "resistor"};
+                 Out::number("max", {"Maximalwert", "Maximum"}, "Ω", 3),
+                 Out::number("nearest", {"Nächster Normwert", "Nearest standard value"}, "Ω", 3),
+                 Out::text("series", {"Normreihe", "Standard series"})};
+    c.keywords = {"farbcode", "farbring", "farbringe", "widerstand", "colour code", "color code", "resistor", "bands"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const bool five = in.choice("bands") == "5";
-        const bool henry = in.choice("part") == "l";
-        double digits = digitOf(in.choice("b1")) * 10 + digitOf(in.choice("b2"));
-        if (five) digits = digits * 10 + digitOf(in.choice("b3"));
-        const double v = digits * multiplierOf(in.choice("mult"));
         const double tol = toleranceOf(in.choice("tol"));
-        const auto [val, unit] = withPrefix(v, henry);
-        r.set("value", val, unit);
-        r.set("tol", tol);
-        r.set("min", val * (1 - tol / 100), unit);
-        r.set("max", val * (1 + tol / 100), unit);
+        const auto ids = bandIds(in);
+        if (in.choice("dir") == "v2c") {
+            const double mult = in.choice("unit") == "M" ? 1e6 : in.choice("unit") == "k" ? 1e3 : 1.0;
+            const double R = in.num("R") * mult;
+            const auto b = electrical::bandsFor(R, five ? 3 : 2);
+            if (!b) throw CalcError({"Wert mit Farbringen nicht darstellbar (0,1 Ω … 99 GΩ).", "Value cannot be shown with colour bands (0.1 Ω … 99 GΩ)."});
+            const auto [v, unit] = withPrefix(b->value, false);
+            r.set("value", v, unit);
+            const auto match = eSeriesMatch(five ? ESeries::E96 : ESeries::E24, b->value);
+            const auto [nv, nunit] = withPrefix(match.nearest, false);
+            r.set("nearest", nv, nunit);
+            const bool exact = std::fabs(match.nearest - b->value) <= 1e-6 * b->value;
+            r.setText("series", exact ? Text{five ? "E96 ✓" : "E24 ✓", five ? "E96 ✓" : "E24 ✓"}
+                                      : Text{five ? "kein E96-Wert" : "kein E24-Wert", five ? "not an E96 value" : "not an E24 value"});
+            if (std::fabs(b->value - R) > 1e-9 * R)
+                r.warn({"Wert auf die darstellbaren Ziffern gerundet.", "Value rounded to the digits the bands can show."});
+            r.set("tol", tol);
+            r.set("min", v * (1 - tol / 100), unit);
+            r.set("max", v * (1 + tol / 100), unit);
+        } else {
+            const bool henry = in.choice("part") == "l";
+            double digits = digitOf(in.choice("b1")) * 10 + digitOf(in.choice("b2"));
+            if (five) digits = digits * 10 + digitOf(in.choice("b3"));
+            const double v = digits * multiplierOf(in.choice("mult"));
+            const auto [val, unit] = withPrefix(v, henry);
+            r.set("value", val, unit);
+            r.set("tol", tol);
+            r.set("min", val * (1 - tol / 100), unit);
+            r.set("max", val * (1 + tol / 100), unit);
+        }
+        Text names{"", ""};
+        for (std::size_t i = 0; i < ids.size(); ++i) {
+            const auto& col = kColours[static_cast<std::size_t>(std::max(0, colourIndex(ids[i])))];
+            names.de += (i ? " – " : "") + std::string(col.de);
+            names.en += (i ? " – " : "") + std::string(col.en);
+        }
+        if (in.choice("tol") == "none") {
+            names.de += " (kein Toleranzring)";
+            names.en += " (no tolerance band)";
+        }
+        r.setText("colours", names);
         return r;
+    };
+    c.chart = [](const Inputs& in, const Result&, const Context&) {
+        Sketch s;
+        s.frame(100, 40, 0.4);
+        const bool five = in.choice("bands") == "5";
+        s.line("ink", {{2, 20}, {22, 20}});
+        s.line("ink", {{78, 20}, {98, 20}});
+        s.rect(five ? "fill:#A9CCE3" : "fill:#E8D5A9", 22, 9, 78, 31);
+        const auto ids = bandIds(in);
+        if (ids.empty()) return s.ch;
+        const std::vector<double> xs = five ? std::vector<double>{28, 35, 42, 49, 68} : std::vector<double>{30, 38, 46, 68};
+        const std::vector<const char*> tags = five ? std::vector<const char*>{"1", "2", "3", "×", "±"}
+                                                   : std::vector<const char*>{"1", "2", "×", "±"};
+        for (std::size_t i = 0; i < ids.size() && i < xs.size(); ++i) {
+            const int k = colourIndex(ids[i]);
+            if (k < 0) continue;
+            s.rect(std::string("fill:") + kColours[static_cast<std::size_t>(k)].hex, xs[i] - 2.2, 9, xs[i] + 2.2, 31);
+            s.label(xs[i], 4, tags[i]);
+        }
+        s.ch.note = {"Ringe von links lesen; der Toleranzring hat den größeren Abstand.",
+                     "Read the bands from the left; the tolerance band has the larger gap."};
+        return s.ch;
     };
     return c;
 }
@@ -182,48 +290,6 @@ Calculator eSeries() {
         r.set("dev", (m.nearest - v) / v * 100.0);
         r.set("lower", m.lower);
         r.set("upper", m.upper);
-        return r;
-    };
-    return c;
-}
-
-Calculator ledResistor() {
-    Calculator c;
-    c.id = "led_resistor";
-    c.category = "electronics";
-    c.title = {"LED-Vorwiderstand", "LED series resistor"};
-    c.summary = {"R = (U_B − n · U_F) / I_F", "R = (U_S − n · U_F) / I_F"};
-    c.description = {"R = (U_B − n · U_F) / I_F    P_R = I² · R\nGewählt wird der nächstgrößere E24-Wert; Belastbarkeit ≥ 2 · P_R wählen.\n"
-                     "Typ. U_F: rot 1,8–2,1 V, grün 2,0–3,2 V, blau/weiß 2,8–3,4 V.",
-                     "R = (U_S − n · U_F) / I_F    P_R = I² · R\nThe next higher E24 value is selected; use a power rating ≥ 2 · P_R.\n"
-                     "Typ. U_F: red 1.8–2.1 V, green 2.0–3.2 V, blue/white 2.8–3.4 V."};
-    c.inputs = {
-        Num::number("Ub", {"Versorgungsspannung U_B", "Supply voltage U_S"}, "V", 24).positive(),
-        Num::number("Uf", {"Durchlassspannung U_F", "Forward voltage U_F"}, "V", 2.1).positive(),
-        Num::number("If", {"LED-Strom I_F", "LED current I_F"}, "mA", 10).positive(),
-        Num::number("n", {"LEDs in Reihe", "LEDs in series"}, "", 1).range(1, 100),
-    };
-    c.outputs = {Out::number("R", {"Berechneter Widerstand", "Calculated resistance"}, "Ω", 1),
-                 Out::number("Re", {"Gewählt (E24)", "Selected (E24)"}, "Ω", 0).primary(),
-                 Out::number("I", {"Strom mit E24-Wert", "Current with E24 value"}, "mA", 2),
-                 Out::number("P", {"Verlustleistung", "Power dissipation"}, "mW", 1),
-                 Out::number("Prated", {"Empfohlene Belastbarkeit ≥", "Recommended rating ≥"}, "W", 3)};
-    c.keywords = {"led", "vorwiderstand", "series resistor"};
-    c.compute = [](const Inputs& in, const Context&) {
-        Result r;
-        const double U = in.num("Ub") - std::round(in.num("n")) * in.num("Uf");
-        if (U <= 0) {
-            throw CalcError({"Versorgungsspannung zu klein für die LED-Reihe.", "Supply voltage too low for the LED string."});
-        }
-        const double I = in.num("If") / 1e3;
-        const double R = U / I;
-        const double Re = eSeriesMatch(ESeries::E24, R).upper;
-        const double Ie = U / Re;
-        r.set("R", R);
-        r.set("Re", Re);
-        r.set("I", Ie * 1e3);
-        r.set("P", Ie * Ie * Re * 1e3);
-        r.set("Prated", 2.0 * Ie * Ie * Re);
         return r;
     };
     return c;
@@ -410,7 +476,6 @@ Calculator batteryRuntime() {
 void addElectronics(std::vector<Calculator>& out) {
     out.push_back(colourCode());
     out.push_back(eSeries());
-    out.push_back(ledResistor());
     out.push_back(voltageDivider());
     out.push_back(rcCircuit());
     out.push_back(lcResonance());

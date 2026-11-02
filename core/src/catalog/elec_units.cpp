@@ -174,27 +174,30 @@ Calculator voltageConverter() {
     return c;
 }
 
-Calculator phaseConverter() {
+Calculator trigAngle() {
     Calculator c;
-    c.id = "conv_phase";
+    c.id = "trig_angle";
     c.category = kCat;
-    c.title = {"Phasenwinkel", "Phase angle"};
-    c.summary = {"φ in Grad/Bogenmaß ↔ cos φ, sin φ, tan φ", "φ in degrees/radians ↔ cos φ, sin φ, tan φ"};
-    c.description = {"φ [rad] = φ [°] · π/180    cos φ = P/S    sin φ = Q/S    tan φ = Q/P\n"
-                     "Für Leistungsfaktoren gilt 0 ≤ φ ≤ 90° (induktiv oder kapazitiv – das Vorzeichen von Q angeben).",
-                     "φ [rad] = φ [°] · π/180    cos φ = P/S    sin φ = Q/S    tan φ = Q/P\n"
-                     "For power factors 0 ≤ φ ≤ 90° (inductive or capacitive – state the sign of Q)."};
-    c.inputs = {Num::number("v", {"Wert", "Value"}, "", 0.85),
+    c.title = {"Winkel und trigonometrische Funktionen", "Angles and trigonometric functions"};
+    c.summary = {"Grad, Bogenmaß, Gon ↔ sin, cos, tan (auch Phasenwinkel cos φ)", "Degrees, radians, gon ↔ sin, cos, tan (also phase angle cos φ)"};
+    c.description = {"φ [rad] = φ [°] · π/180    φ [gon] = φ [°] · 400/360\nsin, cos, tan, cot des Winkels; aus sin/cos/tan wird der Hauptwert "
+                     "(arcsin −90…90°, arccos 0…180°, arctan −90…90°) bestimmt. Leistungsfaktor: cos φ = P/S, tan φ = Q/P.",
+                     "φ [rad] = φ [°] · π/180    φ [gon] = φ [°] · 400/360\nsin, cos, tan, cot of the angle; from sin/cos/tan the principal "
+                     "value is returned (arcsin −90…90°, arccos 0…180°, arctan −90…90°). Power factor: cos φ = P/S, tan φ = Q/P."};
+    c.inputs = {Num::number("v", {"Wert", "Value"}, "", 30),
                 Num::choice("u", {"Gegeben", "Given"},
-                            {{"cos", "cos φ"}, {"deg", {"φ in Grad", "φ in degrees"}}, {"rad", {"φ im Bogenmaß", "φ in radians"}},
-                             {"sin", "sin φ"}, {"tan", {"tan φ (Q/P)", "tan φ (Q/P)"}}},
-                            "cos")};
-    c.outputs = {Out::number("deg", {"Phasenwinkel φ", "Phase angle φ"}, "°", 3).primary(),
-                 Out::number("rad", {"Phasenwinkel φ", "Phase angle φ"}, "rad", 4),
-                 Out::number("cos", {"cos φ", "cos φ"}, "", 4),
-                 Out::number("sin", {"sin φ", "sin φ"}, "", 4),
-                 Out::number("tan", {"tan φ = Q/P", "tan φ = Q/P"}, "", 4)};
-    c.keywords = {"phasenwinkel", "cos phi", "tan phi", "grad", "bogenmaß", "phase angle"};
+                            {{"deg", {"Winkel in Grad (°)", "Angle in degrees (°)"}}, {"rad", {"Winkel im Bogenmaß (rad)", "Angle in radians"}},
+                             {"gon", {"Winkel in Gon (gon)", "Angle in gon"}}, {"sin", "sin"}, {"cos", {"cos (z. B. cos φ)", "cos (e.g. cos φ)"}},
+                             {"tan", {"tan (z. B. Q/P)", "tan (e.g. Q/P)"}}},
+                            "deg")};
+    c.outputs = {Out::number("deg", {"Winkel", "Angle"}, "°", 4).primary(),
+                 Out::number("rad", {"Winkel", "Angle"}, "rad", 5),
+                 Out::number("gon", {"Winkel", "Angle"}, "gon", 4),
+                 Out::number("sin", {"sin", "sin"}, "", 5),
+                 Out::number("cos", {"cos", "cos"}, "", 5),
+                 Out::number("tan", {"tan", "tan"}, "", 5),
+                 Out::number("cot", {"cot", "cot"}, "", 5)};
+    c.keywords = {"winkel", "trigonometrie", "sinus", "cosinus", "tangens", "phasenwinkel", "cos phi", "grad", "bogenmaß", "gon", "angle"};
     c.compute = [](const Inputs& in, const Context&) {
         Result r;
         const double v = in.num("v");
@@ -202,16 +205,67 @@ Calculator phaseConverter() {
         double phi = 0;
         if (u == "deg") phi = v * std::numbers::pi / 180.0;
         else if (u == "rad") phi = v;
+        else if (u == "gon") phi = v * std::numbers::pi / 200.0;
         else if (u == "tan") phi = std::atan(v);
         else {
-            if (v < -1 || v > 1) throw CalcError({"cos φ bzw. sin φ muss zwischen −1 und 1 liegen.", "cos φ or sin φ must be between −1 and 1."});
+            if (v < -1 || v > 1) throw CalcError({"sin bzw. cos muss zwischen −1 und 1 liegen.", "sin or cos must be between −1 and 1."});
             phi = u == "cos" ? std::acos(v) : std::asin(v);
         }
         r.set("deg", phi * 180.0 / std::numbers::pi);
         r.set("rad", phi);
-        r.set("cos", std::cos(phi));
-        r.set("sin", std::sin(phi));
-        if (std::fabs(std::cos(phi)) > 1e-12) r.set("tan", std::tan(phi));
+        r.set("gon", phi * 200.0 / std::numbers::pi);
+        const double s = std::sin(phi), co = std::cos(phi);
+        r.set("sin", std::fabs(s) < 1e-15 ? 0.0 : s);
+        r.set("cos", std::fabs(co) < 1e-15 ? 0.0 : co);
+        if (std::fabs(co) > 1e-12) r.set("tan", s / co);
+        if (std::fabs(s) > 1e-12) r.set("cot", co / s);
+        return r;
+    };
+    return c;
+}
+
+Calculator kvarMicrofarad() {
+    Calculator c;
+    c.id = "conv_kvar_uf";
+    c.category = kCat;
+    c.title = {"var / µF Umrechnung", "var / µF conversion"};
+    c.summary = {"Blindleistung eines Kondensators ↔ Kapazität", "Reactive power of a capacitor ↔ capacitance"};
+    c.description = {"Q = ω · C · U_C² je Kondensator, ω = 2πf.\n1~: U_C = U. 3~ Stern: U_C = U/√3, Q_ges = 3 · ω · C · U²/3 = ω · C · U². "
+                     "3~ Dreieck: U_C = U, Q_ges = 3 · ω · C · U² (U = Außenleiterspannung, C = Kapazität je Kondensator).",
+                     "Q = ω · C · U_C² per capacitor, ω = 2πf.\n1~: U_C = U. 3~ star: U_C = U/√3, Q_tot = 3 · ω · C · U²/3 = ω · C · U². "
+                     "3~ delta: U_C = U, Q_tot = 3 · ω · C · U² (U = line voltage, C = capacitance per capacitor)."};
+    c.inputs = {Num::choice("dir", {"Gegeben", "Given"}, {{"q", {"Blindleistung Q", "Reactive power Q"}}, {"c", {"Kapazität C", "Capacitance C"}}}, "q"),
+                Num::number("Q", {"Blindleistung Q (gesamt)", "Reactive power Q (total)"}, "kvar", 10).positive(),
+                Num::number("C", {"Kapazität je Kondensator", "Capacitance per capacitor"}, "µF", 66.3).positive(),
+                Num::number("U", {"Spannung U", "Voltage U"}, "V", 400).positive(),
+                Num::choice("f", {"Frequenz", "Frequency"}, {{"50", "50 Hz"}, {"60", "60 Hz"}}, "50"),
+                Num::choice("conn", {"Schaltung", "Connection"},
+                            {{"delta", {"3~ Dreieck", "3~ delta"}}, {"star", {"3~ Stern", "3~ star"}}, {"ac1", {"1~ / einzelner Kondensator", "1~ / single capacitor"}}},
+                            "delta")};
+    c.inputs[1].showIf("dir", {"q"});
+    c.inputs[2].showIf("dir", {"c"});
+    c.outputs = {Out::number("Cout", {"Kapazität je Kondensator", "Capacitance per capacitor"}, "µF", 2).primary(),
+                 Out::number("Qout", {"Blindleistung gesamt", "Total reactive power"}, "kvar", 3).primary(),
+                 Out::number("I", {"Strom (Außenleiter)", "Current (line)"}, "A", 2),
+                 Out::number("Uc", {"Spannung am Kondensator", "Voltage across capacitor"}, "V", 1)};
+    c.keywords = {"kvar", "µf", "uf", "kondensator", "blindleistung", "capacitor", "var"};
+    c.compute = [](const Inputs& in, const Context&) {
+        Result r;
+        const double w = 2.0 * std::numbers::pi * parseDouble(in.choice("f"));
+        const double U = in.num("U");
+        const auto& conn = in.choice("conn");
+        const double k = conn == "delta" ? 3.0 : 1.0;  // Q_tot = k · ω · C · U²
+        const double Uc = conn == "star" ? U / kSqrt3 : U;
+        if (in.choice("dir") == "q") {
+            const double C = in.num("Q") * 1e3 / (k * w * U * U);
+            r.set("Cout", C * 1e6);
+            r.set("I", conn == "ac1" ? in.num("Q") * 1e3 / U : in.num("Q") * 1e3 / (kSqrt3 * U));
+        } else {
+            const double Q = k * w * in.num("C") * 1e-6 * U * U;
+            r.set("Qout", Q / 1e3);
+            r.set("I", conn == "ac1" ? Q / U : Q / (kSqrt3 * U));
+        }
+        r.set("Uc", Uc);
         return r;
     };
     return c;
@@ -222,7 +276,8 @@ Calculator phaseConverter() {
 void addElectricalUnits(std::vector<Calculator>& out) {
     out.push_back(deltaStar());
     out.push_back(voltageConverter());
-    out.push_back(phaseConverter());
+    out.push_back(trigAngle());
+    out.push_back(kvarMicrofarad());
 }
 
 }  // namespace elc::catalog

@@ -26,10 +26,15 @@ constexpr double kT25 = 298.15;
 
 }  // namespace
 
+double copperAlpha(Rtd type) { return type == Rtd::Cu10 ? 0.00427 : 0.00428; }
+
 double rtdR0(Rtd type) {
     switch (type) {
         case Rtd::Pt100: return 100.0;
         case Rtd::Pt500: return 500.0;
+        case Rtd::Cu10: return 10.0;
+        case Rtd::Cu50: return 50.0;
+        case Rtd::Cu100: return 100.0;
         default: return 1000.0;
     }
 }
@@ -37,7 +42,10 @@ double rtdR0(Rtd type) {
 std::array<double, 2> rtdRange(Rtd type) {
     switch (type) {
         case Rtd::Ni1000: return {-60.0, 250.0};
-        case Rtd::Ni1000TK5000: return {-50.0, 150.0};
+        case Rtd::Ni1000TK5000:
+        case Rtd::Cu10:
+        case Rtd::Cu50:
+        case Rtd::Cu100: return {-50.0, 150.0};
         default: return {-200.0, 850.0};
     }
 }
@@ -56,6 +64,10 @@ double rtdResistance(Rtd type, double T) {
             return R0 * (1.0 + kNiA * T + kNiB * T * T + kNiD * std::pow(T, 4) + kNiF * std::pow(T, 6));
         case Rtd::Ni1000TK5000:
             return R0 * (1.0 + kLgA * T + kLgB * T * T + kLgC * T * T * T);
+        case Rtd::Cu10:
+        case Rtd::Cu50:
+        case Rtd::Cu100:
+            return R0 * (1.0 + copperAlpha(type) * T);
     }
     return kNaN;
 }
@@ -74,6 +86,10 @@ double rtdSensitivity(Rtd type, double T) {
             return R0 * (kNiA + 2.0 * kNiB * T + 4.0 * kNiD * std::pow(T, 3) + 6.0 * kNiF * std::pow(T, 5));
         case Rtd::Ni1000TK5000:
             return R0 * (kLgA + 2.0 * kLgB * T + 3.0 * kLgC * T * T);
+        case Rtd::Cu10:
+        case Rtd::Cu50:
+        case Rtd::Cu100:
+            return R0 * copperAlpha(type);
     }
     return kNaN;
 }

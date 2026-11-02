@@ -74,8 +74,16 @@ const std::array<Unit, 11> kLength{{
     {"nmi", "sm", {"Seemeile", "nautical mile"}, 1852.0},
 }};
 
+const std::array<Unit, 4> kSpeed{{
+    {"rpm", "1/min", {"Umdrehungen pro Minute", "revolutions per minute"}, 2.0 * 3.14159265358979323846 / 60.0},
+    {"rps", "1/s", {"Umdrehungen pro Sekunde (Hz)", "revolutions per second (Hz)"}, 2.0 * 3.14159265358979323846},
+    {"rads", "rad/s", {"Winkelgeschwindigkeit", "angular velocity"}, 1.0},
+    {"degs", "°/s", {"Grad pro Sekunde", "degrees per second"}, 3.14159265358979323846 / 180.0},
+}};
+
 }  // namespace
 
+std::span<const Unit> speedUnits() { return kSpeed; }
 std::span<const Unit> areaUnits() { return kArea; }
 std::span<const Unit> lengthUnits() { return kLength; }
 std::span<const Unit> powerUnits() { return kPower; }

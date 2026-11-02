@@ -130,30 +130,47 @@ Table fuseClasses() {
                  {"gPV", {"Ganzbereich", "full range"}, {"Photovoltaik-Strings (DC, IEC 60269-6)", "photovoltaic strings (DC, IEC 60269-6)"}}});
 }
 
-Table fuseSizes() {
-    const Text neozed{"Neozed (D0)", "Neozed (D0)"};
-    const Text diazed{"Diazed (D)", "Diazed (D)"};
-    const Text nh{"NH (Messer)", "NH (blade)"};
-    return make("fuse_d_nh", {"D- und NH-Sicherungen: Größen", "D and NH fuses: sizes"},
-                {"Neozed, Diazed und NH-Größen mit Bemessungsströmen", "Neozed, Diazed and NH sizes with rated currents"},
-                {"IEC 60269-3 (D-System, für Laien bedienbar) und IEC 60269-2 (NH, nur Fachkräfte). Größte Bemessungsströme je Größe; "
-                 "Passschrauben/-hülsen verhindern beim D-System zu große Einsätze. Herstellerangaben prüfen.",
-                 "IEC 60269-3 (D system, usable by ordinary persons) and IEC 60269-2 (NH, skilled persons only). Highest rated currents "
-                 "per size; gauge screws/rings prevent oversized D cartridges. Check manufacturer data."},
-                {{"Größe", "Size"}, {"System", "System"}, {"Gewinde / Bauform", "Thread / design"}, {"Bemessungsstrom", "Rated current"}, {"Spannung", "Voltage"}},
-                {{"D01", neozed, "E14", "2–16 A", "400 V AC"},
-                 {"D02", neozed, "E18", "20–63 A", "400 V AC"},
-                 {"D03", neozed, "M30 × 2", "80–100 A", "400 V AC"},
-                 {"DII", diazed, "E27", "2–25 A", "500 V AC"},
-                 {"DIII", diazed, "E33", "35–63 A", "500 V AC"},
-                 {"DIV", diazed, "R 1¼\"", "80–100 A", "500 V AC"},
-                 {"NH000", nh, {"Größe 000", "size 000"}, {"bis 100 A", "up to 100 A"}, "500/690 V AC"},
-                 {"NH00", nh, {"Größe 00", "size 00"}, {"bis 160 A", "up to 160 A"}, "500/690 V AC"},
-                 {"NH0", nh, {"Größe 0 (nicht für Neuanlagen)", "size 0 (not for new installations)"}, {"bis 160 A", "up to 160 A"}, "500/690 V AC"},
-                 {"NH1", nh, {"Größe 1", "size 1"}, {"bis 250 A", "up to 250 A"}, "500/690 V AC"},
-                 {"NH2", nh, {"Größe 2", "size 2"}, {"bis 400 A", "up to 400 A"}, "500/690 V AC"},
-                 {"NH3", nh, {"Größe 3", "size 3"}, {"bis 630 A", "up to 630 A"}, "500/690 V AC"},
-                 {"NH4a", nh, {"Größe 4a", "size 4a"}, {"bis 1250 A", "up to 1250 A"}, "500/690 V AC"}});
+Table fuseD() {
+    struct F {
+        const char* in;
+        Text colour;
+        const char* neozed;
+        const char* diazed;
+    };
+    const std::vector<F> f{{"2 A", {"rosa", "pink"}, "D01", "DII"},      {"4 A", {"braun", "brown"}, "D01", "DII"},
+                           {"6 A", {"grün", "green"}, "D01", "DII"},     {"10 A", {"rot", "red"}, "D01", "DII"},
+                           {"13 A", {"schwarz", "black"}, "D01", "DII"}, {"16 A", {"grau", "grey"}, "D01", "DII"},
+                           {"20 A", {"blau", "blue"}, "D02", "DII"},     {"25 A", {"gelb", "yellow"}, "D02", "DII"},
+                           {"35 A", {"schwarz", "black"}, "D02", "DIII"}, {"50 A", {"weiß", "white"}, "D02", "DIII"},
+                           {"63 A", {"kupfer", "copper"}, "D02", "DIII"}, {"80 A", {"silber", "silver"}, "D03", "DIV"},
+                           {"100 A", {"rot", "red"}, "D03", "DIV"}};
+    std::vector<Row> rows;
+    for (const auto& x : f) rows.push_back({x.in, x.colour, x.neozed, x.diazed});
+    return make("fuse_d", {"D-Sicherungen (Neozed/Diazed): Größen und Kennmelder", "D-type fuses (Neozed/Diazed): sizes and indicator colours"},
+                {"Bemessungsstrom, Kennmelderfarbe, Größe D0 und D", "Rated current, indicator colour, size D0 and D"},
+                {"IEC 60269-3 / DIN VDE 0636-3 (D-System, für Laien bedienbar). Neozed D0: D01 E14 (2–16 A), D02 E18 (20–63 A), "
+                 "D03 M30 × 2 (80–100 A), 400 V AC. Diazed D: DII E27 (2–25 A), DIII E33 (35–63 A), DIV R 1¼\" (80–100 A), 500 V AC. "
+                 "Passschrauben/-hülsen verhindern zu große Einsätze. Größe = Bereich der Größe; einzelne Stufen herstellerabhängig.",
+                 "IEC 60269-3 (D system, usable by ordinary persons). Neozed D0: D01 E14 (2–16 A), D02 E18 (20–63 A), D03 M30 × 2 "
+                 "(80–100 A), 400 V AC. Diazed D: DII E27 (2–25 A), DIII E33 (35–63 A), DIV R 1¼\" (80–100 A), 500 V AC. Gauge "
+                 "screws/rings prevent oversized cartridges. Size = range of the size; individual ratings depend on the manufacturer."},
+                {{"I_n", "I_n"}, {"Kennmelder", "Indicator"}, {"Neozed (D0)", "Neozed (D0)"}, {"Diazed (D)", "Diazed (D)"}}, rows);
+}
+
+Table fuseNh() {
+    return make("fuse_nh", {"NH-Sicherungen: Größen", "NH fuses: sizes"}, {"NH000 … NH4a mit Bemessungsströmen", "NH000 … NH4a with rated currents"},
+                {"IEC 60269-2 / DIN VDE 0636-2 (NH-Messersicherungen, nur durch Fachkräfte oder unterwiesene Personen bedienbar, "
+                 "Aufsteckgriff mit Stulpe). Größte Bemessungsströme je Größe für 500/690 V AC; Herstellerangaben prüfen.",
+                 "IEC 60269-2 (NH blade fuses, to be operated by skilled or instructed persons only, with fuse puller and sleeve). "
+                 "Highest rated currents per size for 500/690 V AC; check manufacturer data."},
+                {{"Größe", "Size"}, {"Bemessungsstrom", "Rated current"}, {"Spannung", "Voltage"}, {"Hinweis", "Note"}},
+                {{"NH000", {"bis 100 A", "up to 100 A"}, "500/690 V AC", {"kleinste Bauform", "smallest size"}},
+                 {"NH00", {"bis 160 A", "up to 160 A"}, "500/690 V AC", {"häufig in Verteilungen", "common in distribution boards"}},
+                 {"NH0", {"bis 160 A", "up to 160 A"}, "500/690 V AC", {"nicht für Neuanlagen", "not for new installations"}},
+                 {"NH1", {"bis 250 A", "up to 250 A"}, "500/690 V AC", "–"},
+                 {"NH2", {"bis 400 A", "up to 400 A"}, "500/690 V AC", "–"},
+                 {"NH3", {"bis 630 A", "up to 630 A"}, "500/690 V AC", "–"},
+                 {"NH4a", {"bis 1250 A", "up to 1250 A"}, "500/690 V AC", {"Sonderbauform", "special size"}}});
 }
 
 Table fuseCylindrical() {
@@ -318,12 +335,27 @@ Table awgTable() {
         const auto m = nextAtLeast(cables::kStandardAreas, A);
         rows.push_back({{name, name}, num(units::awgDiameter(n), 3), num(A, A < 1 ? 4 : 2), num(R, R < 1 ? 4 : 2), m ? num(*m, 2) : dash()});
     }
-    return make("awg_table", {"AWG-Umrechnungstabelle", "AWG conversion table"}, {"American Wire Gauge 4/0 … 40", "American Wire Gauge 4/0 … 40"},
+    // kcmil sizes above 4/0 AWG (circular mils; d = equivalent solid diameter)
+    std::vector<Row> kcmil;
+    for (const int k : {250, 300, 350, 400, 500, 600, 750, 1000}) {
+        const double A = k * kMm2PerKcmil;
+        const double R = cables::resistivity20(cables::Material::Cu) / A * 1000.0;
+        const auto m = nextAtLeast(cables::kStandardAreas, A);
+        const std::string name = std::to_string(k) + " kcmil";
+        kcmil.push_back({{name, name}, num(std::sqrt(4.0 * A / std::numbers::pi), 3), num(A, 2), num(R, 4), m ? num(*m, 2) : dash()});
+    }
+    rows.insert(rows.begin(), kcmil.rbegin(), kcmil.rend());
+    return make("awg_table", {"AWG-/kcmil-Umrechnungstabelle", "AWG/kcmil conversion table"},
+                {"1000 kcmil … 4/0 … 40 AWG in mm² mit metrischem Normquerschnitt", "1000 kcmil … 4/0 … 40 AWG in mm² with metric standard size"},
                 {"ASTM B258: d = 0,127 mm · 92^((36 − n)/39), n = 0 für 1/0, −1 für 2/0 …; A = π/4 · d²; R für Kupfer (massiv) bei 20 °C "
-                 "mit ρ = 0,017241 Ω·mm²/m. Letzte Spalte: nächster metrischer Normquerschnitt ≥ AWG-Querschnitt.",
+                 "mit ρ = 0,017241 Ω·mm²/m. Über 4/0 AWG: 1 kcmil = 0,506707 mm² (d = Durchmesser eines gleich großen Massivleiters). "
+                 "Letzte Spalte: nächster metrischer Normquerschnitt ≥ US-Querschnitt (IEC 60228). Größen sind nicht gleichwertig – "
+                 "Belastbarkeit immer nach der jeweiligen Norm (IEC bzw. NEC) bestimmen.",
                  "ASTM B258: d = 0.127 mm · 92^((36 − n)/39), n = 0 for 1/0, −1 for 2/0 …; A = π/4 · d²; R for solid copper at 20 °C "
-                 "with ρ = 0.017241 Ω·mm²/m. Last column: next metric standard size ≥ AWG area."},
-                {"AWG", {"d in mm", "d in mm"}, {"A in mm²", "A in mm²"}, {"R in Ω/km", "R in Ω/km"}, {"metrisch ≥", "metric ≥"}}, rows);
+                 "with ρ = 0.017241 Ω·mm²/m. Above 4/0 AWG: 1 kcmil = 0.506707 mm² (d = diameter of an equal solid conductor). "
+                 "Last column: next metric standard size ≥ US area (IEC 60228). Sizes are not equivalent – always determine the "
+                 "ampacity per the respective standard (IEC or NEC)."},
+                {{"AWG / kcmil", "AWG / kcmil"}, {"d in mm", "d in mm"}, {"A in mm²", "A in mm²"}, {"R in Ω/km", "R in Ω/km"}, {"metrisch ≥", "metric ≥"}}, rows);
 }
 
 Table swgTableDef() {
@@ -338,41 +370,6 @@ Table swgTableDef() {
                 {"SWG", {"d in Zoll", "d in inch"}, {"d in mm", "d in mm"}, {"A in mm²", "A in mm²"}}, rows);
 }
 
-Table wireCompare() {
-    struct Imp {
-        std::string name;
-        double mm2;
-    };
-    std::vector<Imp> imp;
-    for (int n = 20; n >= -3; --n) imp.push_back({n <= 0 ? std::to_string(1 - n) + "/0 AWG" : std::to_string(n) + " AWG", units::awgArea(n)});
-    for (const int k : {250, 300, 350, 400, 500, 600, 750, 1000}) imp.push_back({std::to_string(k) + " kcmil", k * kMm2PerKcmil});
-    std::vector<Row> rows;
-    for (const double a : cables::kStandardAreas) {
-        const Imp* best = &imp.front();
-        for (const auto& i : imp) {
-            if (std::fabs(std::log(i.mm2 / a)) < std::fabs(std::log(best->mm2 / a))) best = &i;
-        }
-        const Imp* atLeast = nullptr;
-        for (const auto& i : imp) {
-            if (i.mm2 >= a * (1 - 1e-9)) {
-                atLeast = &i;
-                break;
-            }
-        }
-        rows.push_back({num(a, 2), {best->name, best->name}, num(best->mm2, 2), num((best->mm2 / a - 1) * 100, 1),
-                        atLeast ? Text{atLeast->name, atLeast->name} : dash()});
-    }
-    return make("wire_size_compare", {"Vergleich imperialer/metrischer Leitergrößen", "Imperial/metric conductor sizes"},
-                {"mm² ↔ AWG/kcmil", "mm² ↔ AWG/kcmil"},
-                {"Für jeden metrischen Normquerschnitt (IEC 60228) die nächstliegende AWG-/kcmil-Größe (logarithmisch) und die "
-                 "nächstgrößere. Größen sind nicht gleichwertig – Belastbarkeit immer nach der jeweiligen Norm (IEC bzw. NEC) bestimmen.",
-                 "For each metric standard size (IEC 60228) the nearest AWG/kcmil size (logarithmic) and the next larger one. Sizes "
-                 "are not equivalent – always determine the ampacity per the respective standard (IEC or NEC)."},
-                {{"mm² (IEC)", "mm² (IEC)"}, {"Nächste US-Größe", "Nearest US size"}, {"deren mm²", "its mm²"}, {"Abweichung in %", "Deviation in %"},
-                 {"US-Größe ≥", "US size ≥"}},
-                rows);
-}
-
 }  // namespace
 
 void addElectricalTables(std::vector<Table>& out) {
@@ -380,7 +377,8 @@ void addElectricalTables(std::vector<Table>& out) {
     out.push_back(busbarTable());
     out.push_back(miTable());
     out.push_back(fuseClasses());
-    out.push_back(fuseSizes());
+    out.push_back(fuseD());
+    out.push_back(fuseNh());
     out.push_back(fuseCylindrical());
     out.push_back(fuseGlass());
     out.push_back(fuseAutomotive());
@@ -392,46 +390,6 @@ void addElectricalTables(std::vector<Table>& out) {
     out.push_back(motorMarkings());
     out.push_back(awgTable());
     out.push_back(swgTableDef());
-    out.push_back(wireCompare());
-}
-
-std::vector<CategoryGroup> electricalGroups() {
-    return {
-        {{"Strom, Spannung & Leistung", "Current, voltage & power"},
-         {"current_from_power", "voltage_from_power", "power", "power_factor_calc", "ohm", "conductor_resistance", "impedance_ui",
-          "reactance", "operating_current", "joule_effect"}},
-        {{"Leitungen & Schutz", "Cables & protection"},
-         {"cable_sizing", "overload_protection", "voltage_drop", "max_length_vdrop", "disconnection", "ampacity", "ampacity_mi",
-          "busbar_ampacity", "conduit_fill", "short_circuit_withstand", "let_through_table", "cable_rxz", "cable_temperature",
-          "cable_losses", "neutral_current", "vdrop_distributed", "sizing_distributed", "mi_cable_table", "busbar_table"}},
-        {{"Sicherungen", "Fuses"},
-         {"fuse_classes", "fuse_d_nh", "fuse_colours", "fuse_cylindrical", "fuse_glass", "fuse_automotive", "mcb_characteristics"}},
-        {{"Kurzschluss, Erdung & Überspannung", "Short circuit, earthing & overvoltage"},
-         {"short_circuit", "transformer", "short_circuit_min", "earthing_rcd", "surge_risk", "network_systems"}},
-        {{"Blindleistungskompensation", "Power factor correction"}, {"pf_correction", "transformer_pfc", "capacitor_voltage"}},
-        {{"Bauteile & Codes", "Components & codes"},
-         {"resistor_color", "color_from_value", "smd_resistor", "eia96_table", "capacitor_code", "capacitor_code_table",
-          "capacitor_voltage_codes", "inductor_code", "e_series", "resistor_colours"}},
-        {{"Schaltungen", "Circuits"},
-         {"resistors_series_parallel", "capacitors_series_parallel", "lc_resonance", "voltage_divider", "current_divider",
-          "zener_regulator", "series_resistor", "led_resistor", "rc", "battery_runtime"}},
-        {{"Transformator, Antenne, CCTV & Sensoren", "Transformer, antenna, CCTV & sensors"},
-         {"transformer_windings", "antenna_length", "cctv_storage", "rtd", "rtd_cu", "ntc", "thermocouple", "analog_scaling"}},
-        {{"Motor", "Motor"},
-         {"motor_current", "motor_power", "motor_voltage", "motor_pf", "motor_efficiency", "steinmetz", "motor_speed", "torque",
-          "nec_flc", "nec_flc_3ph", "nec_flc_1ph", "motor_wiring_6", "motor_wiring_9", "motor_wiring_12", "motor_connections",
-          "motor_terminal_markings", "motor_terminals", "insulation_classes", "star_delta", "motor_duty", "motor_ie"}},
-        {{"Ressourcen", "Resources"},
-         {"fuse_classes", "fuse_d_nh", "ul_fuse_classes", "e_series_table", "trip_curves", "trip_characteristics", "mcb_characteristics",
-          "cable_reactance_table", "resistivity_table", "vdrop_per_length", "conductor_data", "earthing_systems", "network_systems",
-          "ip_first", "ip_second", "ik_codes", "nema_enclosures", "ex_selection", "ex_zones", "protection_classes", "cctv_resolutions",
-          "thermocouple_table", "ansi_device_numbers", "device_acronyms", "electrical_symbols", "world_electricity", "plug_types",
-          "iec60320_connectors", "iec60309_sockets", "nema_connectors", "ev_plugs", "conductor_colours", "wiring_colours_intl",
-          "si_prefixes", "units_table", "pipe_dimensions", "cable_glands"}},
-        {{"Umrechnung", "Conversion"},
-         {"delta_star", "conv_power", "conv_awg", "awg_table", "swg_table", "wire_size_compare", "conv_area", "conv_length",
-          "conv_voltage", "conv_phase", "conv_energy", "conv_temperature", "conv_pressure"}},
-    };
 }
 
 }  // namespace elc::catalog

@@ -24,34 +24,26 @@ Table make(std::string id, Text title, Text summary, Text description, Row colum
     return t;
 }
 
-Table ipFirst() {
-    return make("ip_first", {"IP-Schutzart – 1. Ziffer", "IP code – 1st digit"},
-                {"Schutz gegen Fremdkörper und Berühren", "Protection against solids and contact"},
-                {"IEC 60529 / EN 60529 (DIN VDE 0470-1)", "IEC 60529 / EN 60529"},
-                {{"Ziffer", "Digit"}, {"Fremdkörperschutz", "Solid objects"}, {"Berührungsschutz", "Contact protection"}},
-                {{"0", {"kein Schutz", "no protection"}, {"kein Schutz", "no protection"}},
-                 {"1", {"≥ 50 mm", "≥ 50 mm"}, {"Handrücken", "back of hand"}},
-                 {"2", {"≥ 12,5 mm", "≥ 12.5 mm"}, {"Finger", "finger"}},
-                 {"3", {"≥ 2,5 mm", "≥ 2.5 mm"}, {"Werkzeug", "tool"}},
-                 {"4", {"≥ 1,0 mm", "≥ 1.0 mm"}, {"Draht", "wire"}},
-                 {"5", {"staubgeschützt", "dust-protected"}, {"Draht", "wire"}},
-                 {"6", {"staubdicht", "dust-tight"}, {"Draht", "wire"}}});
-}
-
-Table ipSecond() {
-    return make("ip_second", {"IP-Schutzart – 2. Ziffer", "IP code – 2nd digit"}, {"Schutz gegen Wasser", "Protection against water"},
-                {"IEC 60529 inkl. Änderung 2 (2013) für IPX9.", "IEC 60529 incl. amendment 2 (2013) for IPX9."},
-                {{"Ziffer", "Digit"}, {"Schutz gegen", "Protection against"}},
-                {{"0", {"kein Schutz", "no protection"}},
-                 {"1", {"senkrecht fallendes Tropfwasser", "vertically dripping water"}},
-                 {"2", {"Tropfwasser bis 15° Neigung", "dripping water, tilted up to 15°"}},
-                 {"3", {"Sprühwasser bis 60° gegen die Senkrechte", "spraying water up to 60° from vertical"}},
-                 {"4", {"Spritzwasser aus allen Richtungen", "splashing water from any direction"}},
-                 {"5", {"Strahlwasser (Düse 6,3 mm)", "water jets (6.3 mm nozzle)"}},
-                 {"6", {"starkes Strahlwasser (Düse 12,5 mm)", "powerful water jets (12.5 mm nozzle)"}},
-                 {"7", {"zeitweiliges Untertauchen (1 m, 30 min)", "temporary immersion (1 m, 30 min)"}},
-                 {"8", {"dauerndes Untertauchen (nach Vereinbarung)", "continuous immersion (as agreed)"}},
-                 {"9", {"Hochdruck-/Dampfstrahl (80 °C)", "high-pressure, high-temperature jets (80 °C)"}}});
+Table ipCodes() {
+    const Text none{"kein Schutz", "no protection"};
+    return make("ip_codes", {"IP-Schutzarten (IP-Code)", "IP codes (ingress protection)"},
+                {"1. Ziffer Fremdkörper/Berührung, 2. Ziffer Wasser", "1st digit solids/contact, 2nd digit water"},
+                {"IEC 60529 / EN 60529 (DIN VDE 0470-1) inkl. Änderung 2 (2013) für IPX9. Beispiel IP54: staubgeschützt, Draht; "
+                 "Spritzwasser. X = nicht geprüft. Zusatzbuchstaben A–D (Berührungsschutz) und H, M, S, W möglich.",
+                 "IEC 60529 incl. amendment 2 (2013) for IPX9. Example IP54: dust-protected, wire; splashing water. X = not tested. "
+                 "Additional letters A–D (contact) and H, M, S, W possible."},
+                {{"Ziffer", "Digit"}, {"1. Ziffer: Fremdkörper", "1st digit: solid objects"}, {"1. Ziffer: Berührung", "1st digit: contact"},
+                 {"2. Ziffer: Wasser", "2nd digit: water"}},
+                {{"0", none, none, none},
+                 {"1", {"≥ 50 mm", "≥ 50 mm"}, {"Handrücken", "back of hand"}, {"senkrecht fallendes Tropfwasser", "vertically dripping water"}},
+                 {"2", {"≥ 12,5 mm", "≥ 12.5 mm"}, {"Finger", "finger"}, {"Tropfwasser bis 15° Neigung", "dripping water, tilted up to 15°"}},
+                 {"3", {"≥ 2,5 mm", "≥ 2.5 mm"}, {"Werkzeug", "tool"}, {"Sprühwasser bis 60° gegen die Senkrechte", "spraying water up to 60° from vertical"}},
+                 {"4", {"≥ 1,0 mm", "≥ 1.0 mm"}, {"Draht", "wire"}, {"Spritzwasser aus allen Richtungen", "splashing water from any direction"}},
+                 {"5", {"staubgeschützt", "dust-protected"}, {"Draht", "wire"}, {"Strahlwasser (Düse 6,3 mm)", "water jets (6.3 mm nozzle)"}},
+                 {"6", {"staubdicht", "dust-tight"}, {"Draht", "wire"}, {"starkes Strahlwasser (Düse 12,5 mm)", "powerful water jets (12.5 mm nozzle)"}},
+                 {"7", "–", "–", {"zeitweiliges Untertauchen (1 m, 30 min)", "temporary immersion (1 m, 30 min)"}},
+                 {"8", "–", "–", {"dauerndes Untertauchen (nach Vereinbarung)", "continuous immersion (as agreed)"}},
+                 {"9", "–", "–", {"Hochdruck-/Dampfstrahl (80 °C), IPX9", "high-pressure, high-temperature jets (80 °C), IPX9"}}});
 }
 
 Table protectionClasses() {
@@ -62,20 +54,6 @@ Table protectionClasses() {
                  {"I", {"Basisisolierung + Schutzleiteranschluss", "basic insulation + PE connection"}, {"Schutzleiterzeichen ⏚", "PE symbol ⏚"}},
                  {"II", {"doppelte oder verstärkte Isolierung", "double or reinforced insulation"}, {"Doppelquadrat ⧈, kein PE", "double square ⧈, no PE"}},
                  {"III", {"Schutzkleinspannung SELV/PELV", "extra-low voltage SELV/PELV"}, {"≤ 50 V AC / 120 V DC", "≤ 50 V AC / 120 V DC"}}});
-}
-
-Table networkSystems() {
-    return make("network_systems", {"Netzsysteme", "Earthing systems"}, {"TN-C, TN-S, TN-C-S, TT, IT", "TN-C, TN-S, TN-C-S, TT, IT"},
-                {"IEC 60364-1 / DIN VDE 0100-100 / NIN 3.1.2. 1. Buchstabe: Erdung der Stromquelle, 2. Buchstabe: Erdung der Körper.",
-                 "IEC 60364-1. 1st letter: source earthing, 2nd letter: exposed-conductive-part earthing."},
-                {{"System", "System"}, {"Aufbau", "Arrangement"}, {"Hinweis", "Note"}},
-                {{"TN-C", {"N und PE als PEN kombiniert", "N and PE combined as PEN"}, {"PEN ≥ 10 mm² Cu; EMV-ungünstig", "PEN ≥ 10 mm² Cu; poor EMC"}},
-                 {"TN-S", {"N und PE getrennt im ganzen Netz", "separate N and PE throughout"}, {"EMV-günstig, Standard für Neuanlagen", "good EMC, standard for new installations"}},
-                 {"TN-C-S", {"PEN-Aufteilung an einem Punkt, danach getrennt", "PEN split at one point, separate afterwards"},
-                  {"nach Aufteilung nie wieder verbinden", "never reconnect after the split"}},
-                 {"TT", {"Körper über eigenen Anlagenerder", "exposed parts on local earth electrode"}, {"Fehlerschutz meist mit RCD", "fault protection usually by RCD"}},
-                 {"IT", {"Quelle isoliert oder hochohmig geerdet", "source isolated or high-impedance earthed"},
-                  {"Isolationsüberwachung, Betrieb bei 1. Fehler (Medizin, Industrie)", "insulation monitoring, operates after 1st fault (medical, industry)"}}});
 }
 
 Table insulationClasses() {
@@ -91,47 +69,6 @@ Table insulationClasses() {
                  {"H", "180 °C", "125 K"},
                  {"N", "200 °C", "–"},
                  {"R", "220 °C", "–"}});
-}
-
-Table conductorColours() {
-    return make("conductor_colours", {"Aderfarben", "Conductor colours"}, {"Netz und Maschinen (Empfehlung)", "Mains and machines (recommendation)"},
-                {"Kennzeichnung nach IEC 60445 (DIN EN 60445 / VDE 0197); Maschinen nach IEC 60204-1 Abschn. 13.2 (Empfehlung).",
-                 "Identification per IEC 60445; machines per IEC 60204-1 clause 13.2 (recommendation)."},
-                {{"Leiter / Kreis", "Conductor / circuit"}, {"Farbe", "Colour"}},
-                {{{"Außenleiter L1", "Line conductor L1"}, {"braun", "brown"}},
-                 {{"Außenleiter L2", "Line conductor L2"}, {"schwarz", "black"}},
-                 {{"Außenleiter L3", "Line conductor L3"}, {"grau", "grey"}},
-                 {{"Neutralleiter N", "Neutral N"}, {"blau", "blue"}},
-                 {{"Schutzleiter PE", "Protective conductor PE"}, {"grün-gelb", "green-yellow"}},
-                 {{"PEN-Leiter", "PEN conductor"}, {"grün-gelb + blaue Markierung an den Enden", "green-yellow + blue marking at ends"}},
-                 {{"Maschine: Hauptstromkreise AC/DC", "Machine: AC/DC power circuits"}, {"schwarz", "black"}},
-                 {{"Maschine: AC-Steuerstromkreise", "Machine: AC control circuits"}, {"rot", "red"}},
-                 {{"Maschine: DC-Steuerstromkreise", "Machine: DC control circuits"}, {"blau", "blue"}},
-                 {{"Maschine: Fremdspannung (bleibt bei Hauptschalter AUS)", "Machine: external supply (live with main switch OFF)"},
-                  {"orange", "orange"}}});
-}
-
-Table mcbCharacteristics() {
-    return make("mcb_characteristics", {"LS-Schalter-Charakteristiken", "MCB tripping curves"}, {"B, C, D, K, Z – Sofortauslösung", "B, C, D, K, Z – instantaneous trip"},
-                {"B/C/D nach IEC 60898-1: Nichtauslösestrom 1,13 · I_n, Auslösestrom 1,45 · I_n (< 1 h). K/Z nach IEC 60947-2 bzw. Herstellerangaben.",
-                 "B/C/D per IEC 60898-1: non-tripping 1.13 · I_n, tripping 1.45 · I_n (< 1 h). K/Z per IEC 60947-2 or manufacturer data."},
-                {{"Typ", "Type"}, {"Sofortauslösung", "Instantaneous trip"}, {"Einsatz", "Application"}},
-                {{"B", "3 … 5 · I_n", {"Leitungsschutz, ohmsche Lasten, Wohnbau", "cable protection, resistive loads, residential"}},
-                 {"C", "5 … 10 · I_n", {"Motoren, Leuchten, Trafos, Industrie", "motors, luminaires, transformers, industry"}},
-                 {"D", "10 … 20 · I_n", {"hohe Einschaltströme (Trafos, Ventile)", "high inrush (transformers, valves)"}},
-                 {"K", "8 … 14 · I_n", {"Motoren/Trafos, enge thermische Auslösung", "motors/transformers, tight thermal trip"}},
-                 {"Z", "2 … 3 · I_n", {"Halbleiter, Messkreise", "semiconductors, measuring circuits"}}});
-}
-
-Table fuseColours() {
-    return make("fuse_colours", {"D-Sicherungen: Kennmelder", "D-type fuses: indicator colours"}, {"DIAZED/NEOZED Farbcode", "DIAZED/NEOZED colour code"},
-                {"Kennmelderfarben nach DIN VDE 0636 / IEC 60269-3.", "Indicator colours per IEC 60269-3 (DIAZED/NEOZED)."},
-                {{"I_n", "I_n"}, {"Farbe", "Colour"}},
-                {{"2 A", {"rosa", "pink"}},   {"4 A", {"braun", "brown"}},    {"6 A", {"grün", "green"}},
-                 {"10 A", {"rot", "red"}},    {"13 A", {"schwarz", "black"}}, {"16 A", {"grau", "grey"}},
-                 {"20 A", {"blau", "blue"}},  {"25 A", {"gelb", "yellow"}},   {"35 A", {"schwarz", "black"}},
-                 {"50 A", {"weiß", "white"}}, {"63 A", {"kupfer", "copper"}}, {"80 A", {"silber", "silver"}},
-                 {"100 A", {"rot", "red"}}});
 }
 
 Table voltageDropLimits() {
@@ -278,20 +215,6 @@ Table motorIe() {
                  {"IE5", {"Ultra-Premium-Wirkungsgrad", "ultra premium efficiency"}}});
 }
 
-Table motorTerminals() {
-    return make("motor_terminals", {"Motor-Klemmbrett: Stern / Dreieck", "Motor terminal board: star / delta"},
-                {"Brücken, Spannungen, Drehrichtung", "Links, voltages, rotation"},
-                {"Klemmenbezeichnung nach IEC 60034-8. Klemmbrett oben: W2 U2 V2, unten: U1 V1 W1.",
-                 "Terminal marking per IEC 60034-8. Upper row: W2 U2 V2, lower row: U1 V1 W1."},
-                {{"Thema", "Topic"}, {"Ausführung", "Arrangement"}},
-                {{{"Stern (Y)", "Star (Y)"}, {"eine waagerechte Brücke W2–U2–V2, Netz an U1/V1/W1", "one horizontal link W2–U2–V2, supply to U1/V1/W1"}},
-                 {{"Dreieck (Δ)", "Delta (Δ)"}, {"drei senkrechte Brücken U1–W2, V1–U2, W1–V2", "three vertical links U1–W2, V1–U2, W1–V2"}},
-                 {{"Motor 230/400 V", "Motor 230/400 V"}, {"an 400-V-Netz in Stern", "on 400 V mains in star"}},
-                 {{"Motor 400/690 V", "Motor 400/690 V"}, {"an 400-V-Netz in Dreieck (Y-Δ-Anlauf möglich)", "on 400 V mains in delta (Y-Δ start possible)"}},
-                 {{"Rechtslauf", "Clockwise"}, {"L1→U1, L2→V1, L3→W1 (Blick auf Wellenende)", "L1→U1, L2→V1, L3→W1 (facing shaft end)"}},
-                 {{"Drehrichtungsumkehr", "Reverse rotation"}, {"zwei Außenleiter tauschen", "swap two line conductors"}}});
-}
-
 Table motorMounting() {
     return make("motor_mounting", {"Motor-Bauformen (IM)", "Motor mounting (IM)"}, {"IEC 60034-7 Code I", "IEC 60034-7 code I"},
                 {"Häufige Bauformen nach IEC 60034-7.", "Common mounting arrangements per IEC 60034-7."},
@@ -403,32 +326,11 @@ Table siPrefixes() {
                  {"Milli", "m", "10⁻³"}, {"Mikro", "µ", "10⁻⁶"}, {"Nano", "n", "10⁻⁹"}, {"Piko", "p", "10⁻¹²"}});
 }
 
-Table resistorColours() {
-    return make("resistor_colours", {"Farbcode-Tabelle", "Colour code table"}, {"Ziffern, Multiplikator, Toleranz", "digits, multiplier, tolerance"},
-                {"IEC 60062.", "IEC 60062."}, {{"Farbe", "Colour"}, {"Ziffer", "Digit"}, {"Multiplikator", "Multiplier"}, {"Toleranz", "Tolerance"}},
-                {{{"schwarz", "black"}, "0", "×1", "–"},
-                 {{"braun", "brown"}, "1", "×10", "±1 %"},
-                 {{"rot", "red"}, "2", "×100", "±2 %"},
-                 {{"orange", "orange"}, "3", "×1 k", "–"},
-                 {{"gelb", "yellow"}, "4", "×10 k", "–"},
-                 {{"grün", "green"}, "5", "×100 k", {"±0,5 %", "±0.5 %"}},
-                 {{"blau", "blue"}, "6", "×1 M", {"±0,25 %", "±0.25 %"}},
-                 {{"violett", "violet"}, "7", "×10 M", {"±0,1 %", "±0.1 %"}},
-                 {{"grau", "grey"}, "8", "×100 M", {"±0,05 %", "±0.05 %"}},
-                 {{"weiß", "white"}, "9", "×1 G", "–"},
-                 {"Gold", "–", {"×0,1", "×0.1"}, "±5 %"},
-                 {{"Silber", "Silver"}, "–", {"×0,01", "×0.01"}, "±10 %"},
-                 {{"keine", "none"}, "–", "–", "±20 %"}});
-}
-
 }  // namespace
 
 void addTables(std::vector<Table>& out) {
-    out.push_back(ipFirst());
-    out.push_back(ipSecond());
+    out.push_back(ipCodes());
     out.push_back(protectionClasses());
-    out.push_back(networkSystems());
-    out.push_back(conductorColours());
     out.push_back(voltageDropLimits());
     out.push_back(ampacityTable(cables::Insulation::PVC, 2));
     out.push_back(ampacityTable(cables::Insulation::PVC, 3));
@@ -436,14 +338,11 @@ void addTables(std::vector<Table>& out) {
     out.push_back(ampacityTable(cables::Insulation::XLPE, 3));
     out.push_back(temperatureFactors());
     out.push_back(groupingFactors());
-    out.push_back(mcbCharacteristics());
-    out.push_back(fuseColours());
     out.push_back(cableTypes());
     out.push_back(fieldbuses());
     out.push_back(insulationClasses());
     out.push_back(motorDuty());
     out.push_back(motorIe());
-    out.push_back(motorTerminals());
     out.push_back(motorMounting());
     out.push_back(pinRj45());
     out.push_back(pinRs485());
@@ -452,7 +351,6 @@ void addTables(std::vector<Table>& out) {
     out.push_back(pinRs232());
     out.push_back(pinUsb());
     out.push_back(pinHdmi());
-    out.push_back(resistorColours());
     out.push_back(siPrefixes());
 }
 

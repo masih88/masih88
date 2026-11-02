@@ -13,7 +13,7 @@ namespace elc::automation {
     return outLo + (x - inLo) * (outHi - outLo) / (inHi - inLo);
 }
 
-enum class Rtd { Pt100, Pt500, Pt1000, Ni1000, Ni1000TK5000 };
+enum class Rtd { Pt100, Pt500, Pt1000, Ni1000, Ni1000TK5000, Cu10, Cu50, Cu100 };
 
 /// R(T) in Ω.
 /// Pt: IEC 60751 Callendar–Van Dusen (A = 3.9083e-3, B = −5.775e-7, C = −4.183e-12 below 0 °C)
@@ -26,6 +26,8 @@ enum class Rtd { Pt100, Pt500, Pt1000, Ni1000, Ni1000TK5000 };
 /// Valid temperature range of the characteristic {min, max} in °C
 [[nodiscard]] std::array<double, 2> rtdRange(Rtd type);
 [[nodiscard]] double rtdR0(Rtd type);
+/// Linear temperature coefficient of copper RTDs: Cu10 0.00427 1/K (US practice), Cu50/Cu100 0.00428 1/K (GOST 6651)
+[[nodiscard]] double copperAlpha(Rtd type);
 
 /// NTC beta model: R = R25·exp(B·(1/T − 1/T25)), T in K internally
 [[nodiscard]] double ntcResistance(double R25, double B, double T_C);

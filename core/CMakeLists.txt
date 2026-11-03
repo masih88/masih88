@@ -48,6 +48,8 @@ add_library(elc_core STATIC
     src/catalog/pinout_drawings.cpp
     src/catalog/motor_feeder.cpp
     src/catalog/surge.cpp
+    src/catalog/surge_apps.cpp
+    src/catalog/surge_drawings.cpp
     src/tables/tables.cpp
     src/tables/vdi_tables.cpp
     src/lists/lists.cpp

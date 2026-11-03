@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "catalog/helpers.hpp"
+#include "catalog/surge_drawings.hpp"
 #include "elc/formulas/automation.hpp"
 
 namespace elc::catalog {
@@ -212,6 +213,16 @@ Calculator spdPower() {
         r.setText("next", next);
         return r;
     };
+    c.chart = [](const Inputs& in, const Result& r, const Context&) {
+        Text type{"kein SPD", "no SPD"};
+        if (r.texts.contains("type")) {
+            const auto& t = r.texts.at("type").de;
+            if (t.find("Typ 1+2") != std::string::npos) type = {"Typ 1+2", "type 1+2"};
+            else if (t.find("Typ 2") != std::string::npos) type = {"Typ 2", "type 2"};
+            else if (t.find("Typ 3") != std::string::npos) type = {"Typ 3", "type 3"};
+        }
+        return surgepics::scheme(in.choice("net"), in.choice("ph") == "3", type);
+    };
     return c;
 }
 
@@ -284,6 +295,8 @@ Calculator spdSignal() {
         "Grenzfrequenz ≥ Übertragungsfrequenz.\n"
         "Pt100/Pt1000 im 2-Leiter-Anschluss: jede Ader hat die Längsimpedanz R des Ableiters, Messfehler ΔT = 2 · R · Stufen / "
         "(dR/dT); 3-/4-Leiter-Anschluss kompensiert. In Ex-i-Kreisen nur dafür zugelassene Ableiter.\n"
+        "Blitzschutzklasse I (z. B. Rechenzentrum) nach VdS 2833: I_imp je Ader 2,5 kA bei weniger als 3 Doppeladern, 1 kA ab 3, "
+        "0,5 kA ab 10 Doppeladern (DEHN WPX050 Tabelle 3).\n"
         "Werte nach DEHN Auswahlmatrix Industriegebäude (DS390) und BLITZDUCTOR-Datenblatt; IEC 61643-21/-22, IEC 62305-4.",
         "Lines leaving the building (field devices outdoors, lines between buildings): zone transition LPZ 0A → 1, combined "
         "arrester with lightning current capability D1 (10/350 µs), e.g. 2.5 kA per core (DEHN BLITZDUCTOR XT ML4 BE 24: "
@@ -292,6 +305,8 @@ Calculator spdSignal() {
         "cut-off frequency ≥ transmission frequency.\n"
         "Pt100/Pt1000 in 2-wire connection: every core carries the series impedance R of the arrester, error ΔT = 2 · R · stages "
         "/ (dR/dT); 3/4-wire compensates. In Ex i circuits only arresters approved for them.\n"
+        "LPL I (e.g. data centre) per VdS 2833: I_imp per core 2.5 kA with fewer than 3 pairs, 1 kA from 3, 0.5 kA from 10 pairs "
+        "(DEHN WPX050 table 3).\n"
         "Values per DEHN selection matrix industrial buildings (DS390) and BLITZDUCTOR data sheet; IEC 61643-21/-22, IEC 62305-4."};
     std::vector<Option> sigOpts;
     for (const auto& s : signals()) sigOpts.push_back({s.id, s.name});
@@ -310,15 +325,19 @@ Calculator spdSignal() {
         Num::choice("ends", {"Ableiter im Messkreis", "Arresters in the loop"},
                     {{"1", {"eine Stufe (Schaltschrank)", "one stage (panel)"}}, {"2", {"zwei Stufen (Feld + Schaltschrank)", "two stages (field + panel)"}}},
                     "2"),
+        Num::number("pairs", {"Doppeladern im Kabel", "Pairs in the cable"}, "", 2).range(1, 200)
+            .withHint({"für I_imp je Ader bei Blitzschutzklasse I (VdS 2833)", "for I_imp per core with LPL I (VdS 2833)"}),
     };
     for (const int i : {3, 4, 5, 6}) c.inputs[static_cast<std::size_t>(i)].showIf("sig", {"pt"});
+    c.inputs[7].showIf("zone", {"out"});
     c.outputs = {Out::text("arrester", {"Ableiter", "Arrester"}).primary(),
                  Out::text("lpz", {"Zonenübergang", "Zone transition"}),
                  Out::number("Uc", {"U_C-Klasse mindestens", "U_C class at least"}, "V", 1).primary(),
                  Out::text("band", {"Übertragung", "Transmission"}),
                  Out::text("dehn", {"Beispiele DEHN", "DEHN examples"}),
                  Out::text("install", {"Einbau", "Installation"}),
-                 Out::number("dT", {"Messfehler durch Ableiter (2-Leiter)", "Error caused by the arrester (2-wire)"}, "K", 2)};
+                 Out::number("dT", {"Messfehler durch Ableiter (2-Leiter)", "Error caused by the arrester (2-wire)"}, "K", 2),
+                 Out::number("IimpCore", {"I_imp je Ader bei LPL I (VdS 2833)", "I_imp per core for LPL I (VdS 2833)"}, "kA", 1)};
     c.keywords = {"blitzductor", "msr", "sensor", "4-20 ma", "pt100", "bus", "modbus", "bacnet", "knx", "ethernet", "poe", "dehnpatch",
                   "datenleitung", "überspannungsschutz", "surge protection", "signal"};
     c.compute = [](const Inputs& in, const Context&) {
@@ -342,6 +361,11 @@ Calculator spdSignal() {
         }
         if (U > 180) throw CalcError({"Über 180 V: Ableiter für Energietechnik verwenden.", "Above 180 V: use a power-supply SPD."});
         r.set("Uc", uc);
+        if (out) {
+            // VdS 2833 via DEHN WPX050 table 3: lightning impulse current per core for LPL I by the number of pairs
+            const double pairs = std::round(in.num("pairs"));
+            r.set("IimpCore", pairs >= 10 ? 0.5 : pairs >= 3 ? 1.0 : 2.5);
+        }
         r.setText("band", s.band);
         r.setText("dehn", s.dehn);
         r.setText("install", out ? Text{"Beidseitig beschalten: am Gebäudeeintritt (Zonengrenze) und am Feldgerät; Erdung kurz an den Potentialausgleich, "
@@ -364,6 +388,10 @@ Calculator spdSignal() {
             }
         }
         return r;
+    };
+    c.chart = [](const Inputs& in, const Result&, const Context&) {
+        const bool out = in.choice("zone") == "out";
+        return surgepics::signalRoute(out, out ? Text{"D1 + C2"} : Text{"C2"});
     };
     return c;
 }
@@ -450,6 +478,13 @@ Calculator spdDistance() {
         }
         return r;
     };
+    c.chart = [](const Inputs& in, const Result& r, const Context&) {
+        const double upf = r.values.contains("Upf") ? r.values.at("Upf") : 0.0;
+        const double uw = r.values.contains("Uw") ? r.values.at("Uw") : 1.0;
+        double lpo = r.values.contains("lpo") ? r.values.at("lpo") : 0.0;
+        if (upf <= 0.5 * uw) lpo = -1;  // protection independent of the length
+        return surgepics::distance(upf, uw, in.num("l"), lpo);
+    };
     return c;
 }
 
@@ -467,8 +502,13 @@ Table make(std::string id, Text title, Text summary, Text description, std::vect
     return t;
 }
 
+Table withDrawing(Table t, Chart ch) {
+    t.drawing = std::move(ch);
+    return t;
+}
+
 Table lpzTable() {
-    return make("lpz_zones", {"Blitzschutzzonen (LPZ) und Ableiter", "Lightning protection zones (LPZ) and arresters"},
+    return withDrawing(make("lpz_zones", {"Blitzschutzzonen (LPZ) und Ableiter", "Lightning protection zones (LPZ) and arresters"},
                 {"Zonen nach IEC 62305-4 und Schutzgerät an der Zonengrenze", "Zones per IEC 62305-4 and protective device at the boundary"},
                 {"IEC 62305-4 / DIN EN 62305-4 (VDE 0185-305-4), Darstellung nach DEHN Blitzplaner. An jeder Zonengrenze werden alle "
                  "Leitungen in den Potentialausgleich einbezogen – direkt oder über SPD.",
@@ -483,11 +523,12 @@ Table lpzTable() {
                   {"Typ 2", "type 2"}, {"Überspannungs-Ableiter C2", "surge arrester C2"}},
                  {"LPZ 2", {"weiter gedämpft (geschirmte Räume, Schränke)", "further attenuated (screened rooms, cabinets)"}, {"2 → 3", "2 → 3"},
                   {"Typ 3", "type 3"}, {"Feinschutz C1/C2", "fine protection C1/C2"}},
-                 {"LPZ 3", {"Gerät/Baugruppe", "device/module"}, "–", "–", "–"}});
+                 {"LPZ 3", {"Gerät/Baugruppe", "device/module"}, "–", "–", "–"}}),
+                       surgepics::zones());
 }
 
 Table spdTypes() {
-    return make("spd_types", {"SPD-Typen Energietechnik", "SPD types for power"}, {"Typ 1, 2, 3 – Prüfstrom, Einsatz, Beispiele", "Type 1, 2, 3 – test current, use, examples"},
+    return withDrawing(make("spd_types", {"SPD-Typen Energietechnik", "SPD types for power"}, {"Typ 1, 2, 3 – Prüfstrom, Einsatz, Beispiele", "Type 1, 2, 3 – test current, use, examples"},
                 {"IEC 61643-11 / DIN EN 61643-11 (Typ = Klasse I/II/III bzw. T1/T2/T3). Energetische Koordination der Stufen nach "
                  "Herstellerangabe; Produktbeispiele DEHN (Kurzkatalog Elektrohandwerk 08/2023).",
                  "IEC 61643-11 (type = class I/II/III or T1/T2/T3). Energy coordination of the stages per manufacturer; DEHN examples "
@@ -504,11 +545,12 @@ Table spdTypes() {
                   {"I_n 20 kA, I_max 40 kA, U_p ≤ 1,5 kV", "I_n 20 kA, I_max 40 kA, U_p ≤ 1.5 kV"}, {"DEHNguard M/MP/S", "DEHNguard M/MP/S"}},
                  {{"Typ 3 (Geräteschutz)", "type 3 (device protection)"}, {"Kombiwelle 1,2/50 µs, 8/20 µs", "combination wave 1.2/50 µs, 8/20 µs"},
                   {"vor dem Endgerät (LPZ 2 → 3)", "ahead of the equipment (LPZ 2 → 3)"}, {"U_OC 6 kV, I_L 16–25 A", "U_OC 6 kV, I_L 16–25 A"},
-                  {"DEHNrail, DEHNflex, DEHNsafe, DEHNprotector", "DEHNrail, DEHNflex, DEHNsafe, DEHNprotector"}}});
+                  {"DEHNrail, DEHNflex, DEHNsafe, DEHNprotector", "DEHNrail, DEHNflex, DEHNsafe, DEHNprotector"}}}),
+                       surgepics::coordination());
 }
 
 Table overvoltageCategories() {
-    return make("overvoltage_categories", {"Überspannungskategorien und Bemessungs-Stoßspannung", "Overvoltage categories and rated impulse voltage"},
+    return withDrawing(make("overvoltage_categories", {"Überspannungskategorien und Bemessungs-Stoßspannung", "Overvoltage categories and rated impulse voltage"},
                 {"U_W für 230/400 V nach Einbauort", "U_W for 230/400 V by location"},
                 {"IEC 60664-1 / DIN VDE 0100-443 Tabelle 443.2 für Netze 230/400 V (120/208 V in Klammern). Das SPD muss U_p,f "
                  "unter U_W der zu schützenden Betriebsmittel halten.",
@@ -518,11 +560,12 @@ Table overvoltageCategories() {
                 {{"IV", "6 kV (4 kV)", {"am Speisepunkt: Zähler, Hauptsicherung, Rundsteuerempfänger", "at the origin: meter, main fuse, ripple control receiver"}},
                  {"III", "4 kV (2,5 kV)", {"feste Installation: Verteiler, Schalter, Steckdosen, Motoren", "fixed installation: boards, switches, sockets, motors"}},
                  {"II", "2,5 kV (1,5 kV)", {"Verbrauchsgeräte: Haushaltsgeräte, Werkzeuge", "appliances: household appliances, tools"}},
-                 {"I", "1,5 kV (0,8 kV)", {"besonders schutzbedürftige Elektronik", "particularly sensitive electronics"}}});
+                 {"I", "1,5 kV (0,8 kV)", {"besonders schutzbedürftige Elektronik", "particularly sensitive electronics"}}}),
+                       surgepics::categories());
 }
 
 Table spdConnection() {
-    return make("spd_connection", {"SPD-Schaltungen je Netzsystem", "SPD connection per earthing system"}, {"3+0, 4+0, 3+1, 1+1 und U_C", "3+0, 4+0, 3+1, 1+1 and U_C"},
+    return withDrawing(make("spd_connection", {"SPD-Schaltungen je Netzsystem", "SPD connection per earthing system"}, {"3+0, 4+0, 3+1, 1+1 und U_C", "3+0, 4+0, 3+1, 1+1 and U_C"},
                 {"DIN VDE 0100-534 / IEC 60364-5-53 (Mindest-U_C, Tabelle 534.2) und DEHN-Typbezeichnungen. 3+1/1+1: Varistoren L–N und "
                  "Summenfunkenstrecke N–PE (CT2); in TT-Systemen vor dem RCD üblich.",
                  "IEC 60364-5-53 (minimum U_C, table 534.2) and DEHN type designations. 3+1/1+1: varistors L–N and spark gap N–PE "
@@ -533,22 +576,25 @@ Table spdConnection() {
                  {"TN-S (1~)", {"2+0 oder 1+1", "2+0 or 1+1"}, "≥ 253 V", "≥ 230 V"},
                  {"TT (3~)", "3+1", "≥ 253 V", "≥ 230 V"},
                  {"TT (1~)", "1+1", "≥ 253 V", "≥ 230 V"},
-                 {{"IT ohne N (3~)", "IT without N (3~)"}, "3+0", {"L–PE ≥ U (400 V)", "L–PE ≥ U (400 V)"}, "–"}});
+                 {{"IT ohne N (3~)", "IT without N (3~)"}, "3+0", {"L–PE ≥ U (400 V)", "L–PE ≥ U (400 V)"}, "–"}}),
+                       surgepics::schemes());
 }
 
 Table lightningParameters() {
     return make("lightning_parameters", {"Blitzschutzklassen: Blitzstrom und Fangeinrichtung", "Lightning protection levels: current and air-termination"},
                 {"Höchst- und Mindestwerte, Blitzkugel, Maschenweite", "Maximum and minimum values, rolling sphere, mesh size"},
-                {"IEC 62305-1 Tabelle 3/4 und IEC 62305-3 Tabelle 2 (DIN EN 62305). Höchstwerte bestimmen die Bemessung der Ableiter, "
-                 "Mindestwerte den Fangradius. Gegen gültige Ausgabe prüfen.",
-                 "IEC 62305-1 tables 3/4 and IEC 62305-3 table 2. Maximum values size the arresters, minimum values the air-termination "
-                 "radius. Check against the edition in force."},
+                {"IEC 62305-1 Tabelle 3/4 und IEC 62305-3 Tabelle 2/4 (DIN EN 62305), typischer Abstand der Ableitungen nach DEHN WPX035 "
+                 "Tabelle 1 (im Ex-Bereich zusätzlich je 10 m Umfang eine Ableitung, mindestens 2). Höchstwerte bestimmen die Bemessung "
+                 "der Ableiter, Mindestwerte den Fangradius. Gegen gültige Ausgabe prüfen.",
+                 "IEC 62305-1 tables 3/4 and IEC 62305-3 tables 2/4, typical spacing of down conductors per DEHN WPX035 table 1 (in Ex "
+                 "areas additionally one down conductor per 10 m of perimeter, at least 2). Maximum values size the arresters, minimum "
+                 "values the air-termination radius. Check against the edition in force."},
                 {{"Klasse", "Level"}, {"I_max (10/350 µs)", "I_max (10/350 µs)"}, {"Ladung Q_kurz", "Charge Q_short"}, {"W/R", "W/R"},
-                 {"I_min", "I_min"}, {"Blitzkugel", "Rolling sphere"}, {"Maschenweite", "Mesh size"}},
-                {{"I", "200 kA", "100 C", "10 MJ/Ω", "3 kA", "20 m", "5 × 5 m"},
-                 {"II", "150 kA", "75 C", "5,6 MJ/Ω", "5 kA", "30 m", "10 × 10 m"},
-                 {"III", "100 kA", "50 C", "2,5 MJ/Ω", "10 kA", "45 m", "15 × 15 m"},
-                 {"IV", "100 kA", "50 C", "2,5 MJ/Ω", "16 kA", "60 m", "20 × 20 m"}});
+                 {"I_min", "I_min"}, {"Blitzkugel", "Rolling sphere"}, {"Maschenweite", "Mesh size"}, {"Abstand Ableitungen", "Down conductor spacing"}},
+                {{"I", "200 kA", "100 C", "10 MJ/Ω", "3 kA", "20 m", "5 × 5 m", "10 m"},
+                 {"II", "150 kA", "75 C", "5,6 MJ/Ω", "5 kA", "30 m", "10 × 10 m", "10 m"},
+                 {"III", "100 kA", "50 C", "2,5 MJ/Ω", "10 kA", "45 m", "15 × 15 m", "15 m"},
+                 {"IV", "100 kA", "50 C", "2,5 MJ/Ω", "16 kA", "60 m", "20 × 20 m", "20 m"}});
 }
 
 Table signalCategories() {
@@ -573,6 +619,7 @@ void addSurge(std::vector<Calculator>& out) {
     out.push_back(spdPower());
     out.push_back(spdSignal());
     out.push_back(spdDistance());
+    addSurgeApplications(out);
 }
 
 void addSurgeTables(std::vector<Table>& out) {
@@ -582,6 +629,7 @@ void addSurgeTables(std::vector<Table>& out) {
     out.push_back(overvoltageCategories());
     out.push_back(lightningParameters());
     out.push_back(signalCategories());
+    addSurgeApplicationTables(out);
 }
 
 }  // namespace elc::catalog

@@ -4,6 +4,22 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.11 – Überspannungsschutz für Rechenzentren und Ex-Bereiche, mit Bildern:**
+- **Bilder im Bereich „Überspannungs- & Blitzschutz“:** Blitzschutzzonen LPZ 0A–3 mit Ableiterpositionen, Schutzkette
+  Typ 1+2 → 2 → 3, Schaltbilder 4+0/3+1/3+0 (Varistor, Funkenstrecke), Überspannungskategorien, Rechenzentrum mit nummerierten
+  Schutzpunkten, eigensicherer Messkreis am Tank; die Rechner zeigen Schaltung, Leitungsweg, Schleife bzw. Schutzbereich.
+- **Überspannungsschutz im Ex-Bereich (eigensicherer Messkreis):** Zündschutzart je Zone (ia/ib/ic), Prüfung U_i ≥ U_o und
+  I_i ≥ I_o, Erdfreiheit (500 V AC), 10 × 10 kA, Leitung Ableiter → Feldgerät ≤ 1 m geschirmt – nach DEHN WPX035.
+- **Rechenzentrum:** Schutzvorschlag je Anwendung (NSHV, Notstrom, Server, BMA, IP-Kameras, PV, Dachaufbauten) mit Typ und
+  Art.-Nr., Planungsgrundsätze (LPL I, Maschen 5 × 5 m, Ringerder, Raumschirmung) – nach DEHN WPX050.
+- **Kenndaten der Komponenten:** DEHNvenCI, DEHNventil, DEHNguard ACI, DEHNrail, DEHNcube, BLITZDUCTORconnect BE/BD/BD HF,
+  DEHNpatch und BXT ML4 BD EX 24 mit U_C, I_imp, I_n, U_p, Vorsicherung und Grenzfrequenz; Ableitvermögen nach VdS 2833.
+- **Induzierte Spannung in Installationsschleifen** (U = M · Δi/Δt, Beispiel 720 kV) und I_imp je Ader für Datenleitungen.
+
+| Ex-Bereich: eigensicherer Messkreis | Rechenzentrum: Schutzvorschlag |
+|---|---|
+| ![Ex-Bereich](docs/screenshots/ueberspannung_ex.png) | ![Rechenzentrum](docs/screenshots/ueberspannung_rz.png) |
+
 **Neu in 1.10 – Pinbelegungen mit Bildern, Kabeltrasse, Motorabgang und Überspannungsschutz:**
 - **Bilder für alle 32 Pinbelegungen:** Steckeransichten (RJ45/PoE mit T568B-Aderfarben, Telefon-RJ, D-Sub 9, VGA, M12 Stecker
   und Buchse, MIDI, USB-C, OBD II, SIM, Raspberry Pi, LCD 16×2) bzw. Kontaktfolgen (HDMI, DisplayPort, DVI, SCART …); die
@@ -159,9 +175,9 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.10)
+## Funktionsumfang (Version 1.11)
 
-**3 Projektlisten, 122 Rechner und 126 Tabellen** in 15 Bereichen – jedes Thema genau einmal. Alle Formeln, Eingaben und
+**3 Projektlisten, 124 Rechner und 132 Tabellen** in 15 Bereichen – jedes Thema genau einmal. Alle Formeln, Eingaben und
 Quellen stehen in [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Bereich | Inhalt |
@@ -172,7 +188,7 @@ Quellen stehen in [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/
 | **Elektronik & Bauteile** | Farbcode beide Richtungen, E-Reihen, SMD/EIA-96, Kondensator- und Induktivitätscode; Spannungsteiler, Vorwiderstand (LED/Verbraucher), Z-Diode, RC, LC, RLC-Impedanz, Akkulaufzeit |
 | **Gebäudeautomation & MSR** | Analogsignal-Skalierung (NAMUR NE 43), Bürde, Pt/Ni/Cu-Fühler, Leitungsfehler, NTC, Thermoelemente (NIST), 24-V-Versorgung; Reglereinstellung (Ziegler/Nichols, CHR), KNX-Topologie, DALI, Feldbusse; AMEV- und VDI-3814-Kennzeichnung; GA-Effizienz EN ISO 52120 |
 | **HLKS** | h,x-Diagramm (Mollier) mit Zustandsänderungen und Taupunkt, Außenluft (EN 16798-1/CO₂), RLT-Gerät & Kanal; Wärmeleistung ↔ Volumenstrom, Heizkennlinie, Wärmepumpe; hydraulische Grundschaltungen, Ventil kv/kvs, Rohrabmessungen |
-| **Überspannungs- & Blitzschutz** | SPD-Auswahl 230/400 V nach Zone und Netzsystem, MSR/Sensoren/Datenleitungen, wirksamer Schutzpegel und Schutzbereich, Risikobewertung (CRL); Tabellen LPZ, SPD-Typen, Schaltungen, Überspannungskategorien, Blitzschutzklassen, Prüfkategorien |
+| **Überspannungs- & Blitzschutz** | SPD-Auswahl 230/400 V nach Zone und Netzsystem, MSR/Sensoren/Datenleitungen (mit I_imp je Ader nach VdS 2833), wirksamer Schutzpegel und Schutzbereich, Ex-i-Messkreise, induzierte Schleifenspannung, Risikobewertung (CRL); Tabellen LPZ, SPD-Typen, Schaltungen, Überspannungskategorien, Blitzschutzklassen, Prüfkategorien, Kenndaten DEHN-Komponenten (Energie, MSR/Daten), Rechenzentrum (Schutzvorschlag, Planung), Ex-Bereich, Ableitvermögen – mit Bildern |
 | **Explosionsschutz (ATEX)** | Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub, Kennzeichnung; Tabellen Zonen, Gruppen, T-Klassen, Zündschutzarten, Zündtemperaturen |
 | **R&I-Kennzeichnung** | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814) für 78 Sensoren/Wächter; Kennbuchstaben-Tabellen |
 | **Reinraum & Pharma** | ISO 14644-1 Klasse, Messstellen, Luftwechsel & Erholzeit, FFU-Decke, Druckkaskade; ISO- und GMP-Annex-1-Tabellen |

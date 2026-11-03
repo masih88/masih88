@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.10.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.11.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -3347,6 +3347,18 @@ U_W = Bemessungs-Stoßspannung des Geräts (230/400 V: Kategorie I 1,5 kV, II 2,
 
 *IEC 60664-1 / DIN VDE 0100-443 Tabelle 443.2 für Netze 230/400 V (120/208 V in Klammern). Das SPD muss U_p,f unter U_W der zu schützenden Betriebsmittel halten.*
 
+#### SPD Energietechnik: Kenndaten (DEHN)
+
+| Gerät (Art.-Nr.) | Typ | Netz | U_C | I_imp (10/350 µs) | I_n (8/20 µs) | U_p | Vorsicherung / Kurzschluss | Bauform |
+|---|---|---|---|---|---|---|---|---|
+| DEHNvenCI DVCI 1 255 FM (961 205) | Typ 1 + Typ 2 (+ Typ 3 koordiniert ≤ 10 m) | 230 V, 1-polig | 255 V | 25 kA | 25 kA | ≤ 1,5 kV | nicht nötig (integriert, 100 kA); I_fi 50 kA | 2 TE, IP 20 |
+| DEHNventil DV M2 TNS 255 FM (954 405) | Typ 1 + 2 + 3 | TN-S 230/400 V | 255 V | 25 kA je Pol, 100 kA gesamt | 25 / 100 kA | ≤ 1,5 kV | max. 250 A gG; I_SCCR 50 kA (100 kA geprüft) | 4 TE, IP 20 |
+| DEHNguard DG M TNS ACI 275 FM (952 440) | Typ 2 (+ Typ 3 koordiniert ≤ 10 m) | TN-S 230/400 V | 275 V L–PE, 255 V N–PE | – | 20 kA | ≤ 1,5 kV | keine externe Sicherung (ACI); I_SCCR 25 kA | 4 TE, IP 20 |
+| DEHNrail DR M 2P 255 FM (953 205) | Typ 3 | 230 V, I_L 25 A | 255 V AC/DC | – | 3 kA (gesamt 5 kA); U_OC 6 kV | ≤ 1,25 kV L–N, ≤ 1,5 kV L/N–PE | 25 A gG oder B 25; I_SCCR 6 kA | 1 TE, IP 20 |
+| DEHNcube DCU YPV SCI 1000 2M (900 920) | Typ 2 PV (EN 61643-31) | PV-Gleichspannung, 2 MPP | U_CPV 1000 V | – | 12,5 kA (I_max 25 kA, gesamt 40 kA) | ≤ 4 kV (≤ 3,5 kV bei 5 kA) | I_SCPV 1000 A | IP 65, 130 × 94 × 81 mm |
+
+*Datenblattwerte aus DEHN WPX050 (Schutzvorschlag Rechenzentren, 04/2022). Typ nach EN 61643-11 (PV: EN 61643-31). „Koordiniert ≤ 10 m“ = energetisch koordinierte Schutzwirkung zum Endgerät bis 10 m Leitung. Beispiele – gegen aktuellen Katalog prüfen.*
+
 ### MSR, Sensoren & Datenleitungen
 
 #### Überspannungsschutz MSR, Sensoren und Datenleitungen
@@ -3357,12 +3369,13 @@ U_W = Bemessungs-Stoßspannung des Geräts (230/400 V: Kategorie I 1,5 kV, II 2,
 Leitungen, die das Gebäude verlassen (Feldgeräte im Freien, Leitungen zwischen Gebäuden): Zonenübergang LPZ 0A → 1, Kombi-Ableiter mit Blitzstromtragfähigkeit D1 (10/350 µs), z. B. 2,5 kA je Ader (DEHN BLITZDUCTOR XT ML4 BE 24: D1 2,5 kA je Ader, C2 10 kA je Ader). Innerhalb des Gebäudes (LPZ 1 → 2): Überspannungs-Ableiter Kategorie C2 (8/20 µs).
 U_C ≥ höchste Betriebsspannung des Signals einschließlich Toleranz; Nennstrom des Ableiters ≥ Signal-/Laststrom; Grenzfrequenz ≥ Übertragungsfrequenz.
 Pt100/Pt1000 im 2-Leiter-Anschluss: jede Ader hat die Längsimpedanz R des Ableiters, Messfehler ΔT = 2 · R · Stufen / (dR/dT); 3-/4-Leiter-Anschluss kompensiert. In Ex-i-Kreisen nur dafür zugelassene Ableiter.
+Blitzschutzklasse I (z. B. Rechenzentrum) nach VdS 2833: I_imp je Ader 2,5 kA bei weniger als 3 Doppeladern, 1 kA ab 3, 0,5 kA ab 10 Doppeladern (DEHN WPX050 Tabelle 3).
 Werte nach DEHN Auswahlmatrix Industriegebäude (DS390) und BLITZDUCTOR-Datenblatt; IEC 61643-21/-22, IEC 62305-4.
 ```
 
-**Eingaben:** Signal / Schnittstelle, Leitungsweg, Höchste Betriebsspannung des Signals [V], Fühler, Anschluss, Längsimpedanz je Ader und Ableiter [Ω], Ableiter im Messkreis
+**Eingaben:** Signal / Schnittstelle, Leitungsweg, Höchste Betriebsspannung des Signals [V], Fühler, Anschluss, Längsimpedanz je Ader und Ableiter [Ω], Ableiter im Messkreis, Doppeladern im Kabel
 
-**Ergebnisse:** Ableiter, Zonenübergang, U_C-Klasse mindestens [V], Übertragung, Beispiele DEHN, Einbau, Messfehler durch Ableiter (2-Leiter) [K]
+**Ergebnisse:** Ableiter, Zonenübergang, U_C-Klasse mindestens [V], Übertragung, Beispiele DEHN, Einbau, Messfehler durch Ableiter (2-Leiter) [K], I_imp je Ader bei LPL I (VdS 2833) [kA]
 
 #### Prüfkategorien für Datenleitungs-Ableiter
 
@@ -3374,6 +3387,92 @@ Werte nach DEHN Auswahlmatrix Industriegebäude (DS390) und BLITZDUCTOR-Datenbla
 | D1 | ≥ 1 kV | 0,5–2,5 kA (10/350 µs) | Blitzteilströme, LPZ 0A → 1 |
 
 *IEC 61643-21 / DIN EN 61643-21 (Auswahl). D1 = Blitzstromtragfähigkeit für LPZ 0A → 1, C2 = Überspannung LPZ 0B → 1 und höher. DEHN-Beispiel BLITZDUCTOR XT ML4 BE 24: D1 2,5 kA je Ader (10 kA gesamt), C2 10 kA je Ader. Gegen gültige Ausgabe prüfen.*
+
+#### SPD MSR und Daten: Kenndaten (DEHN)
+
+| Gerät (Art.-Nr.) | Schaltung | U_N / U_C | I_L | I_imp D1 je Ader | I_n C2 je Ader | U_p Ader–Ader / Ader–PG | f_G | Einsatz |
+|---|---|---|---|---|---|---|---|---|
+| BLITZDUCTORconnect BCO ML2 BE 24 (927 224) | 2 Einzeladern, gemeinsamer Bezug (unsymmetrisch) | 24 V / 33 V DC | 0,75 A | 1,5 kA (3 kA gesamt) | 5 kA (10 kA gesamt) | ≤ 90 V / ≤ 75 V (C3: ≤ 45 V Ader–PG) | 3,4 MHz | 4–20 mA, 0–10 V, Binär 24 V; Dachaufbauten, Brandmeldeanlage |
+| BLITZDUCTORconnect BCO ML2 BD 24 (927 244) | 1 Doppelader, erdpotentialfrei (symmetrisch) | 24 V / 36 V DC | 0,75 A | 1,5 kA | 5 kA | ≤ 57 V / ≤ 600 V | 5,8 MHz | erdfreie Signale und Meldungen; NSHV, Notstrom |
+| BLITZDUCTORconnect BCO ML2 BD HF 5 (927 271) | 1 Doppelader, hochfrequent (symmetrisch) | 5 V / 8,5 V DC | 0,75 A | 1,5 kA | 5 kA | ≤ 42 V / ≤ 600 V (C3: ≤ 15 V Ader–Ader) | 100 MHz | Bussysteme (z. B. RS-485); Serverraum, Sicherheitstechnik |
+| DEHNpatch DPA CLE IP66 (929 221) | RJ45, alle 4 Paare, Klasse E | 5 V / 8,5 V DC; PoE 60 V Paar–Paar | 1 A | 0,8 kA (4 kA gesamt) | 2,5 kA Ader–PG (10 kA gesamt) | ≤ 170 V / ≤ 600 V; PoE ≤ 120 V | 250 MHz | Gigabit-Ethernet und PoE++ im Freien (IP 66), IP-Kameras |
+| BLITZDUCTOR XT BXT ML4 BD EX 24 | eigensicher ia, erdfrei 500 V | U_i 30 V | I_i 500 mA | – | 20 kA gesamt (8/20 µs) | ≤ 52 V Ader–Ader | 7,7 MHz | 4–20 mA/HART in Ex-Zone 1 (ATEX, IECEx); C_i/L_i vernachlässigbar |
+
+*Datenblattwerte aus DEHN WPX050 (04/2022) und WPX035 Tabelle 2 (01/2022); Prüfkategorien nach IEC 61643-21 (D1 = 10/350 µs, C2 = 8/20 µs). Unsymmetrisch (BE) = Einzeladern mit gemeinsamem Bezug, z. B. 4–20 mA gegen 0 V; symmetrisch (BD) = erdpotentialfreie Doppelader. BLITZDUCTORconnect ist für Einbau in Ex-Zone 2 zugelassen (II 3G Ex ec IIC T4 Gc). Beispiele – gegen aktuellen Katalog prüfen.*
+
+### Anwendungen: Rechenzentrum & Ex-Bereich
+
+#### Rechenzentrum: Schutzvorschlag nach Anwendung
+
+| Nr. | Schutz für | Zone | Energietechnik | Informationstechnik | Art.-Nr. |
+|---|---|---|---|---|---|
+| 1 | Niederspannungsschaltanlage (NSHV) | LPZ 0A → 1 | Kombi-Ableiter Typ 1+2(+3): DEHNvenCI DVCI 1 255 FM, alternativ DEHNventil DV M2 TNS 255 FM | BLITZDUCTORconnect BCO ML2 BD 24; Netzanalyse DEHNrecord DRC SD 2 1 | 961 205 / 954 405; 927 244; 910 921 |
+| 2 | Notstromversorgung | LPZ 1 | Typ 2: DEHNguard DG M TNS ACI 275 FM | BLITZDUCTORconnect BCO ML2 BD 24 | 952 440; 927 244 |
+| 3 | Serverraum | LPZ 1 → 2 (Server LPZ 3) | Typ 2 im Bodentank: DEHNguard ACI; große Räume zusätzlich Typ 3 | BLITZDUCTORconnect BCO ML2 BD HF 5 | 952 440; 927 271 |
+| 4 | Brandmeldeanlage | LPZ 1 → 2 | Typ 3: DEHNrail DR M 2P 255 | BLITZDUCTORconnect BCO ML2 BE 24 | 953 205; 927 224 |
+| 5 | Sicherheitszentrale, Büros, IP-Kameras | LPZ 0B → 1, 1 → 2 | Typ 3: DEHNrail DR M 2P 255 | DEHNpatch DPA CL8 EA 4PPOE, DEHNpatch Outdoor DPA CLE IP66, BCO ML2 BD HF 5 | 953 205; 929 161; 929 221; 927 271 |
+| 6 | PV-Anlage | LPZ 0B → 1 | Typ 2 PV: DEHNcube DCU YPV SCI 1000 2M | – | 900 920 |
+| 7 | Dachaufbauten (Heizung, Klima, Lüftung) | LPZ 0B → 1 | Typ 2: DEHNguard ACI (I_n 20 kA je Pol bei LPL I) | BLITZDUCTORconnect BCO ML2 BE 24 | 952 440; 927 224 |
+
+*Nach DEHN WPX050 Bild 11 (Rechenzentrum, Blitzschutzklasse I). NSHV: Kombi-Ableiter auf Funkenstreckenbasis mit 100 kA (10/350 µs) gesamt bei LPL I; Unterverteilungen wegen Leitungslängen > 10 m mit Typ 2 (DEHNguard ACI ohne Vorsicherung). Serverraum: nicht geschirmt Typ 2 im Bodentank ausreichend, größere Räume zusätzlich Typ 3 im Abgang der Stromschiene oder in der Rack-Stromversorgung; Raum = LPZ 2, Servergehäuse kann LPZ 3 sein (nachweisbare Dämpfung, Anbindung ≥ 6 mm² Cu). Kenndaten siehe Tabellen „SPD Energietechnik“ und „SPD MSR und Daten“. Beispiele – gegen aktuellen Katalog prüfen.*
+
+#### Rechenzentrum: Blitzschutz, Erdung, Schirmung
+
+| Thema | Anforderung | Grundlage |
+|---|---|---|
+| Blitzschutzklasse | in der Regel LPL I (Risikoanalyse mit dem Betreiber abstimmen); Stoßströme bis 200 kA (10/350 µs) | EN 62305-2, EN 50600 |
+| Äquipotentialflächen | Bewehrung mit Maschen 5 × 5 m, alle 1 m mit der Bewehrung verbinden; verkürzt den Trennungsabstand und senkt die Impedanz | EN 62305-4 |
+| Erdung | ein gemeinsames Erdungssystem (Blitzschutz, MS, NS, TK, Schirmung, Potentialausgleich); Ringerder mit Masche 5 × 5 m unter oder außerhalb des Fundamenterders, alle 5 m damit verbunden | EN 62305-4, EN 50600-2-2 |
+| Raumschirmung | reine Gitterstruktur 5 × 5 m dämpft das Blitzfeld etwa um Faktor 2 (6 dB); Durchbrüche minimieren, Fenster und Türen einbeziehen; Bewertung gegen Prüfschärfegrad 3 (EN 61000-4-9/-10) | EN 62305-4 |
+| Potentialausgleichsnetzwerk | dreidimensional vermascht: Rohre, Bewehrung, Gitterroste, Kabel- und Lüftungskanäle, Aufzugsschienen, Fenster/Türen; Racks kurz anbinden (möglichst kein Runddraht) | EN 62305-4, DIN VDE 0100-444 |
+| Dachaufbauten | getrennte Fangeinrichtung (HVI-Leitung) hält den Trennungsabstand; sonst Leitungen über SPD einbinden: Typ 2 mit I_n 20 kA je Pol (LPL I), 15 kA (LPL II), 10 kA (LPL III/IV), Informationstechnik 10 kA je Ader | WPX050 Tabelle 1 |
+| Blitzschutzzonen | NSHV-Einspeisung LPZ 0A → 1 (Typ 1/Kombi-Ableiter); Unterverteilungen Typ 2 (Leitungen > 10 m: Induktion); Serverraum LPZ 2, Servergehäuse LPZ 3 möglich | EN 62305-4 |
+| Anschluss SPD | Anschlusslänge ≤ 0,5 m; Einspeisungen über Kuppelschalter (mehrere Trafos) gleich beschalten; Typ 2 auch in den Abgängen großer NSHV | IEC 60364-5-53 |
+| Serverraum | nicht geschirmt: Typ 2 im Bodentank ausreichend; größere Räume zusätzlich Typ 3 im Abgang der Stromschiene oder in der Rack-Stromversorgung; Servergehäuse als LPZ 3 nur mit nachgewiesener Dämpfung, Anbindung ≥ 6 mm² Cu | WPX050 |
+
+*Planungsgrundsätze aus DEHN WPX050 „Blitz- und Überspannungsschutzkonzept für Rechenzentren“ (04/2022) mit EN 62305-2/-3/-4, EN 50600-1/-2-2, IEC 60364-5-53, DIN VDE 0100-444. Gegen gültige Normausgabe prüfen.*
+
+#### Überspannungsschutz im Ex-Bereich (eigensicherer Messkreis)
+
+*Ableiter für Ex-i-Messkreise: Zündschutzart, U_i/I_i gegen U_o/I_o, Erdfreiheit, Einbau – nach DEHN WPX035* — `spd_ex`
+
+```text
+Nach DEHN WPX035 „Blitz- und Überspannungsschutz für explosionsgefährdete Bereiche“ und DIN EN 60079-11/-14/-25, DIN EN 62305-4:
+• Einbauort: Übergang LPZ 0B → 1 am Feldgerät (z. B. Temperatur-Messumformer am Tank) und am anderen Ende der Feldleitung mit gleichem Ableitvermögen; nach dem Trennverstärker in der Warte (LPZ 2) ist kein weiteres SPD nötig, wenn der Schirm beidseitig aufgelegt ist.
+• Ableitvermögen mindestens 10 Impulse à 10 kA (8/20 µs) ohne Defekt; Ableiter im metallisch geschirmten Gehäuse, Erdung mindestens 4 mm² Cu; Leitung Ableiter → Betriebsmittel im beidseitig geerdeten Metallrohr oder geschirmt mit höchstens 1 m.
+• Zündschutzart: Zone 0/20 ia, Zone 1/21 ia oder ib, Zone 2/22 ia, ib oder ic; ein nach ia bescheinigter Ableiter eignet sich auch für ib/ic.
+• Zusammenschaltung: U_i (bzw. U_C) des Ableiters ≥ U_o des Speisegeräts, I_i (Nennstrom) ≥ I_o; innere Kapazität C_i und Induktivität L_i in den Nachweis der Eigensicherheit aufnehmen.
+• Erdfreiheit: Messumformer mit Isolationsfestigkeit ≥ 500 V AC gelten als erdfrei – der Ableiter darf das nicht aufheben; bei < 500 V AC gilt der Kreis als geerdet, dann Schutzpegel U_p (Ader–PG) bei 10 kA (8/20 µs) unterhalb der Isolationsfestigkeit (z. B. ≤ 35 V).
+• Endgeräte nach NAMUR NE 21: 0,5 kV Ader/Ader, 1 kV Ader/Erde (IEC 61000-4-5).
+Vorgabewerte = Beispiel Tabelle 2 (Messumformer U_o 29,4 V, I_o 130 mA; BLITZDUCTOR XT ML4 BD EX 24: ia, U_i 30 V, I_i 500 mA, 20 kA, U_p ≤ 52 V). Produktangaben gegen aktuelle Bescheinigung prüfen.
+```
+
+**Eingaben:** Ex-Zone am Feldgerät, U_o des Speisegeräts / Messkreises [V], I_o (Kurzschlussstrom im Fehlerfall) [mA], Zündschutzart des Ableiters, U_i bzw. U_C des Ableiters [V], I_i bzw. Nennstrom des Ableiters [mA], Isolation Messumformer gegen Erde, Leitung Ableiter → Feldgerät [m], Verlegung dieser Leitung
+
+**Ergebnisse:** Geforderte Zündschutzart, U_i des Ableiters mindestens [V], I_i des Ableiters mindestens [mA], Einbauort, Ableitvermögen, Schutzpegel / Erdfreiheit, Leitung zum Feldgerät, Erdung und Schirm, Beispiele DEHN
+
+#### Ex-Bereich: Blitz- und Überspannungsschutz
+
+| Thema | Anforderung | Grundlage |
+|---|---|---|
+| Blitzschutzklasse | mindestens II (Blitzkugel 30 m, Masche 10 × 10 m); Abweichung nur begründet oder nach Risikoanalyse | DIN EN 62305-3 |
+| Fangeinrichtung | außerhalb der Ex-Zonen errichten (Funken am Einschlagpunkt); natürliche Teile (Dach, Rohre, Behälter) nur ab 5 mm Stahl und ohne gefährliche Erwärmung | DIN EN 62305-3 Anhang D |
+| Ableitungen | je 10 m Umfang der Dachaußenkante eine, mindestens 2; Potentialausgleich am Boden und alle 20 m Höhe; durchverbundene Bewehrung zulässig | DIN EN 62305-3 |
+| Trennungsabstand | an der Näherungsstelle berechnen (Aufteilung des Blitzstroms auf die Ableitungen) | DIN EN 62305-3 |
+| Gebäudeschirmung | Metallfassade und Bewehrung zum Schirmkäfig verbinden: Magnetfeld 10- bis 300-mal kleiner | DIN EN 62305-4 |
+| SPD-Einbauort | Übergang LPZ 0B → 1, bevor Überspannungen Ex-Zone 0/20 erreichen; am anderen Ende der Feldleitung gleiches Ableitvermögen | DIN EN 62305-4 |
+| SPD-Ableitvermögen | mindestens 10 Impulse à 10 kA (8/20 µs) ohne Defekt | DIN EN 60079-11/-14/-25 |
+| SPD-Gehäuse | metallisch geschirmtes Gehäuse, Erdung ≥ 4 mm² Cu | DIN EN 60079-14 |
+| Leitung SPD → Gerät | im beidseitig geerdeten Metallrohr oder geschirmt mit höchstens 1 m | DIN EN 60079-14 |
+| Erdfreiheit | Messumformer ≥ 500 V AC gegen Erde = erdfrei, darf durch das SPD nicht aufgehoben werden; < 500 V AC = geerdet: U_p (Ader–PG) bei 10 kA unter der Isolationsfestigkeit, z. B. ≤ 35 V | DIN EN 60079-11 |
+| Zündschutzart | SPD mit ia-Bescheinigung auch für ib/ic; U_i ≥ U_o und I_i ≥ I_o des Speisegeräts; C_i/L_i in den Nachweis aufnehmen | DIN EN 60079-11/-25 |
+| Störfestigkeit | NAMUR NE 21: 0,5 kV Ader/Ader, 1 kV Ader/Erde (IEC 61000-4-5); Prüfschärfegrad 1–4 auf den Schutzgeräten (z. B. P1) | NE 21, IEC 61000-4-5 |
+| Erdungsanlage | je Gebäude/Anlagenteil eigene Erdung, alle vermascht; Masche 20 × 20 m, im Ex-Bereich und bei Elektronik 10 × 10 m | DIN 18014, DIN EN 62305, DIN VDE 0151 |
+| Potentialausgleich | konsequent einschließlich Stützen, Rohre, Behälter; Anschlüsse gegen Selbstlockern sichern; zusätzlicher PA nach DIN EN 60079-14 (DIN VDE 0100-410/-540); Erdleiter am SPD ≥ 4 mm² Cu | DIN EN 60079-14 |
+| Kabelschirm | beidseitig erden, wenn die Erdung vermascht ist (10 × 10 m) und ein isolierter PA-Leiter ≥ 4 mm² (besser 16 mm²) parallel zur Leitung an dieselbe PA-Schiene geführt wird | DIN EN 60079-14 |
+| Warte (LPZ 1 → 2) | geschirmte Leitung beidseitig aufgelegt: am Übergang LPZ 1 → 2 kein weiteres SPD nötig | WPX035 |
+
+*Aus DEHN WPX035 „Blitz- und Überspannungsschutz für explosionsgefährdete Bereiche“ (01/2022) mit DIN EN 62305-3/-4, DIN EN 60079-11/-14/-25, NAMUR NE 21, DIN 18014, DIN VDE 0151. Auswahl der Ableiter mit dem Rechner „Überspannungsschutz im Ex-Bereich“. Gegen gültige Normausgabe prüfen.*
 
 ### Blitzschutzzonen & Risiko
 
@@ -3400,16 +3499,46 @@ Werte nach DEHN Auswahlmatrix Industriegebäude (DS390) und BLITZDUCTOR-Datenbla
 
 *IEC 61643-11 / DIN EN 61643-11 (Typ = Klasse I/II/III bzw. T1/T2/T3). Energetische Koordination der Stufen nach Herstellerangabe; Produktbeispiele DEHN (Kurzkatalog Elektrohandwerk 08/2023).*
 
+#### Ableitvermögen nach Blitzschutzklasse
+
+| Anwendung | Schaltung / Leitung | Ableitvermögen | Quelle |
+|---|---|---|---|
+| Energietechnik, LPL I | 4+0: L–PE und N–PE | je 25 kA (10/350 µs) | VdS 2833 (WPX050 Tab. 2) |
+| Energietechnik, LPL I | 3+1: L–N / N–PE | 25 kA / 100 kA (10/350 µs) | VdS 2833 (WPX050 Tab. 2) |
+| Informationstechnik, LPL I | < 3 Doppeladern | 2,5 kA je Ader (10/350 µs) | VdS 2833 (WPX050 Tab. 3) |
+| Informationstechnik, LPL I | ≥ 3 Doppeladern | 1 kA je Ader | VdS 2833 (WPX050 Tab. 3) |
+| Informationstechnik, LPL I | ≥ 10 Doppeladern | 0,5 kA je Ader | VdS 2833 (WPX050 Tab. 3) |
+| Typ 2 ohne Trennungsabstand, LPL I | Energie / Informationstechnik | I_n 20 kA je Pol / 10 kA je Ader (8/20 µs) | WPX050 Tab. 1 |
+| Typ 2 ohne Trennungsabstand, LPL II | Energie / Informationstechnik | I_n 15 kA je Pol / 10 kA je Ader | WPX050 Tab. 1 |
+| Typ 2 ohne Trennungsabstand, LPL III/IV | Energie / Informationstechnik | I_n 10 kA je Pol / 10 kA je Ader | WPX050 Tab. 1 |
+| Ex-Bereich, eigensicherer Kreis | jede Ader | 10 Impulse à 10 kA (8/20 µs) ohne Defekt | DIN EN 60079-14 (WPX035) |
+
+*Nach DEHN WPX050 Tabelle 1–3 (VdS 2833) und WPX035. LPL I = höchste Blitzschutzklasse (Rechenzentren). Für andere Klassen I_imp mit dem Rechner „Überspannungsschutz 230/400 V“ (Stromaufteilung) bestimmen. Gegen gültige Ausgabe prüfen.*
+
 #### Blitzschutzklassen: Blitzstrom und Fangeinrichtung
 
-| Klasse | I_max (10/350 µs) | Ladung Q_kurz | W/R | I_min | Blitzkugel | Maschenweite |
-|---|---|---|---|---|---|---|
-| I | 200 kA | 100 C | 10 MJ/Ω | 3 kA | 20 m | 5 × 5 m |
-| II | 150 kA | 75 C | 5,6 MJ/Ω | 5 kA | 30 m | 10 × 10 m |
-| III | 100 kA | 50 C | 2,5 MJ/Ω | 10 kA | 45 m | 15 × 15 m |
-| IV | 100 kA | 50 C | 2,5 MJ/Ω | 16 kA | 60 m | 20 × 20 m |
+| Klasse | I_max (10/350 µs) | Ladung Q_kurz | W/R | I_min | Blitzkugel | Maschenweite | Abstand Ableitungen |
+|---|---|---|---|---|---|---|---|
+| I | 200 kA | 100 C | 10 MJ/Ω | 3 kA | 20 m | 5 × 5 m | 10 m |
+| II | 150 kA | 75 C | 5,6 MJ/Ω | 5 kA | 30 m | 10 × 10 m | 10 m |
+| III | 100 kA | 50 C | 2,5 MJ/Ω | 10 kA | 45 m | 15 × 15 m | 15 m |
+| IV | 100 kA | 50 C | 2,5 MJ/Ω | 16 kA | 60 m | 20 × 20 m | 20 m |
 
-*IEC 62305-1 Tabelle 3/4 und IEC 62305-3 Tabelle 2 (DIN EN 62305). Höchstwerte bestimmen die Bemessung der Ableiter, Mindestwerte den Fangradius. Gegen gültige Ausgabe prüfen.*
+*IEC 62305-1 Tabelle 3/4 und IEC 62305-3 Tabelle 2/4 (DIN EN 62305), typischer Abstand der Ableitungen nach DEHN WPX035 Tabelle 1 (im Ex-Bereich zusätzlich je 10 m Umfang eine Ableitung, mindestens 2). Höchstwerte bestimmen die Bemessung der Ableiter, Mindestwerte den Fangradius. Gegen gültige Ausgabe prüfen.*
+
+#### Induzierte Spannung in Installationsschleifen
+
+*U = M · Δi/Δt einer Leiterschleife neben der Ableitung (LEMP) – Beispiel DEHN WPX050: 720 kV* — `lemp_loop`
+
+```text
+Induzierte Rechteckspannung in einer offenen oder geschlossenen Leiterschleife (z. B. Alarm- oder Versorgungsleitung) neben einer blitzstromführenden Ableitung: U = M · Δi/Δt (DEHN WPX050 Bild 14/15).
+M = Gegeninduktivität der Schleife (aus dem DEHN-Diagramm für quadratische Schleifen a × a im Abstand s; Beispiel a = 10 m, s = 3 m → M₂ ≈ 4,8 µH). Δi/Δt = Steilheit des Blitzstroms nach IEC 62305-1 Tabelle 3: erster Stoß 20/15/10 kA/µs, Folgestoß 200/150/100 kA/µs für Blitzschutzklasse I/II/III–IV.
+Beispiel WPX050: 4,8 µH · 150 kA/µs = 720 kV. Abhilfe: Schleifen klein halten (Hin- und Rückleiter gemeinsam verlegen), Abstand zu Ableitungen, Schirmung (beidseitig aufgelegt) und SPD an den Schleifenenden.
+```
+
+**Eingaben:** Gegeninduktivität M der Schleife [µH], Blitzschutzklasse, Blitzstrom-Anteil, Eigene Steilheit Δi/Δt [kA/µs]
+
+**Ergebnisse:** Induzierte Spannung U [kV], Steilheit Δi/Δt [kA/µs]
 
 #### Risikoanalyse für Überspannungen atmosphärischen Ursprungs
 

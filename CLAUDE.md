@@ -24,6 +24,8 @@ cmake --build build && ./build/tests/elc_tests
 - Bilder zu Tabellen (z. B. Steckeransichten) in `catalog/pinout_drawings.cpp` (`tableDrawing`); Pin-Farben aus den
   Tabellenzeilen ableiten. Steckeransichten nur seitenrichtig zeichnen, wenn die Ansicht belegt ist (Quelle in `note`),
   sonst als „schematisch“ kennzeichnen.
+- Bilder des Bereichs Überspannungsschutz in `catalog/surge_drawings.cpp`; Text in Bildern nie auf farbige Flächen legen
+  (Tintenfarbe wechselt im Dunkelmodus) – Zonen als farbige Umrisse, Beschriftung auf `bgfill`.
 - Projektlisten (`ListDef`) in `core/src/lists/`; Excel-Spaltennamen als `alias()`; Beispielprojekt in `example`.
 - PDFs/Office-Dateien vor dem Lesen mit `doc2md` (Ordner `Tools/doc2md`) in Markdown umwandeln und gezielt greppen.
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.

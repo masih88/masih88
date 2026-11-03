@@ -190,6 +190,12 @@ Masse/Schirm, Signal, frei bzw. echte Aderfarben); ein Pin, den das Bild zeigt, 
 – der Test `[pinout]` schlägt dann fehl. Seitenrichtige Ansichten nur, wo die Ansicht belegt ist; sonst Hinweis
 „Kontaktfolge schematisch“ in `note`.
 
+Tabellen können ihr Bild auch selbst setzen (`t.drawing = …` beim Erzeugen); `tableDrawing()` füllt nur Tabellen ohne Bild.
+So machen es die Überspannungsschutz-Tabellen (ab 1.11): Bilder in `catalog/surge_drawings.cpp` (Blitzschutzzonen, Schutzkette,
+Schaltbilder 4+0/3+1, Überspannungskategorien, Rechenzentrum, Ex-i-Messkreis), die auch die Rechner `spd_power`, `spd_signal`,
+`spd_ex`, `lemp_loop` und `spd_distance` über `c.chart` nutzen. Beschriftungen stehen in der Tintenfarbe, Zonen als farbige
+Umrisse (`line:#…`) – so bleibt das Bild im hellen und dunklen Modus lesbar.
+
 Kabeltrasse: Projektliste `lists/cabletray.cpp` mit Kabeldaten aus `formulas/cabledata.cpp` (Textsuche „NYM-J 5x2,5“).
 Motorabgang: `catalog/motor_feeder.cpp` mit Eaton-Richtwerten (`motors::motorGuide`, `mpcbRange`, `tripClassFor`).
 Überspannungsschutz: `catalog/surge.cpp` (Bereich `surge`).

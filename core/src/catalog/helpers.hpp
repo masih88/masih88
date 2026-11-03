@@ -56,6 +56,8 @@ void addMotorFeeder(std::vector<Calculator>& out);           // motor_feeder.cpp
 void addMotorFeederTables(std::vector<Table>& out);
 void addSurge(std::vector<Calculator>& out);                 // surge.cpp
 void addSurgeTables(std::vector<Table>& out);
+void addSurgeApplications(std::vector<Calculator>& out);     // surge_apps.cpp: Ex i loops, induced loop voltage (v1.11)
+void addSurgeApplicationTables(std::vector<Table>& out);     // surge_apps.cpp: DEHN components, data centre, Ex
 ListDef cableTrayList();                                     // lists/cabletray.cpp
 
 

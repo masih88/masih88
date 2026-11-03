@@ -1,6 +1,6 @@
 # Berechnungen, Formeln & Tabellen
 
-> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.9.0).
+> Automatisch erzeugt mit `elcalc markdown` aus dem Rechenkern (Version 1.10.0).
 > Alle Angaben ohne Gewähr – Normwerte vor Verwendung gegen die gültige Ausgabe prüfen.
 
 ## Projektlisten
@@ -45,6 +45,27 @@ Die Vorlagen sind Planungspraxis und projektspezifisch anzupassen (Bauteil-Kürz
 **Ergebnisse je Zeile:** AI, AO, BI, BO, COM (Bus), Physikalische Datenpunkte, Erste Benutzeradresse, Funktionen
 
 **Summen:** Physikalische Datenpunkte, Kommunikative Datenpunkte, Analoge Eingabe AI, Analoge Ausgabe AO, Binäre Eingabe BI, Binäre Ausgabe BO, Physikalisch inkl. Reserve, AI-Module, AO-Module, BI-Module, BO-Module, Kostenschätzung Datenpunkte [€]
+
+### Kabeltrasse: Belegung, Breite und Last
+
+*Kabel eintragen → Trassenbreite mit Reserve, Füllgrad, Gewicht, Häufung* — `cable_tray`
+
+```text
+Platzbedarf je Kabel d² (Quadrat um den Kabelquerschnitt), Summe × (1 + Reserve); Richtwert Reserve ≈ 30 %.
+Trassenbreite = kleinste Normbreite (50 … 600 mm) mit B · H ≥ Bedarf; Füllgrad = Σ d² / (B · H).
+Kabellast q = Σ n · m' (kg/m), F = q · 9,81 N/kg; Bemessungslast nach VDE 0639: 0,028 N/(m·mm²) × B · H.
+Zulässige Last je Stützabstand aus dem Belastungsdiagramm des Herstellers eintragen (Stützabstand möglichst ≤ 1,5 m).
+Häufungsfaktor der Energiekabel nach DIN VDE 0298-4 / IEC 60364-5-52: einlagig auf gelochter Rinne bzw. Leiter, sonst gebündelt.
+Kabeldaten (d, Gewicht) aus Datenblättern: NYM (Faber), NYY-J (Waskönig+Walter), J-Y(St)Y und LiYCY (Lapp), Cat 7 (DIGITUS) – andere Typen mit d und Gewicht eintragen. Quelle Methode: OBO Bettermann KTS-Guide „Systemauswahl“.
+```
+
+**Projekteinstellungen:** Trassenart, Seitenhöhe (Nutzhöhe), Platzreserve [%], Stützabstand [m], Zulässige Last laut Belastungsdiagramm [kN/m], Trennsteg Energie/Daten
+
+**Spalten je Zeile:** Bezeichnung, Kabeltyp, Anzahl, Außendurchmesser (falls abweichend) [mm], Gewicht (falls abweichend) [kg/km], Art
+
+**Ergebnisse je Zeile:** d [mm], Platzbedarf n · d² [mm²], Last [kg/m], Breite nebeneinander [mm], Art, Erkannt als
+
+**Summen:** Trassenbreite (Normbreite) [mm], Anzahl Trassen, Füllgrad ohne Reserve [%], Belegung mit Reserve [%], Platzbedarf Σ n · d² [mm²], Bedarf mit Reserve [mm²], Kabelgewicht [kg/m], Kabellast je Trasse [kN/m], Bemessungslast VDE 0639 [kN/m], Energiekabel, Daten-/Steuerkabel, Breite Energiekabel nebeneinander [mm], Häufungsfaktor Energiekabel
 
 ## Elektrotechnik
 
@@ -744,6 +765,149 @@ Richtwerte (u. a. NEC Chapter 9): 1 Leitung 53 %, 2 Leitungen 31 %, ab 3 Leitung
 
 *d = Durchmesser eines massiven Rundleiters; R₂₀ max. nach IEC 60228 (Kupfer blank, Klasse 1/2); Metallgewicht je Leiter mit Dichte Cu 8,89 und Al 2,70 kg/dm³ (Kabelgewicht = Metall · Aderzahl + Isolierung und Mantel, siehe Herstellerdatenblatt); Isolierwanddicke PVC 0,6/1 kV nach IEC 60502-1. Außendurchmesser sind herstellerabhängig.*
 
+#### Kabel: Außendurchmesser und Gewicht
+
+| Kabel | d in mm | Gewicht in kg/km | Quelle |
+|---|---|---|---|
+| NYM-J 1x2,5 | 5,8 | 70 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 1x4 | 6,4 | 80 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 1x6 | 6,8 | 105 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 1x10 | 8 | 155 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 1x16 | 9,1 | 230 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 1x25 | 12,3 | 330 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-O 2x1,5 | 7,8 | 115 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-O 2x2,5 | 8,9 | 157 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 3x1,5 | 8,2 | 135 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 3x2,5 | 9,4 | 190 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 3x4 | 10,8 | 265 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 3x6 | 12,2 | 315 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 3x10 | 14,7 | 465 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x1,5 | 8,8 | 160 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x2,5 | 10,2 | 230 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x4 | 12,1 | 330 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x6 | 13,3 | 460 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x10 | 16,1 | 690 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x16 | 19 | 1090 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x25 | 23,4 | 1640 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 4x35 | 25,7 | 2090 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x1,5 | 9,5 | 190 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x2,5 | 11 | 270 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x4 | 13,2 | 410 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x6 | 14,5 | 540 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x10 | 17,7 | 850 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x16 | 21,2 | 1350 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 5x25 | 25,7 | 1990 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 7x1,5 | 10,5 | 235 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 7x2,5 | 12,6 | 350 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 8x1,5 | 12,5 | 237 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 10x1,5 | 14,3 | 330 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 12x1,5 | 14,4 | 400 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 12x2,5 | 15,4 | 660 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYM-J 16x1,5 | 15,8 | 457 | Faber Kabel, Datenblatt NYM-J/NYM-O (Richtwerte) |
+| NYY-J 1x10 | 10 | 168 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x16 | 11 | 230 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x25 | 13 | 349 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x35 | 14 | 448 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x50 | 15 | 584 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x70 | 17 | 796 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x95 | 19 | 1067 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x120 | 20 | 1296 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x150 | 22 | 1592 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x185 | 24 | 1954 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x240 | 27 | 2525 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 1x300 | 30 | 3150 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x1,5 | 11 | 178 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x2,5 | 12 | 223 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x4 | 14 | 313 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x6 | 15 | 390 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x10 | 17 | 539 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 3x16 | 19 | 749 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x1,5 | 12 | 208 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x2,5 | 13 | 261 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x4 | 15 | 371 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x6 | 16 | 469 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x10 | 19 | 656 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x16 | 20 | 929 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x25 | 25 | 1452 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x35 | 25 | 1697 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x50 | 30 | 2357 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x70 | 33 | 3142 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x95 | 37 | 4301 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x120 | 43 | 5439 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x150 | 44 | 6483 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x185 | 51 | 8244 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 4x240 | 56 | 10501 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x1,5 | 13 | 238 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x2,5 | 14 | 303 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x4 | 16 | 433 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x6 | 18 | 551 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x10 | 20 | 779 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x16 | 22 | 1122 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x25 | 28 | 1758 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x35 | 31 | 2314 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x50 | 35 | 3129 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x70 | 40 | 4314 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x95 | 47 | 5905 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 5x120 | 50 | 7166 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 7x1,5 | 14 | 289 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 7x2,5 | 15 | 374 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 10x1,5 | 16 | 394 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 12x1,5 | 17 | 455 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 12x2,5 | 19 | 599 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 19x1,5 | 20 | 627 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| NYY-J 24x1,5 | 22 | 792 | Waskönig+Walter, Datenblatt NYY-J (2019) |
+| J-Y(St)Y 1x2x0,6 | 5 | 30 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 2x2x0,6 | 5,5 | 40 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 4x2x0,6 | 6,7 | 60 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 10x2x0,6 | 9 | 110 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 1x2x0,8 | 6 | 40 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 2x2x0,8 | 7 | 60 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 3x2x0,8 | 8,5 | 80 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 4x2x0,8 | 9 | 100 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 5x2x0,8 | 9,5 | 120 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 6x2x0,8 | 10,5 | 140 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 8x2x0,8 | 11,5 | 170 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 10x2x0,8 | 13 | 220 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 12x2x0,8 | 14 | 250 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 16x2x0,8 | 15,5 | 320 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 20x2x0,8 | 16,5 | 380 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 24x2x0,8 | 19 | 460 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 30x2x0,8 | 20 | 560 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 40x2x0,8 | 22,5 | 710 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| J-Y(St)Y 50x2x0,8 | 25,5 | 900 | Lapp, Produktinformation J-Y(ST)Y…LG |
+| LiYCY 2x0,25 | 4,5 | 32 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 3x0,25 | 4,7 | 37 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 4x0,25 | 5 | 41,3 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 6x0,25 | 6 | 58 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 8x0,25 | 7,1 | 73 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 10x0,25 | 7,5 | 82 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 12x0,25 | 7,7 | 98 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 2x0,5 | 5,6 | 47 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 3x0,5 | 5,9 | 55 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 4x0,5 | 6,3 | 70 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 5x0,5 | 7 | 90 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 7x0,5 | 7,6 | 112 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 10x0,5 | 9,3 | 139 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 12x0,5 | 9,6 | 177 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 2x0,75 | 6 | 53 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 3x0,75 | 6,3 | 65 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 4x0,75 | 7 | 79 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 5x0,75 | 7,6 | 109 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 7x0,75 | 8,2 | 156 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 12x0,75 | 10,8 | 218 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 2x1 | 6,3 | 72 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 3x1 | 6,8 | 90 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 4x1 | 7,3 | 109 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 7x1 | 8,6 | 171 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 2x1,5 | 7,1 | 90 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 3x1,5 | 7,5 | 115 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 4x1,5 | 8,1 | 129 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 5x1,5 | 8,8 | 176 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| LiYCY 7x1,5 | 9,5 | 220 | Lapp, Datenblatt UNITRONIC LiYCY (2020) |
+| Cat 7 S/FTP 4x2xAWG23 | 7,2 | 51 | DIGITUS DK-1743-VH (Cat 7, Dca) |
+
+*Richtwerte aus den genannten Herstellerdatenblättern (Durchmesser ca.-Werte, NYY-J auf mm gerundet). Andere Hersteller weichen ab – für die Ausführung Datenblatt des eingesetzten Kabels verwenden. Genutzt von der Projektliste „Kabeltrasse“.*
+
 #### Kabel- & Leitungstypen
 
 | Typ | Aufbau | U_0/U | Einsatz |
@@ -969,7 +1133,7 @@ Mit Kurzschlussstrom: Auslösezeit-Bereich am Fehlerort (Abschaltbedingung: Ausl
 
 *UL 248 / CSA C22.2 No. 248. Klassen mit Unverwechselbarkeit (rejection: CC, J, L, R, T) nehmen keine Sicherung mit geringerem Schaltvermögen auf. Werte als Übersicht – Herstellerdaten und gültige Normausgabe prüfen.*
 
-### Kurzschluss, Erdung & Überspannung
+### Kurzschluss & Erdung
 
 #### Kurzschlussstrom am Leitungsende
 
@@ -1026,23 +1190,6 @@ Gegen die gültige Ausgabe prüfen.
 **Eingaben:** Netzsystem, Bemessungsdifferenzstrom I_Δn, Berührungsspannung U_L, Nennspannung U₀ [V], Gemessen: R_A bzw. Z_s [Ω]
 
 **Ergebnisse:** Zulässiger Widerstand (R_A bzw. Z_s) [Ω], Berührungsspannung bei I_Δn [V], Max. I_Δn für den gemessenen Widerstand [mA]
-
-#### Risikoanalyse für Überspannungen atmosphärischen Ursprungs
-
-*Bewertung nach IEC 60364-4-44, 443.5 (CRL)* — `surge_risk`
-
-```text
-IEC 60364-4-44:2007+A1:2015 Abschnitt 443 (DIN VDE 0100-443:2016-10):
-Schutz gegen transiente Überspannungen ist immer vorzusehen, wenn Überspannungen Folgen haben für Menschenleben (z. B. Sicherheitsdienste, Medizin), öffentliche Einrichtungen und Kulturgüter, Gewerbe/Industrie oder eine große Anzahl von Personen (443.4). Sonst Risikobewertung:
-L_P = 2 · L_PAL + L_PCL + 0,4 · L_PAH + 0,2 · L_PCH (km; NS-Freileitung, NS-Kabel, HS-Freileitung, HS-Kabel ab dem Gebäude, zusammen höchstens 1 km)    CRL = f_env / (L_P · N_g)
-f_env = 85 (ländlich/vorstädtisch), 850 (städtisch). CRL < 1000 → Überspannungsschutz erforderlich.
-N_g = Blitzdichte (Erdblitze je km² und Jahr), z. B. aus Blitzdichtekarten (Deutschland meist 0,5–4).
-Gegen die gültige Ausgabe (DE: DIN VDE 0100-443/-534, CH: NIN 4.4.3) prüfen.
-```
-
-**Eingaben:** Folgen für Leben, öffentliche Dienste, Gewerbe oder viele Personen?, Umgebung, Blitzdichte N_g [1/(km²·a)], NS-Freileitung L_PAL [km], NS-Kabel L_PCL [km], HS-Freileitung L_PAH [km], HS-Kabel L_PCH [km]
-
-**Ergebnisse:** Ergebnis, Bewertungslänge L_P [km], Berechneter Risikopegel CRL
 
 ### Transformator & Kompensation
 
@@ -1447,6 +1594,66 @@ Schaltzeichen nach IEC 60617 / DIN EN 60617 (Stromlaufpläne) und Installationss
 *IEC 62196 (Stecker), IEC 61851-1 (Lademodi): Mode 1 Haushaltssteckdose ohne Kommunikation (in DE/CH nicht üblich), Mode 2 Haushalts-/CEE-Steckdose mit Kabel-Schutzeinrichtung (IC-CPD), Mode 3 Ladestation AC (Wallbox), Mode 4 DC-Schnellladung. Leistungen als Richtwerte; Fahrzeug und Ladestation begrenzen.*
 
 ## Motoren & Antriebe
+
+### Motorabgang
+
+#### Motorabgang: Motor, Pumpe, Ventilator
+
+*Was der Abgang braucht: MSS/LS, Schütze, Sanftanlasser/FU, Leitung, Reparaturschalter, RCD* — `motor_feeder`
+
+```text
+Motorstrom: Richtwerte für 4-polige Käfigläufer (Eaton Schaltungsbuch 06/11, S. 10-43/44) oder Typenschild.
+Anlaufstrom: direkt ≤ 6 · I_N (t_A ≤ 5 s), Stern-Dreieck ≤ 2 · I_N (t_A ≤ 15 s), Sanftanlauf ca. 2–6 · I_N, FU ≈ 1 (…2) · I_N.
+Überlastschutz I_r = I_N; Stern-Dreieck: Relais in der Motorleitung 0,58 · I_N (t_A ≤ 15 s), in der Netzzuleitung I_N (15–40 s), darüber in der Dreieckverbindung (im Anlauf kein Schutz). Schütze Y-Δ: Netz- und Dreieckschütz 0,58 · I_N, Sternschütz 0,33 · I_N (Eaton S. 8-37).
+Auslöseklasse IEC 60947-4-1 bei 7,2 · I_r: CLASS 10 > 4 s, 20 > 6 s, 30 > 9 s – die Hochlaufzeit muss darunter liegen.
+Motorschutzschalter: Einstellbereiche Eaton PKZM0 (0,1–32 A, kurzschlussfest bis 50 kA bei 400 V) und PKZM4 (bis 65 A).
+Leitung Cu/PVC mit I_z ≥ I_r (DIN VDE 0298-4, Temperatur- und Häufungsfaktor); bei FU/EC für den Leitungsschutz I_n.
+RCD bei Umrichtern mit B6-Gleichrichter: Typ B (allstromsensitiv), da glatte Gleichfehlerströme möglich sind (EN 50178, DIN VDE 0100-530). Herstellerangaben (Koordinationstabellen Typ 1/2) haben Vorrang.
+```
+
+**Eingaben:** Anwendung, Anlaufart, Drehrichtung, Schutzkonzept, Motorleistung P_N [kW], Netz, Motordaten, Bemessungsstrom I_N (Typenschild) [A], Leistungsfaktor cos φ (Typenschild), Hochlaufzeit t_A [s], Leitungslänge (einfach) [m], Verlegeart, Gehäufte Stromkreise, Umgebungstemperatur [°C]
+
+**Ergebnisse:** Motorbemessungsstrom I_N [A], Anlaufstrom (ca.) [A], Einstellwert Überlastschutz I_r [A], Kurzschluss- und Überlastschutz, Kleinste Vorsicherung gL/gG (Richtwert) [A], Leitungsschutzschalter I_n [A], Schütze (AC-3), Anlaufgerät / Umrichter, Leiterquerschnitt Cu [mm²], Belastbarkeit I_z [A], Spannungsfall bei I_N [%], Leitung, Reparaturschalter, Fehlerstromschutz (RCD), Auslöseklasse / Anordnung, Zubehör und Hinweise
+
+#### Motorbemessungsströme und Absicherung
+
+| P in kW | cos φ | η in % | I_N 400 V | Sicherung direkt 400 V | Sicherung Y-Δ 400 V | I_N 230 V | Sicherung direkt 230 V | Sicherung Y-Δ 230 V |
+|---|---|---|---|---|---|---|---|---|
+| 0,06 | 0,7 | 58 | 0,21 | 2 | – | 0,37 | 2 | – |
+| 0,09 | 0,7 | 60 | 0,31 | 2 | – | 0,54 | 2 | – |
+| 0,12 | 0,7 | 60 | 0,41 | 2 | – | 0,72 | 4 | 2 |
+| 0,18 | 0,7 | 62 | 0,6 | 2 | – | 1,04 | 4 | 2 |
+| 0,25 | 0,7 | 62 | 0,8 | 4 | 2 | 1,4 | 4 | 2 |
+| 0,37 | 0,72 | 66 | 1,1 | 4 | 2 | 2 | 6 | 4 |
+| 0,55 | 0,75 | 69 | 1,5 | 4 | 2 | 2,7 | 10 | 4 |
+| 0,75 | 0,79 | 74 | 1,9 | 6 | 4 | 3,2 | 10 | 4 |
+| 1,1 | 0,81 | 74 | 2,6 | 6 | 4 | 4,6 | 10 | 6 |
+| 1,5 | 0,81 | 74 | 3,6 | 6 | 4 | 6,3 | 16 | 10 |
+| 2,2 | 0,81 | 78 | 5 | 10 | 6 | 8,7 | 20 | 10 |
+| 3 | 0,82 | 80 | 6,6 | 16 | 10 | 11,5 | 25 | 16 |
+| 4 | 0,82 | 83 | 8,5 | 20 | 10 | 14,8 | 32 | 16 |
+| 5,5 | 0,82 | 86 | 11,3 | 25 | 16 | 19,6 | 32 | 25 |
+| 7,5 | 0,82 | 87 | 15,2 | 32 | 16 | 26,4 | 50 | 32 |
+| 11 | 0,84 | 87 | 21,7 | 40 | 25 | 38 | 80 | 40 |
+| 15 | 0,84 | 88 | 29,3 | 63 | 32 | 51 | 100 | 63 |
+| 18,5 | 0,84 | 88 | 36 | 63 | 40 | 63 | 125 | 80 |
+| 22 | 0,84 | 92 | 41 | 80 | 50 | 71 | 125 | 80 |
+| 30 | 0,85 | 92 | 55 | 100 | 63 | 96 | 200 | 100 |
+| 37 | 0,86 | 92 | 68 | 125 | 80 | 117 | 200 | 125 |
+| 45 | 0,86 | 93 | 81 | 160 | 100 | 141 | 250 | 160 |
+| 55 | 0,86 | 93 | 99 | 200 | 125 | 173 | 250 | 200 |
+| 75 | 0,86 | 94 | 134 | 200 | 160 | 233 | 315 | 250 |
+| 90 | 0,86 | 94 | 161 | 250 | 200 | 279 | 400 | 315 |
+| 110 | 0,86 | 94 | 196 | 315 | 200 | 342 | 500 | 400 |
+| 132 | 0,87 | 95 | 231 | 400 | 250 | 401 | 630 | 500 |
+| 160 | 0,87 | 95 | 279 | 400 | 315 | 486 | 630 | 630 |
+| 200 | 0,87 | 95 | 349 | 500 | 400 | 607 | 800 | 630 |
+| 250 | 0,87 | 95 | 437 | 630 | 500 | – | – | – |
+| 315 | 0,87 | 96 | 544 | 800 | 630 | – | – | – |
+| 400 | 0,88 | 96 | 683 | 1000 | 800 | – | – | – |
+| 450 | 0,88 | 96 | 769 | 1000 | 800 | – | – | – |
+
+*Eaton Schaltungsbuch 06/11, S. 10-43/10-44: Richtwerte für innen- und oberflächengekühlte Drehstrommotoren mit 1500 min⁻¹. Kleinstmögliche Kurzschlusssicherung („träge“ bzw. gL, DIN VDE 0636) für Direktanlauf (I_A ≤ 6 · I_N, t_A ≤ 5 s) und Stern-Dreieck (I_A ≤ 2 · I_N, t_A ≤ 15 s); der Höchstwert richtet sich nach Schaltgerät bzw. Motorschutzrelais. Bei höherem Anlaufstrom oder längerer Anlaufzeit größere Sicherung; aM-Sicherung = Bemessungsstrom.*
 
 ### Motordaten
 
@@ -3080,6 +3287,146 @@ Kleinste regelbare Menge: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v = S
 | DN 150 | 6" | 165,1 / 168,3 |
 
 *Gewinderohre EN 10255 / ISO 65 bzw. nahtlose/geschweißte Rohre EN 10220 (Außendurchmesser in mm). Die Zollgröße ist eine Nenngröße, nicht der Durchmesser. Wanddicke je Reihe (mittel/schwer) verschieden.*
+
+## Überspannungs- & Blitzschutz
+
+### Energietechnik 230/400 V
+
+#### Überspannungsschutz 230/400 V: Auswahl
+
+*Typ 1+2, 2 oder 3 je Einbauort und Blitzschutzzone, Schaltung, U_C, I_imp/I_n, U_p* — `spd_power`
+
+```text
+Blitzschutzzonen-Konzept (IEC 62305-4): LPZ 0A → 1 (äußerer Blitzschutz oder Freileitung) Blitzstrom-Ableiter Typ 1 bzw. Kombi-Ableiter Typ 1+2; LPZ 0B → 1 und 1 → 2 Überspannungs-Ableiter Typ 2; LPZ 2 → 3 Typ 3 am Endgerät.
+Folgestufe: Typ 2 in der Unterverteilung, wenn die Leitung zum vorgeschalteten SPD länger als 10 m ist; Typ 3 vor dem Gerät entsprechend (DEHN-Auswahlmatrix).
+I_imp je Pfad (äußerer Blitzschutz, IEC 62305-1 Anhang E vereinfacht): 50 % des Blitzstroms der Blitzschutzklasse fließen in die Erdungsanlage, 50 % verteilen sich auf die n Versorgungsleitungen und deren m Leiter: I_imp = 0,5 · I / (n · m). Ohne Bestimmung mindestens 12,5 kA je Pfad (DIN VDE 0100-534). N–PE-Funkenstrecke (3+1) führt die Summe.
+Typ 2: I_n ≥ 5 kA je Pfad (8/20 µs), üblich 20 kA. U_C ≥ 1,1 · U₀ = 253 V (L–N, L–PE), N–PE ≥ U₀; IT ohne N: L–PE ≥ U.
+Schutzpegel U_p ≤ 2,5 kV (Überspannungskategorie II), wirksamer Schutz bis ca. 10 m bei U_p ≤ 0,8 · U_W = 2,0 kV.
+Anschluss: a + b ≤ 0,5 m (V-Verdrahtung), Cu ≥ 16 mm² (Typ 1) bzw. ≥ 6 mm² (Typ 2) zum Potentialausgleich. In DE im Vorzählerbereich nur Typ 1 (VDE-AR-N 4100). Produktbeispiele DEHN: DEHNventil, DEHNshield (Typ 1+2), DEHNguard (Typ 2), DEHNrail, DEHNflex, DEHNsafe (Typ 3). Gegen gültige Normausgabe und Herstellerdaten prüfen.
+```
+
+**Eingaben:** Einbauort, Gebäude / Einspeisung, Blitzschutzklasse, Metallene Versorgungsleitungen n, Leitungslänge zum vorgeschalteten SPD [m], Netzsystem, Versorgung
+
+**Ergebnisse:** Ableiter, Zonenübergang, Schaltung, U_C mindestens (L–N / L–PE) [V], U_C mindestens N–PE [V], I_imp je Pfad (10/350 µs) [kA], I_imp gesamt / N–PE [kA], I_n je Pfad (8/20 µs) mindestens [kA], Schutzpegel U_p höchstens [kV], Anschluss, Vorsicherung, Beispiele DEHN, Nächste Schutzstufe
+
+#### Wirksamer Schutzpegel und Schutzbereich
+
+*U_p,f = U_p + ΔU, Vergleich mit U_W, Schwingungsschutzbereich l_po* — `spd_distance`
+
+```text
+Wirksamer Schutzpegel U_p,f = U_p + ΔU (Anschlussleitungen): für 230/400 V pauschal ΔU = 0,5 kV (OVE Fachinformation E 09) bzw. bei Blitzstrom ca. 1 kV je m Anschlussleitung (IEC 62305-4).
+U_p,f ≤ 0,5 · U_W: Schutzbereich unabhängig von der Leitungslänge. Sonst gilt der konventionelle Schutzbereich von 10 m, wenn U_p,f ≤ 0,8 · U_W; darüber hinaus Schwingungsschutzbereich l_po = (U_W − U_p,f) / k mit k = 25 V/m.
+U_W = Bemessungs-Stoßspannung des Geräts (230/400 V: Kategorie I 1,5 kV, II 2,5 kV, III 4 kV, IV 6 kV, IEC 60664-1). Induktiver Schutzbereich bei nahen/direkten Einschlägen zusätzlich nach IEC 62305-4 Anhang prüfen.
+```
+
+**Eingaben:** Schutzpegel U_p des SPD [kV], Zuschlag Anschlussleitung, Länge Anschlussleitungen a + b [m], Gerät (Überspannungskategorie), Leitungslänge SPD → Gerät [m]
+
+**Ergebnisse:** Wirksamer Schutzpegel U_p,f [kV], Bemessungs-Stoßspannung U_W [kV], U_p,f / U_W [%], Schwingungsschutzbereich l_po [m], Bewertung
+
+#### SPD-Schaltungen je Netzsystem
+
+| Netzsystem | Schaltung | U_C L–N / L–PE | U_C N–PE |
+|---|---|---|---|
+| TN-C (3~) | 3+0 | ≥ 253 V | – |
+| TN-S (3~) | 4+0 oder 3+1 | ≥ 253 V | ≥ 230 V |
+| TN-S (1~) | 2+0 oder 1+1 | ≥ 253 V | ≥ 230 V |
+| TT (3~) | 3+1 | ≥ 253 V | ≥ 230 V |
+| TT (1~) | 1+1 | ≥ 253 V | ≥ 230 V |
+| IT ohne N (3~) | 3+0 | L–PE ≥ U (400 V) | – |
+
+*DIN VDE 0100-534 / IEC 60364-5-53 (Mindest-U_C, Tabelle 534.2) und DEHN-Typbezeichnungen. 3+1/1+1: Varistoren L–N und Summenfunkenstrecke N–PE (CT2); in TT-Systemen vor dem RCD üblich.*
+
+#### Überspannungskategorien und Bemessungs-Stoßspannung
+
+| Kategorie | U_W | Betriebsmittel |
+|---|---|---|
+| IV | 6 kV (4 kV) | am Speisepunkt: Zähler, Hauptsicherung, Rundsteuerempfänger |
+| III | 4 kV (2,5 kV) | feste Installation: Verteiler, Schalter, Steckdosen, Motoren |
+| II | 2,5 kV (1,5 kV) | Verbrauchsgeräte: Haushaltsgeräte, Werkzeuge |
+| I | 1,5 kV (0,8 kV) | besonders schutzbedürftige Elektronik |
+
+*IEC 60664-1 / DIN VDE 0100-443 Tabelle 443.2 für Netze 230/400 V (120/208 V in Klammern). Das SPD muss U_p,f unter U_W der zu schützenden Betriebsmittel halten.*
+
+### MSR, Sensoren & Datenleitungen
+
+#### Überspannungsschutz MSR, Sensoren und Datenleitungen
+
+*Ableiterart nach Zone, U_C-Klasse, Bandbreite, Pt100-Messfehler – mit DEHN-Beispielen* — `spd_signal`
+
+```text
+Leitungen, die das Gebäude verlassen (Feldgeräte im Freien, Leitungen zwischen Gebäuden): Zonenübergang LPZ 0A → 1, Kombi-Ableiter mit Blitzstromtragfähigkeit D1 (10/350 µs), z. B. 2,5 kA je Ader (DEHN BLITZDUCTOR XT ML4 BE 24: D1 2,5 kA je Ader, C2 10 kA je Ader). Innerhalb des Gebäudes (LPZ 1 → 2): Überspannungs-Ableiter Kategorie C2 (8/20 µs).
+U_C ≥ höchste Betriebsspannung des Signals einschließlich Toleranz; Nennstrom des Ableiters ≥ Signal-/Laststrom; Grenzfrequenz ≥ Übertragungsfrequenz.
+Pt100/Pt1000 im 2-Leiter-Anschluss: jede Ader hat die Längsimpedanz R des Ableiters, Messfehler ΔT = 2 · R · Stufen / (dR/dT); 3-/4-Leiter-Anschluss kompensiert. In Ex-i-Kreisen nur dafür zugelassene Ableiter.
+Werte nach DEHN Auswahlmatrix Industriegebäude (DS390) und BLITZDUCTOR-Datenblatt; IEC 61643-21/-22, IEC 62305-4.
+```
+
+**Eingaben:** Signal / Schnittstelle, Leitungsweg, Höchste Betriebsspannung des Signals [V], Fühler, Anschluss, Längsimpedanz je Ader und Ableiter [Ω], Ableiter im Messkreis
+
+**Ergebnisse:** Ableiter, Zonenübergang, U_C-Klasse mindestens [V], Übertragung, Beispiele DEHN, Einbau, Messfehler durch Ableiter (2-Leiter) [K]
+
+#### Prüfkategorien für Datenleitungs-Ableiter
+
+| Kategorie | Prüfspannung | Prüfstrom | Einsatz |
+|---|---|---|---|
+| C1 | 0,5–1 kV (1,2/50 µs) | 0,25–0,5 kA (8/20 µs) | induktive Kopplung, Feinschutz |
+| C2 | 2–10 kV (1,2/50 µs) | 1–5 kA (8/20 µs) | Überspannung, LPZ 0B → 1 und höher |
+| C3 | ≥ 1 kV (1 kV/µs) | 10–100 A (10/1000 µs) | Schutzpegel-Prüfung (steile Flanke) |
+| D1 | ≥ 1 kV | 0,5–2,5 kA (10/350 µs) | Blitzteilströme, LPZ 0A → 1 |
+
+*IEC 61643-21 / DIN EN 61643-21 (Auswahl). D1 = Blitzstromtragfähigkeit für LPZ 0A → 1, C2 = Überspannung LPZ 0B → 1 und höher. DEHN-Beispiel BLITZDUCTOR XT ML4 BE 24: D1 2,5 kA je Ader (10 kA gesamt), C2 10 kA je Ader. Gegen gültige Ausgabe prüfen.*
+
+### Blitzschutzzonen & Risiko
+
+#### Blitzschutzzonen (LPZ) und Ableiter
+
+| Zone | Gefährdung | Übergang | Energietechnik | Informationstechnik |
+|---|---|---|---|---|
+| LPZ 0A | direkter Einschlag, volles Blitzfeld | 0A → 1 | Typ 1 bzw. Kombi-Ableiter Typ 1+2 | Kombi-Ableiter, D1 (10/350 µs) |
+| LPZ 0B | kein Direkteinschlag, volles Feld | 0B → 1 | Typ 2 | Überspannungs-Ableiter C2 |
+| LPZ 1 | Teilblitzströme und Überspannungen begrenzt | 1 → 2 | Typ 2 | Überspannungs-Ableiter C2 |
+| LPZ 2 | weiter gedämpft (geschirmte Räume, Schränke) | 2 → 3 | Typ 3 | Feinschutz C1/C2 |
+| LPZ 3 | Gerät/Baugruppe | – | – | – |
+
+*IEC 62305-4 / DIN EN 62305-4 (VDE 0185-305-4), Darstellung nach DEHN Blitzplaner. An jeder Zonengrenze werden alle Leitungen in den Potentialausgleich einbezogen – direkt oder über SPD.*
+
+#### SPD-Typen Energietechnik
+
+| Typ | Prüfung | Einsatz | Typische Werte | Beispiele DEHN |
+|---|---|---|---|---|
+| Typ 1 (Blitzstrom-Ableiter) | I_imp 10/350 µs | Einspeisung bei LPS/Freileitung (LPZ 0A → 1) | 12,5–25 kA je Pfad, U_p ≤ 1,5–2,5 kV | DEHNbloc, DEHNgap, DEHNvenCI |
+| Typ 1+2 (Kombi-Ableiter) | I_imp und I_n | Hauptverteilung, Zählerschrank | U_p ≤ 1,5 kV, I_imp 12,5–25 kA je Pfad | DEHNventil, DEHNshield |
+| Typ 2 (Überspannungs-Ableiter) | I_n 8/20 µs | Haupt- und Unterverteilung (LPZ 0B → 1, 1 → 2) | I_n 20 kA, I_max 40 kA, U_p ≤ 1,5 kV | DEHNguard M/MP/S |
+| Typ 3 (Geräteschutz) | Kombiwelle 1,2/50 µs, 8/20 µs | vor dem Endgerät (LPZ 2 → 3) | U_OC 6 kV, I_L 16–25 A | DEHNrail, DEHNflex, DEHNsafe, DEHNprotector |
+
+*IEC 61643-11 / DIN EN 61643-11 (Typ = Klasse I/II/III bzw. T1/T2/T3). Energetische Koordination der Stufen nach Herstellerangabe; Produktbeispiele DEHN (Kurzkatalog Elektrohandwerk 08/2023).*
+
+#### Blitzschutzklassen: Blitzstrom und Fangeinrichtung
+
+| Klasse | I_max (10/350 µs) | Ladung Q_kurz | W/R | I_min | Blitzkugel | Maschenweite |
+|---|---|---|---|---|---|---|
+| I | 200 kA | 100 C | 10 MJ/Ω | 3 kA | 20 m | 5 × 5 m |
+| II | 150 kA | 75 C | 5,6 MJ/Ω | 5 kA | 30 m | 10 × 10 m |
+| III | 100 kA | 50 C | 2,5 MJ/Ω | 10 kA | 45 m | 15 × 15 m |
+| IV | 100 kA | 50 C | 2,5 MJ/Ω | 16 kA | 60 m | 20 × 20 m |
+
+*IEC 62305-1 Tabelle 3/4 und IEC 62305-3 Tabelle 2 (DIN EN 62305). Höchstwerte bestimmen die Bemessung der Ableiter, Mindestwerte den Fangradius. Gegen gültige Ausgabe prüfen.*
+
+#### Risikoanalyse für Überspannungen atmosphärischen Ursprungs
+
+*Bewertung nach IEC 60364-4-44, 443.5 (CRL)* — `surge_risk`
+
+```text
+IEC 60364-4-44:2007+A1:2015 Abschnitt 443 (DIN VDE 0100-443:2016-10):
+Schutz gegen transiente Überspannungen ist immer vorzusehen, wenn Überspannungen Folgen haben für Menschenleben (z. B. Sicherheitsdienste, Medizin), öffentliche Einrichtungen und Kulturgüter, Gewerbe/Industrie oder eine große Anzahl von Personen (443.4). Sonst Risikobewertung:
+L_P = 2 · L_PAL + L_PCL + 0,4 · L_PAH + 0,2 · L_PCH (km; NS-Freileitung, NS-Kabel, HS-Freileitung, HS-Kabel ab dem Gebäude, zusammen höchstens 1 km)    CRL = f_env / (L_P · N_g)
+f_env = 85 (ländlich/vorstädtisch), 850 (städtisch). CRL < 1000 → Überspannungsschutz erforderlich.
+N_g = Blitzdichte (Erdblitze je km² und Jahr), z. B. aus Blitzdichtekarten (Deutschland meist 0,5–4).
+Gegen die gültige Ausgabe (DE: DIN VDE 0100-443/-534, CH: NIN 4.4.3) prüfen.
+```
+
+**Eingaben:** Folgen für Leben, öffentliche Dienste, Gewerbe oder viele Personen?, Umgebung, Blitzdichte N_g [1/(km²·a)], NS-Freileitung L_PAL [km], NS-Kabel L_PCL [km], HS-Freileitung L_PAH [km], HS-Kabel L_PCH [km]
+
+**Ergebnisse:** Ergebnis, Bewertungslänge L_P [km], Berechneter Risikopegel CRL
 
 ## Explosionsschutz (ATEX)
 

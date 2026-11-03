@@ -3,6 +3,7 @@ add_library(elc_core STATIC
     src/registry.cpp
     src/formulas/basics.cpp
     src/formulas/cables.cpp
+    src/formulas/cabledata.cpp
     src/formulas/motors.cpp
     src/formulas/automation.cpp
     src/formulas/electronics.cpp
@@ -44,11 +45,15 @@ add_library(elc_core STATIC
     src/catalog/elec_resources.cpp
     src/catalog/elec_pinouts.cpp
     src/catalog/layout.cpp
+    src/catalog/pinout_drawings.cpp
+    src/catalog/motor_feeder.cpp
+    src/catalog/surge.cpp
     src/tables/tables.cpp
     src/tables/vdi_tables.cpp
     src/lists/lists.cpp
     src/lists/loadlist.cpp
     src/lists/gapoints.cpp
+    src/lists/cabletray.cpp
 )
 add_library(elc::core ALIAS elc_core)
 

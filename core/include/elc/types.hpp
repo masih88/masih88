@@ -178,6 +178,8 @@ struct Table {
     Text description;
     std::vector<Text> columns;
     std::vector<std::vector<Text>> rows;
+    /// Optional picture shown above the table (e.g. connector face with coloured pins, v1.10)
+    std::optional<Chart> drawing;
 };
 
 /// Titled group of item ids (calculators, tables, lists) inside a category page

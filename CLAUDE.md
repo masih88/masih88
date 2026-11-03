@@ -21,6 +21,9 @@ cmake --build build && ./build/tests/elc_tests
   von dort gesetzt, `c.category` im Quelltext ist nur Vorgabe. Kein Thema doppelt: erst suchen (`elcalc list`), dann
   bestehenden Rechner erweitern (Auswahl „Gesucht“/„Richtung“) statt einen zweiten anzulegen. Entfernte IDs in
   `currentItemId()` (`registry.cpp`) auf den Nachfolger zeigen lassen (Favoriten). Zeichnungen mit `catalog/sketch.hpp`.
+- Bilder zu Tabellen (z. B. Steckeransichten) in `catalog/pinout_drawings.cpp` (`tableDrawing`); Pin-Farben aus den
+  Tabellenzeilen ableiten. Steckeransichten nur seitenrichtig zeichnen, wenn die Ansicht belegt ist (Quelle in `note`),
+  sonst als „schematisch“ kennzeichnen.
 - Projektlisten (`ListDef`) in `core/src/lists/`; Excel-Spaltennamen als `alias()`; Beispielprojekt in `example`.
 - PDFs/Office-Dateien vor dem Lesen mit `doc2md` (Ordner `Tools/doc2md`) in Markdown umwandeln und gezielt greppen.
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.

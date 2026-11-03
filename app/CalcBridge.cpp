@@ -28,6 +28,7 @@ QString categoryColor(const std::string& id) {
     if (id == "automation") return QStringLiteral("#D9534F");
     if (id == "hvac") return QStringLiteral("#E08A1E");
     if (id == "atex") return QStringLiteral("#7B5E3C");
+    if (id == "surge") return QStringLiteral("#283593");
     if (id == "pid") return QStringLiteral("#8A5CD1");
     if (id == "cleanroom") return QStringLiteral("#2A8BBF");
     if (id == "datacenter") return QStringLiteral("#4B5BA8");
@@ -437,13 +438,9 @@ QVariantMap CalcBridge::calculator(const QString& id) const {
             {"hasPick", static_cast<bool>(c->pick)}};
 }
 
-QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) const {
-    const auto* c = elc::findCalculator(id.toStdString());
-    if (!c) return {};
-    const auto ch = elc::evaluateChart(*c, toInputs(c->inputs, values), context());
-    if (!ch) return {};
+QVariantMap CalcBridge::chartMap(const elc::Chart& ch) const {
     QVariantList series;
-    for (const auto& s : ch->series) {
+    for (const auto& s : ch.series) {
         QVariantList pts;
         pts.reserve(static_cast<qsizetype>(2 * s.pts.size()));
         for (const auto& p : s.pts) {
@@ -453,13 +450,21 @@ QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) cons
         series.append(QVariantMap{{"style", q(s.style)}, {"pts", pts}});
     }
     QVariantList labels;
-    for (const auto& l : ch->labels) labels.append(QVariantMap{{"x", l.x}, {"y", l.y}, {"text", txt(l.text)}, {"style", q(l.style)}});
+    for (const auto& l : ch.labels) labels.append(QVariantMap{{"x", l.x}, {"y", l.y}, {"text", txt(l.text)}, {"style", q(l.style)}});
     QVariantList markers;
-    for (const auto& m : ch->markers) markers.append(QVariantMap{{"x", m.x}, {"y", m.y}, {"label", q(m.label)}, {"style", q(m.style)}});
-    return {{"xmin", ch->x.min},     {"xmax", ch->x.max},     {"xstep", ch->x.step},       {"xtitle", txt(ch->x.title)},
-            {"ymin", ch->y.min},     {"ymax", ch->y.max},     {"ystep", ch->y.step},       {"ytitle", txt(ch->y.title)},
-            {"note", txt(ch->note)}, {"series", series},      {"labels", labels},          {"markers", markers},
-            {"diagram", ch->diagram}, {"aspect", ch->aspect},  {"xlog", ch->xLog},           {"ylog", ch->yLog}};
+    for (const auto& m : ch.markers) markers.append(QVariantMap{{"x", m.x}, {"y", m.y}, {"label", q(m.label)}, {"style", q(m.style)}});
+    return {{"xmin", ch.x.min},     {"xmax", ch.x.max},     {"xstep", ch.x.step},       {"xtitle", txt(ch.x.title)},
+            {"ymin", ch.y.min},     {"ymax", ch.y.max},     {"ystep", ch.y.step},       {"ytitle", txt(ch.y.title)},
+            {"note", txt(ch.note)}, {"series", series},     {"labels", labels},         {"markers", markers},
+            {"diagram", ch.diagram}, {"aspect", ch.aspect}, {"xlog", ch.xLog},          {"ylog", ch.yLog}};
+}
+
+QVariantMap CalcBridge::chart(const QString& id, const QVariantMap& values) const {
+    const auto* c = elc::findCalculator(id.toStdString());
+    if (!c) return {};
+    const auto ch = elc::evaluateChart(*c, toInputs(c->inputs, values), context());
+    if (!ch) return {};
+    return chartMap(*ch);
 }
 
 QVariantMap CalcBridge::chartPick(const QString& id, const QVariantMap& values, double x, double y) const {
@@ -559,7 +564,8 @@ QVariantMap CalcBridge::table(const QString& id) const {
             {"description", txt(t->description)},
             {"color", categoryColor(t->category)},
             {"columns", columns},
-            {"rows", rows}};
+            {"rows", rows},
+            {"drawing", t->drawing ? chartMap(*t->drawing) : QVariantMap{}}};
 }
 
 // ---------------------------------------------------------------- project lists

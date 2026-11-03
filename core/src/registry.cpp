@@ -71,6 +71,8 @@ const std::vector<Calculator>& calculators() {
         catalog::addElectricalMotors(v);
         catalog::addElectricalUnits(v);
         catalog::addElectricalResources(v);
+        catalog::addMotorFeeder(v);
+        catalog::addSurge(v);
         assignAreas(v);
         return v;
     }();
@@ -92,7 +94,12 @@ const std::vector<Table>& tables() {
         catalog::addElectricalTables(v);
         catalog::addElectricalResourceTables(v);
         catalog::addPinoutTables(v);
+        catalog::addMotorFeederTables(v);
+        catalog::addSurgeTables(v);
         assignAreas(v);
+        for (auto& t : v) {
+            if (!t.drawing) t.drawing = catalog::tableDrawing(t);
+        }
         return v;
     }();
     return list;
@@ -129,7 +136,7 @@ const Table* findTable(std::string_view id) {
 
 const std::vector<ListDef>& lists() {
     static const std::vector<ListDef> list = [] {
-        std::vector<ListDef> v{catalog::consumerList(), catalog::dataPointList()};
+        std::vector<ListDef> v{catalog::consumerList(), catalog::dataPointList(), catalog::cableTrayList()};
         assignAreas(v);
         return v;
     }();

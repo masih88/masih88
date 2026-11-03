@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "catalog/helpers.hpp"
+#include "elc/formulas/cabledata.hpp"
 #include "elc/formulas/electrical.hpp"
 #include "elc/formulas/units.hpp"
 
@@ -370,6 +371,22 @@ Table swgTableDef() {
                 {"SWG", {"d in Zoll", "d in inch"}, {"d in mm", "d in mm"}, {"A in mm²", "A in mm²"}}, rows);
 }
 
+Table cableDimensions() {
+    std::vector<Row> rows;
+    for (const auto& c : cabledata::all()) {
+        const auto name = c.name();
+        rows.push_back({{name, name}, num(c.d, 1), num(c.kgPerKm, c.kgPerKm < 100 ? 1 : 0), cabledata::source(c.family)});
+    }
+    return make("cable_dimensions", {"Kabel: Außendurchmesser und Gewicht", "Cables: outer diameter and weight"},
+                {"NYM, NYY-J, J-Y(St)Y, LiYCY, Cat 7 – für die Trassenplanung", "NYM, NYY-J, J-Y(St)Y, LiYCY, Cat 7 – for tray planning"},
+                {"Richtwerte aus den genannten Herstellerdatenblättern (Durchmesser ca.-Werte, NYY-J auf mm gerundet). Andere Hersteller "
+                 "weichen ab – für die Ausführung Datenblatt des eingesetzten Kabels verwenden. Genutzt von der Projektliste "
+                 "„Kabeltrasse“.",
+                 "Guide values from the named manufacturer data sheets (approximate diameters, NYY-J rounded to mm). Other makers "
+                 "differ – use the data sheet of the cable actually installed. Used by the project list “cable tray”."},
+                {{"Kabel", "Cable"}, {"d in mm", "d in mm"}, {"Gewicht in kg/km", "Weight in kg/km"}, {"Quelle", "Source"}}, rows);
+}
+
 }  // namespace
 
 void addElectricalTables(std::vector<Table>& out) {
@@ -390,6 +407,7 @@ void addElectricalTables(std::vector<Table>& out) {
     out.push_back(motorMarkings());
     out.push_back(awgTable());
     out.push_back(swgTableDef());
+    out.push_back(cableDimensions());
 }
 
 }  // namespace elc::catalog

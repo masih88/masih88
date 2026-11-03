@@ -8,7 +8,7 @@ namespace elc::catalog {
 std::vector<Category> areas() {
     const Text none{"", ""};
     return {
-        {"projects", {"Projektlisten", "Project lists"}, "Σ", {{none, {"consumer_list", "ga_points"}}}},
+        {"projects", {"Projektlisten", "Project lists"}, "Σ", {{none, {"consumer_list", "ga_points", "cable_tray"}}}},
         {"electrical",
          {"Elektrotechnik", "Electrical engineering"},
          "ET",
@@ -24,12 +24,12 @@ std::vector<Category> areas() {
               {"voltage_drop_limits", "ampacity_pvc2", "ampacity_pvc3",
                "ampacity_xlpe2", "ampacity_xlpe3", "temperature_factors", "grouping_factors", "let_through_table",
                "busbar_table", "mi_cable_table", "cable_reactance_table", "resistivity_table", "vdrop_per_length",
-               "conductor_data", "cable_types", "wiring_colours_intl", "cable_glands"}},
+               "conductor_data", "cable_dimensions", "cable_types", "wiring_colours_intl", "cable_glands"}},
              {{"Schutz & Sicherungen", "Protection & fuses"},
               {"overload_protection", "disconnection", "trip_curves", "trip_characteristics", "fuse_classes", "fuse_d",
                "fuse_nh", "fuse_cylindrical", "fuse_glass", "fuse_automotive", "ul_fuse_classes"}},
-             {{"Kurzschluss, Erdung & Überspannung", "Short circuit, earthing & overvoltage"},
-              {"short_circuit", "short_circuit_min", "earthing_systems", "earthing_rcd", "surge_risk"}},
+             {{"Kurzschluss & Erdung", "Short circuit & earthing"},
+              {"short_circuit", "short_circuit_min", "earthing_systems", "earthing_rcd"}},
              {{"Transformator & Kompensation", "Transformer & power factor correction"},
               {"transformer", "transformer_windings", "pf_correction", "transformer_pfc", "capacitor_voltage"}},
              {{"Schutzarten, Schaltschrank & Sicherheit", "Enclosures, cabinets & safety"},
@@ -43,6 +43,7 @@ std::vector<Category> areas() {
          {"Motoren & Antriebe", "Motors & drives"},
          "M~",
          {
+             {{"Motorabgang", "Motor feeder"}, {"motor_feeder", "motor_rated_currents"}},
              {{"Motordaten", "Motor data"},
               {"motor_efficiency", "torque", "motor_speed", "fan_affinity", "nec_flc", "nec_flc_3ph", "nec_flc_1ph"}},
              {{"Anschluss & Anlauf", "Connection & starting"},
@@ -82,6 +83,14 @@ std::vector<Category> areas() {
              {{"Heizung & Wärmepumpe", "Heating & heat pumps"}, {"heat_flow", "heating_curve", "heat_pump", "heat_pump_values"}},
              {{"Hydraulik & Ventile", "Hydronics & valves"},
               {"hydraulic_circuits", "hydraulic_selection", "valve_kv", "pipe_dimensions"}},
+         }},
+        {"surge",
+         {"Überspannungs- & Blitzschutz", "Surge & lightning protection"},
+         "SPD",
+         {
+             {{"Energietechnik 230/400 V", "Power supply 230/400 V"}, {"spd_power", "spd_distance", "spd_connection", "overvoltage_categories"}},
+             {{"MSR, Sensoren & Datenleitungen", "I&C, sensors & data lines"}, {"spd_signal", "signal_spd_categories"}},
+             {{"Blitzschutzzonen & Risiko", "Protection zones & risk"}, {"lpz_zones", "spd_types", "lightning_parameters", "surge_risk"}},
          }},
         {"atex",
          {"Explosionsschutz (ATEX)", "Explosion protection (ATEX)"},

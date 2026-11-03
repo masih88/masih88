@@ -93,6 +93,7 @@ constexpr Entry kStrings[] = {
     {"more", "Mehr", "More"},
     {"chart", "Diagramm", "Chart"},
     {"schematic", "Prinzipskizze", "Schematic"},
+    {"picture", "Bild", "Picture"},
     {"customize", "Anpassen", "Customize"},
     {"sectionsTitle", "Bereiche ein- und ausblenden", "Show or hide sections"},
     {"sectionsHint", "Ausgeblendete Bereiche erscheinen nicht auf der Startseite. Die Suche findet weiterhin alle Rechner.",

@@ -3,6 +3,7 @@
 // enclosure heat balance.
 
 #include <optional>
+#include <vector>
 
 #include "elc/formulas/cables.hpp"
 #include "elc/formulas/common.hpp"
@@ -39,6 +40,29 @@ struct Steinmetz {
 };
 /// Rule of thumb: C_B ≈ 70 µF/kW at 230 V/50 Hz, scaled with (230/U)²·(50/f); C_A ≈ 2…3·C_B; P ≈ 0.75·P_N
 [[nodiscard]] Steinmetz steinmetz(double P_kW, double U, double f);
+
+/// Guide values for squirrel-cage motors 1500 1/min (Eaton Schaltungsbuch 06/11, p. 10-43/10-44): cos φ, η, rated
+/// current and smallest gL/gG fuse for direct-on-line start (I_A ≤ 6·I_N, t_A ≤ 5 s) and star-delta (I_A ≤ 2·I_N,
+/// t_A ≤ 15 s). NaN = not listed.
+struct MotorGuide {
+    double P_kW, cosPhi, eta_pct;
+    double I230, fuseDol230, fuseYd230;
+    double I400, fuseDol400, fuseYd400;
+};
+[[nodiscard]] const std::vector<MotorGuide>& motorGuideTable();
+/// Row for P_kW or the next larger standard power; nullopt above the table
+[[nodiscard]] std::optional<MotorGuide> motorGuide(double P_kW);
+
+/// Setting range of a motor protective circuit-breaker containing I_r (Eaton PKZM0 0.1…32 A, PKZM4 32…65 A);
+/// nullopt above 65 A (circuit-breaker for motor protection instead)
+struct SettingRange {
+    double lo, hi;
+};
+[[nodiscard]] std::optional<SettingRange> mpcbRange(double Ir);
+
+/// Smallest trip class of IEC/EN 60947-4-1 whose minimum tripping time at 7.2 · I_r (CLASS 10: 4 s, 20: 6 s, 30: 9 s)
+/// exceeds the run-up time; 0 = heavy start beyond CLASS 30
+[[nodiscard]] int tripClassFor(double runUp_s);
 
 }  // namespace elc::motors
 

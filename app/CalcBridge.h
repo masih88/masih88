@@ -109,6 +109,7 @@ signals:
     void hiddenCategoriesChanged();
 
 private:
+    [[nodiscard]] QVariantMap chartMap(const elc::Chart& ch) const;
     [[nodiscard]] QString txt(const elc::Text& t) const;
     [[nodiscard]] elc::Context context() const;
     [[nodiscard]] QVariantMap itemFor(const QString& id) const;

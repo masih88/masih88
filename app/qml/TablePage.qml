@@ -52,6 +52,34 @@ Page {
                 font.pixelSize: 13
             }
 
+            // Optional picture (e.g. connector face with coloured pins)
+            Card {
+                id: drawingCard
+                readonly property var drawing: page.def.drawing || ({})
+                visible: drawing.series !== undefined
+                Label {
+                    text: Calc.ui.picture.toUpperCase()
+                    font.pixelSize: 12
+                    font.letterSpacing: 1.2
+                    font.weight: Font.DemiBold
+                    opacity: 0.6
+                }
+                ChartView {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Math.min(width * (drawingCard.drawing.aspect > 0 ? drawingCard.drawing.aspect : 0.6), 520)
+                    chart: drawingCard.drawing
+                    visible: drawingCard.visible
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: drawingCard.drawing.note || ""
+                    visible: text !== ""
+                    wrapMode: Text.Wrap
+                    font.pixelSize: 11
+                    opacity: 0.65
+                }
+            }
+
             Rectangle {
                 id: frame
                 Layout.fillWidth: true

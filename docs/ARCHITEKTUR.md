@@ -181,6 +181,19 @@ Zeichnungen der Elektro-Rechner nutzen die gemeinsame Hilfe `catalog/sketch.hpp`
 (Kupferbrücken); Beschriftungen „l“/„r“ links-/rechtsbündig. Thermoelemente: Koeffizienten in
 `formulas/thermocouple_nist.hpp`, aus den NIST-ITS-90-Referenzfunktionen erzeugt (nicht von Hand ändern).
 
+## Bilder zu Tabellen (ab 1.10)
+
+`Table::drawing` (optional `Chart`, `diagram = true`) wird beim Aufbau der Registry aus `catalog/tableDrawing()`
+(`catalog/pinout_drawings.cpp`) gesetzt und von `CalcBridge::table()` als `drawing` an `TablePage.qml` gegeben (Karte „Bild“
+über der Tabelle, gleiche `ChartView` wie bei Rechnern). Die Pin-Farben werden aus den Tabellenzeilen abgeleitet (Versorgung,
+Masse/Schirm, Signal, frei bzw. echte Aderfarben); ein Pin, den das Bild zeigt, der aber in der Tabelle fehlt, erscheint als „?“
+– der Test `[pinout]` schlägt dann fehl. Seitenrichtige Ansichten nur, wo die Ansicht belegt ist; sonst Hinweis
+„Kontaktfolge schematisch“ in `note`.
+
+Kabeltrasse: Projektliste `lists/cabletray.cpp` mit Kabeldaten aus `formulas/cabledata.cpp` (Textsuche „NYM-J 5x2,5“).
+Motorabgang: `catalog/motor_feeder.cpp` mit Eaton-Richtwerten (`motors::motorGuide`, `mpcbRange`, `tripClassFor`).
+Überspannungsschutz: `catalog/surge.cpp` (Bereich `surge`).
+
 ## Bereiche ein-/ausblenden (ab 1.6)
 
 `CalcBridge::hiddenCategories` (QSettings-Schlüssel `hiddenCategories`) enthält die ausgeblendeten Kategorie-IDs;

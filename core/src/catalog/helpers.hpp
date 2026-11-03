@@ -48,9 +48,15 @@ void addElectricalTables(std::vector<Table>& out);           // elec_tables.cpp
 void addElectricalResources(std::vector<Calculator>& out);   // elec_resources.cpp
 void addElectricalResourceTables(std::vector<Table>& out);   // elec_resources.cpp
 void addPinoutTables(std::vector<Table>& out);               // elec_pinouts.cpp
+std::optional<Chart> tableDrawing(const Table& t);           // pinout_drawings.cpp: picture for a table (or none)
 std::vector<Category> areas();                               // layout.cpp: areas, groups and items of the app
 ListDef consumerList();
 ListDef dataPointList();
+void addMotorFeeder(std::vector<Calculator>& out);           // motor_feeder.cpp
+void addMotorFeederTables(std::vector<Table>& out);
+void addSurge(std::vector<Calculator>& out);                 // surge.cpp
+void addSurgeTables(std::vector<Table>& out);
+ListDef cableTrayList();                                     // lists/cabletray.cpp
 
 
 inline std::vector<Option> systemOptions(bool withDc = true) {

@@ -63,6 +63,19 @@ jobs:
           mkdir -p logs
           QT_ANDROID="$RUNNER_TEMP/Qt/$QT_VERSION/android_arm64_v8a"
           QT_HOST="$RUNNER_TEMP/Qt/$QT_VERSION/gcc_64"
+          # Optionales App-Icon: liegen Icons in app/android/res, Qt-Vorlage des Manifests kopieren und android:icon setzen
+          if [ -d app/android/res ]; then
+            T=$(find "$QT_ANDROID" "$RUNNER_TEMP/Qt/$QT_VERSION" -path "*/android/templates/AndroidManifest.xml" 2>/dev/null | head -1)
+            if [ -z "$T" ]; then echo "Manifest-Vorlage von Qt nicht gefunden" | tee -a logs/android.log; exit 1; fi
+            cp "$T" app/android/AndroidManifest.xml
+            if grep -q 'android:icon=' app/android/AndroidManifest.xml; then
+              sed -i 's|android:icon="[^"]*"|android:icon="@mipmap/ic_launcher"|' app/android/AndroidManifest.xml
+            else
+              sed -i '0,/<application/s|<application|<application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round"|' app/android/AndroidManifest.xml
+            fi
+            echo "App-Icon aus app/android/res, Vorlage $T" | tee -a logs/android.log
+            grep -n -A3 "<application" app/android/AndroidManifest.xml | tee -a logs/android.log
+          fi
           "$QT_ANDROID/bin/qt-cmake" -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DQT_HOST_PATH="$QT_HOST" \

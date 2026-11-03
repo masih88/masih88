@@ -50,6 +50,16 @@ set_target_properties(ElektroRechner PROPERTIES
     QT_ANDROID_VERSION_CODE 13
 )
 
+# Optional app icon: app/icon/app.rc (Windows, IDI_ICON1 → .ico) and app/android/ (Android launcher icons in res/mipmap-*;
+# the workflow copies Qt's AndroidManifest.xml template there and sets android:icon). The public project ships without
+# icon files – private builds add them (docs/ARCHITEKTUR.md, "App-Icon").
+if(WIN32 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icon/app.rc")
+    target_sources(ElektroRechner PRIVATE icon/app.rc)
+endif()
+if(ANDROID AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/android/AndroidManifest.xml")
+    set_target_properties(ElektroRechner PROPERTIES QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+endif()
+
 include(GNUInstallDirs)
 install(TARGETS ElektroRechner
     BUNDLE  DESTINATION .

@@ -23,3 +23,6 @@ android-build/
 # System
 .DS_Store
 Thumbs.db
+
+# erzeugt vom Workflow, wenn ein privates App-Icon vorhanden ist
+app/android/AndroidManifest.xml

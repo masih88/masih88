@@ -227,3 +227,12 @@ Standard-Hintergrund von Dialogen (auf dem Gerät vorhanden) – Dialoge bekomme
 ```bash
 QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ELC_OPEN=voltage_drop ELC_SCREENSHOT=vd.png ./ElektroRechner
 ```
+
+## App-Icon (optional, ab 1.11)
+
+Das öffentliche Projekt hat kein eigenes Icon. Ein Icon wird nur eingebaut, wenn die Dateien vorhanden sind:
+`app/icon/app.rc` (Windows: `IDI_ICON1 ICON "….ico"`, Qt nimmt IDI_ICON1 auch als Fenster-/Taskleisten-Icon) und
+`app/android/res/` (Android: `mipmap-*/ic_launcher*.png`, adaptives Icon in `mipmap-anydpi-v26`). Liegt `app/android/res`
+vor, kopiert der Workflow „Apps bauen“ die Manifest-Vorlage aus der Qt-Installation nach `app/android/AndroidManifest.xml`
+(nicht eingecheckt) und setzt `android:icon`; `app/CMakeLists.txt` setzt dann `QT_ANDROID_PACKAGE_SOURCE_DIR`.
+Private Varianten (eigenes Icon) liegen in einem privaten Repository, das nur diese Icon-Dateien zusätzlich enthält.

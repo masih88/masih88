@@ -3288,6 +3288,304 @@ Kleinste regelbare Menge: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v = S
 
 *Gewinderohre EN 10255 / ISO 65 bzw. nahtlose/geschweißte Rohre EN 10220 (Außendurchmesser in mm). Die Zollgröße ist eine Nenngröße, nicht der Durchmesser. Wanddicke je Reihe (mittel/schwer) verschieden.*
 
+### Symbole & Leitungsfarben
+
+#### Symbole Lüftung (RLT)
+
+| Nr. | Symbol | Bedeutung / Einsatz | Angelehnt an |
+|---|---|---|---|
+| 1 | Ventilator | Zu- oder Abluftventilator, Spitze in Förderrichtung | DIN EN 12792 |
+| 2 | Luftfilter | Filterstufe (ISO ePM1 … ISO Coarse), Druckverlust überwachen | DIN EN 12792 |
+| 3 | Lufterhitzer (Heizregister) | Warmwasser- oder Elektroregister, Frostschutz | DIN EN 12792 |
+| 4 | Luftkühler (Kühlregister) | Kaltwasser- oder Direktverdampfer, mit Tropfenabscheider | DIN EN 12792 |
+| 5 | Befeuchter | Dampf- oder Verdunstungsbefeuchter | DIN EN 12792 |
+| 6 | Plattenwärmeübertrager | Kreuz- oder Gegenstrom, Luftströme getrennt | DIN EN 12792 |
+| 7 | Rotationswärmeübertrager | Rotor mit Feuchterückgewinnung, Drehzahl geregelt | DIN EN 12792 |
+| 8 | Kreislaufverbundsystem (KVS) | Zwei Register mit Pumpenkreis, Luftströme räumlich getrennt | DIN EN 12792 |
+| 9 | Schalldämpfer | Kulissen- oder Rohrschalldämpfer | DIN EN 12792 |
+| 10 | Jalousieklappe / Regelklappe | Absperr- oder Regelklappe, mit Antrieb (M) | DIN EN 12792 |
+| 11 | Brandschutzklappe (BSK) | Schließt im Brandfall, Auslösung thermisch oder über Rauchmelder | DIN EN 12792, DIN EN 15650 |
+| 12 | Volumenstromregler (VSR) | Konstant- oder variabler Volumenstrom, mit Messung | DIN EN 12792 |
+| 13 | Wetterschutzgitter | Außenluftansaugung / Fortluftausblas | DIN EN 12792 |
+| 14 | Zuluftdurchlass (Deckendurchlass) | Drall- oder Schlitzauslass, Luftstrom in den Raum | DIN EN 12792 |
+| 15 | Abluftdurchlass (Gitter, Ventil) | Abluftgitter oder Tellerventil, Luftstrom aus dem Raum | DIN EN 12792 |
+
+*Bildzeichen für Lüftungsschemata und Grundrisse in der üblichen Form, angelehnt an DIN EN 12792 (Lüftung von Gebäuden – Symbole und Begriffe) und DIN EN ISO 10628-2. Luftarten und ihre Farben siehe Tabelle „Leitungsfarben“. Gegen gültige Normausgabe und Bürostandard prüfen.*
+
+#### Symbole Heizung und Hydraulik
+
+| Nr. | Symbol | Bedeutung / Einsatz | Angelehnt an |
+|---|---|---|---|
+| 1 | Wärmeerzeuger (Kessel) | Gas-, Öl- oder Biomassekessel mit Brenner | DIN EN 12828 |
+| 2 | Wärmepumpe | Luft-, Sole- oder Wasser-Wärmepumpe | DIN EN 12828 |
+| 3 | Umwälzpumpe | Spitze in Förderrichtung | DIN EN ISO 10628-2, DIN 2429-2 |
+| 4 | Pumpe drehzahlgeregelt | Hocheffizienzpumpe mit Drehzahlregelung (Pfeil = verstellbar) | DIN EN ISO 10628-2, DIN 2429-2 |
+| 5 | Absperrventil | Durchgangsventil, offen dargestellt | DIN EN ISO 10628-2, DIN 2429-2 |
+| 6 | Kugelhahn / Absperrklappe | Schnellschluss, voller Durchgang | DIN EN ISO 10628-2, DIN 2429-2 |
+| 7 | Rückflussverhinderer | Durchfluss nur in Pfeilrichtung | DIN EN ISO 10628-2, DIN 2429-2 |
+| 8 | Zweiwege-Regelventil mit Antrieb | Durchflussregelung, Antrieb M | DIN EN ISO 10628-2, DIN 2429-2 |
+| 9 | Dreiwege-Regelventil mit Antrieb | Mischen oder Verteilen, Antrieb M | DIN EN ISO 10628-2, DIN 2429-2 |
+| 10 | Strangregulierventil | Hydraulischer Abgleich, mit Messanschlüssen | DIN EN ISO 10628-2, DIN 2429-2 |
+| 11 | Sicherheitsventil | Begrenzt den Anlagendruck, Abblaseleitung sichtbar führen | DIN EN 12828 |
+| 12 | Ausdehnungsgefäß (MAG) | Membran-Druckausdehnungsgefäß, Vordruck einstellen | DIN EN 12828 |
+| 13 | Heizkörper | Raumheizfläche mit Thermostatventil | DIN EN 12828 |
+| 14 | Plattenwärmeübertrager | Systemtrennung, z. B. Fernwärme oder Glykolkreis | DIN EN ISO 10628-2, DIN 2429-2 |
+| 15 | Schmutzfänger | Schützt Pumpen, Ventile und Zähler | DIN EN ISO 10628-2, DIN 2429-2 |
+| 16 | Pufferspeicher | Hydraulische Entkopplung, Laufzeitverlängerung | DIN EN 12828 |
+
+*Bildzeichen für Heizungs- und Kaltwasserschemata in der üblichen Form, angelehnt an DIN EN ISO 10628-2 und DIN 2429-2 (Pumpen, Armaturen) sowie DIN EN 12828 (Sicherheitstechnik von Heizungsanlagen). Hydraulische Grundschaltungen siehe Gruppe „Hydraulik & Ventile“. Gegen gültige Normausgabe und Bürostandard prüfen.*
+
+#### Symbole Sanitär
+
+| Nr. | Symbol | Bedeutung / Einsatz | Angelehnt an |
+|---|---|---|---|
+| 1 | Wasserzähler | Haupt- oder Unterzähler, Ein- und Auslauf gerade | DIN 1988-100, DIN EN 806-1 |
+| 2 | Systemtrenner (BA) | Schutz des Trinkwassers bis Kategorie 4 (DIN EN 1717) | DIN EN 1717 |
+| 3 | Druckminderer | Begrenzt den Ruhedruck hinter dem Hausanschluss | DIN 1988-100, DIN EN 806-1 |
+| 4 | Trinkwasserfilter | Rückspülfilter nach dem Zähler | DIN 1988-100, DIN EN 806-1 |
+| 5 | Absperrventil | Absperrung je Strang und Stockwerk | DIN 1988-100, DIN EN 806-1 |
+| 6 | Rückflussverhinderer | Verhindert Rückfließen (Kategorie 2) | DIN 1988-100, DIN EN 806-1 |
+| 7 | Trinkwassererwärmer (Speicher) | Speicher mit Heizwendel, ≥ 60 °C am Austritt | DIN 1988-100, DIN EN 806-1 |
+| 8 | Zirkulationspumpe | Hält das Warmwassernetz auf Temperatur (≥ 55 °C) | DIN 1988-100, DIN EN 806-1 |
+| 9 | Waschtisch | Grundrisssymbol mit Becken | DIN 1986-100 |
+| 10 | WC | Grundrisssymbol mit Spülkasten bzw. Vorwandelement | DIN 1986-100 |
+| 11 | Dusche | Duschtasse oder bodengleich mit Ablauf | DIN 1986-100 |
+| 12 | Bodenablauf | Mit Geruchsverschluss, ggf. Rückstauverschluss | DIN 1986-100 |
+| 13 | Fallleitung (Schmutzwasser) | Grundriss: Kreis mit Strich, Pfeil = Fließrichtung | DIN 1986-100 |
+| 14 | Hebeanlage | Fördert Abwasser unter der Rückstauebene | DIN EN 12050 |
+| 15 | Rückstauverschluss | Schützt Abläufe unter der Rückstauebene | DIN EN 13564 |
+
+*Bildzeichen für Trinkwasser- und Entwässerungspläne in der üblichen Form, angelehnt an DIN 1988-100 / DIN EN 806-1 (Trinkwasser), DIN EN 1717 (Schutz vor Verschmutzung), DIN 1986-100 (Entwässerung) sowie DIN EN 12050 und DIN EN 13564. Gegen gültige Normausgabe und Bürostandard prüfen.*
+
+#### Symbole Kälte
+
+| Nr. | Symbol | Bedeutung / Einsatz | Angelehnt an |
+|---|---|---|---|
+| 1 | Verdichter | Hub-, Scroll- oder Schraubenverdichter | DIN EN 1861 |
+| 2 | Verflüssiger, luftgekühlt | Gibt die Wärme an die Außenluft ab | DIN EN 1861 |
+| 3 | Verdampfer | Nimmt Wärme aus Wasser oder Luft auf | DIN EN 1861 |
+| 4 | Expansionsventil, thermostatisch | Regelt die Überhitzung, Fühler am Saugrohr | DIN EN 1861 |
+| 5 | Magnetventil | Absperrung der Flüssigkeitsleitung bei Stillstand | DIN EN 1861 |
+| 6 | Kältemittelsammler | Nimmt Kältemittel bei Lastwechsel auf | DIN EN 1861 |
+| 7 | Filtertrockner | Bindet Feuchte und Schmutz im Kältemittel | DIN EN 1861 |
+| 8 | Schauglas | Zeigt Füllstand und Feuchte (Farbumschlag) | DIN EN 1861 |
+| 9 | Rückkühler / Trockenkühler | Rückkühlung des Verflüssigerkreises, Freie Kühlung | DIN EN 1861 |
+| 10 | Kaltwassersatz (Kältemaschine) | Erzeugt Kaltwasser, z. B. 6/12 °C oder 16/19 °C | DIN EN 1861 |
+| 11 | Kälte-Pufferspeicher | Taktbegrenzung, Mindestvolumen nach Hersteller | DIN EN 1861 |
+| 12 | Kaltwasserpumpe | Primär- oder Sekundärkreis | DIN EN ISO 10628-2 |
+| 13 | Druckwächter (Hoch-/Niederdruck) | Sicherheitsabschaltung des Verdichters | DIN EN 378 |
+| 14 | Umluftkühler (Gebläsekonvektor) | Raumkühlung mit Ventilator und Kühlregister | DIN EN 1861 |
+
+*Bildzeichen für Kälteanlagen in der üblichen Form, angelehnt an DIN EN 1861 (Kälteanlagen – Systemfließbilder, Rohrleitungs- und Instrumentenfließbilder), DIN EN ISO 10628-2 und DIN EN 378. Gegen gültige Normausgabe und Bürostandard prüfen.*
+
+#### Leitungsfarben (Luftarten, Trinkwasser, Heizung, DIN 2403)
+
+| Bereich | Medium | Kürzel | Farbe | Grundlage |
+|---|---|---|---|---|
+| Luft | Außenluft | ODA | grün | DIN EN 16798-3 |
+| Luft | Zuluft | SUP | blau (DIN EN 12792: grün/rot/blau/violett je Aufbereitung) | DIN EN 16798-3 |
+| Luft | Raumluft | IDA | grau | DIN EN 16798-3 |
+| Luft | Überströmluft | TRA | grau | DIN EN 16798-3 |
+| Luft | Abluft | ETA | gelb | DIN EN 16798-3 |
+| Luft | Umluft | RCA | orange (DIN EN 12792: gelb) | DIN EN 16798-3 |
+| Luft | Fortluft | EHA | braun | DIN EN 16798-3 |
+| Luft | Sekundärluft | SEC | orange | DIN EN 16798-3 |
+| Luft | Mischluft | MIA | Farben der Anteile bzw. orange | DIN EN 16798-3 |
+| Luft | Leckluft | LEA | grau | DIN EN 16798-3 |
+| Trinkwasser | Trinkwasser kalt | PWC | grün | DIN 1988-100 |
+| Trinkwasser | Trinkwasser warm | PWH | rot | DIN 1988-100 |
+| Trinkwasser | Zirkulation | PWH-C | violett | DIN 1988-100 |
+| Heizung | Vorlauf | VL | rot | Planpraxis, nicht genormt |
+| Heizung | Rücklauf | RL | blau | Planpraxis, nicht genormt |
+| Kälte | Kaltwasser Vorlauf/Rücklauf | KVL/KRL | im Projekt festlegen (z. B. dunkelgrün/hellblau) | Planpraxis, nicht genormt |
+| Rohrkennzeichnung | Wasser | Gruppe 1 | grün | DIN 2403 |
+| Rohrkennzeichnung | Wasserdampf | Gruppe 2 | rot | DIN 2403 |
+| Rohrkennzeichnung | Luft | Gruppe 3 | grau | DIN 2403 |
+| Rohrkennzeichnung | Brennbare Gase | Gruppe 4 | gelb, Zusatzfarbe rot | DIN 2403 |
+| Rohrkennzeichnung | Nicht brennbare Gase | Gruppe 5 | gelb, Zusatzfarbe schwarz | DIN 2403 |
+| Rohrkennzeichnung | Säuren | Gruppe 6 | orange | DIN 2403 |
+| Rohrkennzeichnung | Laugen | Gruppe 7 | violett | DIN 2403 |
+| Rohrkennzeichnung | Brennbare Flüssigkeiten und Feststoffe | Gruppe 8 | braun, Zusatzfarbe rot | DIN 2403 |
+| Rohrkennzeichnung | Nicht brennbare Flüssigkeiten und Feststoffe | Gruppe 9 | braun, Zusatzfarbe schwarz | DIN 2403 |
+| Rohrkennzeichnung | Sauerstoff | Gruppe 0 | blau | DIN 2403 |
+
+*Luftarten nach DIN EN 16798-3 (Nichtwohngebäude; für Wohnungslüftung DIN EN 12792 mit Abweichungen: Zuluft je Aufbereitung grün, rot, blau oder violett, Umluft gelb). Trinkwasser-Kurzzeichen nach DIN 1988-100 / DIN EN 806-1 mit den üblichen Kennfarben. Rohrleitungskennzeichnung nach DIN 2403 (Gruppenfarbe, Zusatzfarbe) wie in TRGS 201 Anhang 3 wiedergegeben. Heizung und Kälte sind für Pläne nicht genormt: Vorlauf rot / Rücklauf blau ist verbreitete Praxis (z. B. CAD-Layerstruktur Universität Hamburg 2006); Kälte im Projekt festlegen. Verwendete Farben immer in der Planlegende angeben. Gegen gültige Normausgabe und Bürostandard prüfen.*
+
+## Entwurfsplanung (Lph 3)
+
+### Grundlagen der Entwurfsplanung
+
+#### HOAI Lph 3: Grundleistungen Technische Ausrüstung
+
+| Nr. | Grundleistung (HOAI 2021) | In der Praxis |
+|---|---|---|
+| a) | Durcharbeiten des Planungskonzepts (stufenweise Erarbeitung einer Lösung) unter Berücksichtigung aller fachspezifischen Anforderungen sowie unter Beachtung der durch die Objektplanung integrierten Fachplanungen bis zum vollständigen Entwurf | Alle Fachplanungen auf gleichem Stand, Integration durch den Objektplaner rechtzeitig |
+| b) | Festlegen aller Systeme und Anlagenteile | Endgültige Systementscheidung, damit Lph 5 ohne grundsätzliche Änderungen anschließt – nicht jedes Einzelteil |
+| c) | Berechnen und Bemessen der technischen Anlagen und Anlagenteile; Abschätzen von jährlichen Bedarfswerten (z. B. Nutz-, End- und Primärenergiebedarf) und Betriebskosten; Abstimmen des Platzbedarfs; zeichnerische Darstellung des Entwurfs im abgestimmten Ausgabemaßstab mit maßbestimmenden Dimensionen; Fortschreiben und Detaillieren der Funktions- und Strangschemata; Auflisten aller Anlagen mit technischen Daten; Anlagenbeschreibungen mit Angabe der Nutzungsbedingungen | Heiz-/Kühllast, Hauptleitungen und Netze bemessen, Leistungsbilanz; Pläne in der Regel 1:100 |
+| d) | Übergeben der Berechnungsergebnisse an andere Planungsbeteiligte zum Aufstellen vorgeschriebener Nachweise; Angabe und Abstimmung der für die Tragwerksplanung notwendigen Angaben über Durchführungen und Lastangaben (ohne Anfertigen von Schlitz- und Durchführungsplänen) | Gewichte, Aufstellflächen und Durchbrüche an Tragwerksplanung; Ergebnisse an Bauphysik/Brandschutz |
+| e) | Verhandlungen mit Behörden und anderen zu beteiligten Stellen über die Genehmigungsfähigkeit | Vorabstimmung mit Behörden, Versorgern und Prüfsachverständigen |
+| f) | Kostenberechnung nach DIN 276 (3. Ebene) und Terminplanung | Mengen müssen sich in den Plänen wiederfinden lassen |
+| g) | Kostenkontrolle durch Vergleich der Kostenberechnung mit der Kostenschätzung | Abweichungen erklären können |
+| h) | Zusammenfassen, Erläutern und Dokumentieren der Ergebnisse | Erläuterungsbericht mit Anlagenbeschreibungen |
+
+*Wortlaut nach HOAI 2021, Anlage 15 (zu § 55 Abs. 3, § 56 Abs. 3), Leistungsphase 3 „Entwurfsplanung (System- und Integrationsplanung)“ – das Leistungsbild hat sich gegenüber der HOAI 2013 nicht verändert. Spalte „In der Praxis“ zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 4.2: Kernphase der TA-Planung – vollständiger Entwurf, alle Systeme festgelegt, alle Berechnungen, Platzbedarf und Tragwerk abgestimmt, Behörden vorab verhandelt. Die HOAI ist Honorarrecht; als Leistungsbild gilt sie nur, wenn der Vertrag darauf verweist.*
+
+#### Qualitätsprämissen der Entwurfsplanung
+
+| Nr. | Prämisse | Woran man es prüft |
+|---|---|---|
+| 1 | Änderungsfreie Weiterplanung | Lph 5 kann ohne grundsätzliche Änderungen auf dem Entwurf aufbauen |
+| 2 | Alle Systeme und Anlagenteile endgültig festgelegt | Keine offenen Varianten mehr bei Erzeugern, Netzen und Hauptkomponenten |
+| 3 | Berechnungsergebnisse für alle Anlagenteile liegen sorgfältig vor | Lasten, Netze und Komponenten bemessen und dokumentiert |
+| 4 | Lasten und statische Kräfte mit der Tragwerksplanung abgestimmt | Gewichte, Aufstellflächen und Durchbrüche übergeben und bestätigt |
+| 5 | Vorverhandlung mit den Behörden erfolgt | Genehmigungsfähigkeit geklärt (Brandschutz, Wasser, Emissionen) |
+| 6 | Verortung festgelegt; Pläne, Schemata, Berechnung und Beschreibung in sich schlüssig | Gleiche Zahlen und Bezeichnungen in allen Dokumenten |
+| 7 | Aufgabe umfänglich bearbeitet, Integration und Koordination abgeschlossen | Kollisionsfreiheit nachgewiesen (Grundrisse, Schnitte, 3D) |
+| 8 | Themen mit erheblicher Kostenwirkung vom Fachplaner bearbeitet | Keine kostenrelevanten Punkte offen oder auf die Ausführung verschoben |
+
+*Zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 4.6 (abgeleitet aus HOAI, HOAI-Kommentaren, VDI 6026 und Rechtsprechung). Gelten für alle Gewerke.*
+
+#### Formale Anforderungen und Darstellung (Lph 3)
+
+| Thema | Anforderung | Kapitel |
+|---|---|---|
+| Vollständigkeit | Alle Zeichnungen, Schemata, Berechnungen und Spezifikationen, die zum Verständnis nötig sind | 4.7 |
+| Klarheit | Für Auftraggeber, Errichter und Prüfer verständlich; Fachbegriffe und Abkürzungen erklären | 4.7 |
+| Normkonformität | Geltende Normen, Vorschriften und technische Regeln einhalten | 4.7 |
+| Kennzeichnung | Eindeutige Nummerierung und Versionsstand jedes Dokuments; Planliste | 4.7 |
+| Struktur und Prüfbarkeit | Logische Gliederung, Verzeichnisse; Nachweise so, dass Prüfingenieure und Sachverständige prüfen können | 4.7 |
+| Legende | Alle verwendeten Symbole aufführen und laienverständlich beschreiben | 4.7 |
+| Maßstab | Grundrisse in der Regel 1:100 mit maßbestimmenden Dimensionen | 2.3 |
+| Strichdarstellung | 3-Strich (Rohrachse + Außenkante Dämmung) empfohlen, bemaßt auf die Achse; 5-Strich bei 1:100 nicht lesbar; 1-Strich nur bei kleinen Maßnahmen mit Schnitten | 2.3, VDI 6026 |
+| Kollisionsfreiheit | Maßgebend sind rohrführende Gewerke (Heizung, Kälte, Sanitär, Sprinkler) und Lüftungskanäle; Nachweis über Grundrisse, Schnitte oder 3D | 2.3 |
+| Bautoleranzen | Bei Schächten, Doppel-/Hohlraumböden und Deckenkoffern mitdenken und ggf. einzeichnen | 2.2 |
+| Schnittstellen | Schnittstellenliste, -piktogramm und -grundriss zwischen den Gewerken | 2.4 |
+| Kosten | Kostenberechnung DIN 276 in der 3. Ebene; Mengen aus den Plänen nachvollziehbar | 2.5 |
+| Betriebskosten | Jährliche Bedarfswerte und Energiekennwerte abschätzen | 2.6 |
+| Termine | Planungs- und Bauzeitenterminplan fortschreiben, Zeiträume für Qualitätssicherung vorsehen | 2.7 |
+
+*Zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 2 und 4.7, mit VDI 6026 Blatt 1 (2022), Tabelle 5.1. Darstellungsart und Detailtiefe je Gewerk vertraglich festlegen – für alle Fachplaner gleich.*
+
+### Entwurfsplanung Gebäudeautomation (KG 480)
+
+#### Entwurfsplanung GA: Planungsdokumente
+
+| Nr. | Dokument | Inhalt in der Entwurfsplanung | Hinweis |
+|---|---|---|---|
+| 1 | Systemaufbau (Topologie) | Anzahl und Ort der ISP, dezentrale Komponenten, angeschlossene Anlagen, Kommunikationswege ISP–Anlage, ISP–ISP, zur Managementebene und zur Außenwelt; als Gebäudeschnitt mit allen Ebenen | Topologie und Netze in einem Dokument |
+| 2 | Automationsschema | Je Anlage (Typicals nur nach Vereinbarung), mit Sensoren und Aktoren; farbig nach Medien, GA-Lieferumfang hervorgehoben | Regelaufgabe prüfen, z. B. Schwachlastventil am Wärmeübertrager an den Anlagenplaner zurückmelden |
+| 3 | GA-Funktionsliste | Datenpunkte (physikalisch und kommunikativ) und Funktionen je Anlage nach VDI 3814 bzw. DIN EN ISO 16484-3 | Mengengerüst für die Kosten |
+| 4 | Elektrische Berechnungen | Leistungsbilanz je ISP (Leistung, Gleichzeitigkeit, Spannung, Netzart AV/SV/USV, Nennstrom); Energiebedarf nur des GA-Eigenbedarfs; Leistungskabel nach Spannungsfall; Selektivität per Faustregel; Verlegearten A1 … G | Rechner „GA-Schaltschrank: Einspeisung“ |
+| 5 | Schaltschrankauslegung | Einspeisungen (Strom, Schalter, Zuleitung, Klemmen), Flächenbedarf aus Einspeise-, Leistungs- und Automationsteil mit mindestens 20 % Reserve, Türöffnung und Fluchtweg, Schaltschrankansichten | Rechner „GA-Schaltschrank: Fläche“ |
+| 6 | Feldgeräte | Regelorgane (Ventile) berechnen; Sensor- und Aktorlisten nur, wenn sie auch geprüft werden | Rechner „Ventil kv/kvs“ im Bereich HLKS |
+| 7 | Grundrisse | ISP und Trassen lagerichtig, maßstäblich und bemaßt (mit Höhenlage); GA-Komponenten außerhalb der Zentralen | Bezug auf feste Gebäudeteile |
+| 8 | Beschreibungen | Systembeschreibung der „Anlage GA“ mit Nutzungsbedingungen, Funktionsbeschreibungen, Erläuterungsbericht | Keine Leistungen anderer Gewerke beschreiben |
+| 9 | Adressierungssystem | Gewerkeübergreifende Benutzeradresse mit fester Stellenzahl; vom Bauherrn vertraglich für alle Gewerke festzulegen | Bereich GA: AMEV- und VDI-3814-Kennzeichnung |
+| 10 | Kosten | Kostenberechnung DIN 276 3. Ebene (KG 481–485, 489) je Datenpunkt; nach VDI 6026 anlagenbezogen; Kostenkontrolle gegen die Schätzung | Rechner „Kosten KG 480“ |
+| 11 | Schnittstellen | Schnittstellendokument: Einspeisekabel und Drehfeldmessung, Liefern und Einbauen von Sensoren, Aktoren und Antrieben | Jeder Abgabe beilegen |
+| 12 | Systemintegration | Systemintegrationsliste: jede Anlage nach Kostengruppe mit Integrationsart | VDI 3814 |
+| 13 | Brandschutz | Anforderungen aus dem Brandschutzkonzept (z. B. Entrauchungs-Nebenschaltstellen), Brandfallsteuermatrix, Funktionserhalt | Taster in Grundrissen, Verschaltung im Automationsschema |
+| 14 | Wartung | Wartungsflächen (Türöffnung, Fluchtweg), Revisionsöffnungen, Wartungshinweise und -kosten | VDI 6026 |
+
+*Zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.2 (KG 480 Planungsdokumente). Leistungsdefinition je nach Vertrag aus HOAI, DIN EN ISO 16484, VDI 3814, VDI 6026 und AMEV GA – siehe Tabelle „Regelwerke“.*
+
+#### GA-Schaltschrank: Einspeisung
+
+*Strom, Einspeiseschalter und Zuleitung je Netzart AV/SV/USV, Selektivität – nach Buchbeispiel Lph 3* — `ga_isp_supply`
+
+```text
+Planung der Einspeisungen eines Informationsschwerpunkts (ISP) in der Entwurfsplanung nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.2.4/11.2.5, Abb. 11.10:
+• Leistung je Netzart aus der Leistungsbilanz (Summe P · Gleichzeitigkeit + Reserve), Strom I = P / (√3 · U · cos φ) bei 400 V Drehstrom bzw. I = P / (U · cos φ) bei 230 V Wechselstrom, cos φ als Mittelwert der Hauptverbraucher (Buch: 0,8).
+• Einspeiseschalter und Kabel mit mindestens 10 % Reserve: nächster Schalter-Nennstrom ≥ 1,1 · I.
+• Zuleitung: größerer Wert aus Spannungsfall (Cu, 70 °C) und Belastbarkeit I_z ≥ I_n (Verlegeart C, PVC, 30 °C). Nur Planungswert – die endgültige Bemessung macht das Gewerk Elektro bzw. der Errichter.
+• Selektivität (Faustregel des Buchs): zwei Sicherungen sind selektiv, wenn die nachgeschaltete mindestens zwei Nennstromstufen kleiner ist (Beispiel 32 A zu 10 A).
+Buchbeispiel: AV 100 kW → 180,4 A, Schalter 200 A; SV 20 kW → 36,1 A (Buch 63 A, nächste Stufe wäre 40 A). USV 2 kW: das Buch rechnet 3,6 A wie bei 400 V Drehstrom; bei 230 V Wechselstrom sind es 10,9 A.
+```
+
+**Eingaben:** Leistung allgemeine Versorgung (AV) [kW], Spannung AV, Leistung Sicherheitsversorgung (SV) [kW], Spannung SV, Leistung USV [kW], Spannung USV, Leistungsfaktor cos φ (Mittelwert), Reserve Schalter und Kabel [%], Länge der Zuleitung [m], Zulässiger Spannungsfall [%], Größte Abgangssicherung im ISP [A]
+
+**Ergebnisse:** Strom AV [A], Einspeiseschalter AV [A], Zuleitung AV (Planungswert) [mm²], Strom SV [A], Einspeiseschalter SV [A], Zuleitung SV (Planungswert) [mm²], Strom USV [A], Einspeiseschalter USV [A], Zuleitung USV (Planungswert) [mm²], Selektivität (Faustregel)
+
+#### GA-Schaltschrank: Fläche und Felder
+
+*Leistungsfelder aus der Bauteilfläche mit Mindestreserve, Gesamtbreite und Platzbedarf mit Türöffnung* — `ga_cabinet_area`
+
+```text
+Schaltschrankflächenberechnung eines ISP in der Entwurfsplanung nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.2.5, Abb. 11.12:
+• Einspeise- und Automationsfelder werden als ganze Felder festgelegt (zwei Netzarten: je ein Einspeisefeld an den Enden der Reihe).
+• Leistungsteil rechnerisch: Summe der Montageflächen der Bauteile (dm²) auf Leistungsfelder verteilen, bis die Reserve (Nutzfläche − Bedarf) / Nutzfläche den Mindestwert (Buch: 20 %) erreicht. Große Einzelteile (FU, Lasttrenner) skizzieren – sie lassen sich nicht teilen.
+• Nutzfläche je Leistungsfeld = Feldbreite · Nutzbreitenanteil · nutzbare Höhe. Die Vorgaben 80 % und 1,2 m (76,8 dm² bei 0,8 m Feldbreite) sind unsere Annahme; sie ergeben das Buchbeispiel (218 dm² → 4 Felder, Reserve 29,0 %).
+• Platzbedarf: Breite der Reihe × (Schranktiefe + Türöffnung = breitestes Feld bei einflügeliger Tür). Fluchtwegbreite vor dem Schrank zusätzlich beachten.
+```
+
+**Eingaben:** Montagefläche Leistungsteil [dm²], Breite Leistungsfeld [m], Nutzbreitenanteil (Kabelkanäle abgezogen) [%], Nutzbare Montagehöhe [m], Mindestreserve [%], Einspeisefelder, Breite Einspeisefeld [m], Automationsfelder, Breite Automationsfeld [m], Schranktiefe [m], Türen
+
+**Ergebnisse:** Leistungsfelder, Tatsächliche Reserve [%], Felder gesamt, Breite der Schrankreihe [m], Tiefe mit Türöffnung [m], Platzbedarf [m²], Nutzfläche je Leistungsfeld [dm²]
+
+#### Kostenberechnung KG 480 und Kostenkontrolle
+
+*Datenpunkte × Durchschnittspreis, Plausibilität gegen AMEV-Kennwert, Abweichung zur Kostenschätzung* — `ga_cost_480`
+
+```text
+Kostenberechnung der Gebäudeautomation in der Entwurfsplanung nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.2.10:
+• DIN 276 (2018) verlangt die 3. Ebene – in der GA sechs Werte: KG 481 Automationseinrichtungen, 482 Schaltschränke/Automationsschwerpunkte, 483 Automationsmanagement, 484 Kabel, Leitungen und Verlegesysteme, 485 Datenübertragungsnetze, 489 Sonstiges; Bezugseinheit jeweils der Datenpunkt.
+• Datenpunkte = physikalische und kommunikative aus der GA-Funktionsliste; günstigere kommunikative Punkte über einen angepassten Durchschnittspreis berücksichtigen.
+• AMEV GA, Tab. 2: übliche Spanne 300 … 580 € je Hardware-Datenpunkt (Vorgabe 440 € = Mitte). Projektwerte aus Erfahrung verwenden.
+• Kostenkontrolle: Kostenberechnung gegen Kostenschätzung, Abweichung begründen. VDI 6026 fordert zusätzlich eine anlagenbezogene Aufstellung.
+```
+
+**Eingaben:** Physikalische Datenpunkte, Kommunikative Datenpunkte, Durchschnittspreis je Datenpunkt [€ / CHF], Kostenschätzung (Lph 2) [€ / CHF]
+
+**Ergebnisse:** Kosten KG 480 [€], Datenpunkte gesamt, Abweichung zur Kostenschätzung [%], Gliederung 3. Ebene
+
+#### Entwurfsplanung GA: Abhängigkeiten zu anderen Gewerken
+
+| Richtung | Thema | Von / an | Wozu |
+|---|---|---|---|
+| Input | Grundrisse | Objektplanung, TGA | Standorte von ISP und Feldgeräten, Trassen |
+| Input | Anlagenschemata | Heizung, Lüftung, Kälte, Sanitär | Grundlage der Automationsschemata |
+| Input | Anlagen- und Funktionsbeschreibungen | TGA-Fachplaner | Regel- und Steuerfunktionen |
+| Input | Liste elektrischer TGA-Verbraucher | HLKS, Elektro | Leistungsteil, Leistungsbilanz |
+| Input | Thermische Daten der Verbraucherkreise | Heizung, Kälte | Ventilauslegung (kvs, Autorität) |
+| Input | Ex-Zonen- und Sicherheitskonzepte | Bauherr, Sachverständige | Geräteauswahl, Sicherheitsfunktionen |
+| Output | Bauliche Angaben | Objekt- und Tragwerksplanung | Stellflächen der ISP, Durchbrüche, Revisionsöffnungen |
+| Output | Elektrische Leistungsbilanz | Elektro | Einspeiseleistung je Netzart (AV/SV/USV) anmelden |
+| Output | Wärmelasten der Schaltschränke | Lüftung, Kälte | Kühlung der Technikräume |
+| Output | Terminplanung | Projektsteuerung | Nachlauf der GA einplanen |
+
+*Zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.1.6. Die GA plant zeitversetzt: Sie braucht Zwischenstände der Anlagenplanung und liefert selbst Ergebnisse zurück – einen gemeinsamen Planungsstand (Design-Freeze) vereinbaren.*
+
+#### Entwurfsplanung GA: Regelwerke
+
+| Regelwerk | Bedeutung für die Entwurfsplanung |
+|---|---|
+| HOAI 2021, Anlage 15 | Honorarrecht; Grundleistungen a) bis h) sehr allgemein – für die GA durch weitere Regeln zu konkretisieren |
+| DIN EN ISO 16484 | Grundlegende GA-Norm (anerkannte Regel der Technik), aber ohne Trennung nach Leistungsphasen |
+| VDI 3814 (alt, 2003–2010) | Zurückgezogen, in der Praxis noch Grundlage vieler Planungen; Blatt 1 Nr. 11.2 nennt Planungsinhalte ohne Phasentrennung |
+| VDI 3814 (neu, ab 2019) | Leistungen je Phase (Blatt 2.2, Nr. 5.5); fordert fertige Entwurfsergebnisse der anderen Gewerke; nur bei vertraglicher Vereinbarung |
+| VDI 6026 Blatt 1 (2022) | Detaillierte Dokumentinhalte je Gewerk und Phase (Tab. 8 GA), z. B. Schaltschrankansichten, anlagenbezogene Kosten, Wartungsflächen |
+| AMEV GA | Stromversorgungskonzept, Mitwirken bei Listen (Ventile, Zähler), Kostenkennwerte 300–580 € je Hardware-Datenpunkt |
+| DIN 276 (2018) | Kostenberechnung in der 3. Ebene: KG 481–485 und 489, Bezugseinheit Datenpunkt |
+
+*Zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 11.1.3. Welche Regel gilt, entscheidet der Vertrag; ohne Vereinbarung frühzeitig mit dem Auftraggeber abstimmen. Ausgaben gegen den aktuellen Stand prüfen.*
+
+### Planungsdokumente je Gewerk
+
+#### Planungsdokumente Lph 3 je Gewerk
+
+| KG | Schemata | Grundrisse / Schnitte | Berechnung / Bemessung | Bericht / Sonstiges |
+|---|---|---|---|---|
+| 410 Abwasser | Fall-, Sammel- und Grundleitungen mit Nennweiten, Hebeanlagen, Rückstauverschlüsse, Abscheider, Kanalanschlüsse | Leitungen zu massiven Bauteilen bemaßt, DN und Gefälle, Sohlhöhen, Fließrichtung an Fallleitungen, Durchbrüche, Dacheinläufe mit Einzugsfläche | Schmutz- und Regenwasser (DIN 1986-100, DIN EN 12056), Abflusskennzahl K 0,5/0,7/1,0, Hebeanlagen, Fettabscheider, ggf. Versickerung | Abstimmung Entsorger, Vorgaben Brandschutz und Küche, Abflussbeiwerte, Funktionsbeschreibung |
+| 412 Trinkwasser | Kalt, warm und Zirkulation mit Nennweiten, Erwärmer, Druckerhöhung, Aufbereitung | Abstände zu Bauteilen, Trennung warm/kalt, DN, Steigleitungen mit Pfeilen, Höhen der Rohrachsen, Durchbrüche | Rohrnetz nach DIN 1988-300 (Gebäudetyp, Mindestfließdrücke, v_max), Zirkulation, Trinkwassererwärmer, Bedarf kalt/warm | Versorgungsdruck, Hygiene (VDI 6023 Raumbuch), Pumpen- und Aufbereitungsdimensionierung |
+| 420 Wärme | Funktions- und Strangschema: Erzeuger, Puffer, Verteiler, Pumpengruppen, Regelventile, MAG, Wärmetauscher mit Temperaturen, Druckverhältnisse | Heizflächen, Ventile, Pumpen, Rohre mit Dämmung, auf Rohrmitte bemaßt, Durchbrüche, Entlüftung an Hochpunkten | Norm-Heizlast (DIN EN 12831), Raumheizflächen, Rohrnetz, alle Komponenten, Dämm-Matrix | Energiekonzept, System je Raumtyp, Technikflächen, Temperaturen |
+| 430 Lüftung | RLT-Geräte, Brandschutzklappen, Volumenstromregler, Schalldämpfer, Überströmer, Sonderabluft (Küche, Labor, Batterie) | Raumnummern und -stempel, Kanäle rund/eckig bemaßt, Luftart, Höhen, Dämmung/Brandschutzverkleidung, Einbauteile, Luftmengen | Luftmengen raumweise (DIN EN 16798), Kanalnetz je Strang (+ ca. 10 % Reserve auf den Druckverlust), Dichtheitsklasse ATC, Schall | Systeme je Bereich, Kanalgeschwindigkeiten, Feuchte, Auslegung im h,x-Diagramm |
+| 434 Kälte | Kälteerzeuger, Rückkühler, Puffer, Verteiler, Pumpengruppen, Umluftkühler, Flächenkühlung | Wie Heizung: Geräte, Rohre mit Dämmung, Höhen, Durchbrüche | Kühllast (VDI 2078), Raumkühlflächen, Rohrnetz, Komponenten, Dämm-Matrix | Kälteerzeugungskonzept, Temperaturen, Schalt- und Anschlusspläne der Kältemaschinen |
+| 440 Elektro | Mittelspannung, Netzersatz, PV, NSHV, Steigleitungen, Unterverteilungen, KNX, Spannungsfälle, Sicherheitsbeleuchtung, Potentialausgleich | Trassen, Installation, Beleuchtung, Erdung, Blitzschutz | Leistungsbilanz, Trafokühlung, Druckentlastung, Netzberechnung, Trassenbedarf, Beleuchtung, Trennungsabstand Blitzschutz | Leuchtenkatalog, Raumkonditionen, Datenpunktliste für die GA |
+| 450 Kommunikation und Sicherheit | Türsprech, ELA, Brandmelde- (BMA), Sprachalarm- (SAA), Einbruchmelde- (EMA), Video (VÜA), Zutritt (ZUKO), Datennetze | Melder, Lautsprecher, Kameras, Datenanschlüsse; Türdetails, Aufbau Datenschränke | BMA-Auslegung, Beschallung, weitere Simulationen | Brandmelde- und Alarmierungskonzept nach DIN 14675 |
+| 480 Gebäudeautomation | Systemaufbau (Topologie) und Automationsschemata je Anlage | ISP und Trassen lagerichtig, maßstäblich, bemaßt; Schaltschrankansichten | GA-Funktionslisten, Leistungsbilanz, Einspeisungen, Schaltschrankflächen, Regelventile | Siehe Gruppe „Gebäudeautomation (KG 480)“ |
+
+*Checkliste, zusammengefasst nach Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, Kap. 5 bis 11 (Abschnitte „Planungsdokumente“). Jede Zeile: was in der Entwurfsplanung mindestens vorliegen sollte. Zusätzlich je Gewerk Planliste und Dokumentenliste passend zu allen Grundrissen, Schemata und Berechnungen.*
+
 ## Überspannungs- & Blitzschutz
 
 ### Energietechnik 230/400 V

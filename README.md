@@ -4,6 +4,23 @@ Elektro-, Gebäudeautomations- und Industrie-Rechner für **Windows und Android*
 Qt-6-Quick-Oberfläche. Inspiriert von „Elektro-Berechnungen“, aber mit Schwerpunkt auf Planung in
 **Gebäudeautomation (GA/MSR)** und **Industrie**, umschaltbar **Deutsch/Englisch** und **DE (DIN VDE) / CH (NIN)**.
 
+**Neu in 1.12 – Entwurfsplanung (Lph 3), HLKS-Symbole und neues Design (zuerst für Android):**
+- **Neuer Bereich „Entwurfsplanung (Lph 3)“** nach dem Fachbuch *Entwurfsplanung der Technischen Gebäudeausrüstung*
+  (Vielhauer/Geyer/Hürst/Adelmann, Springer Vieweg 2025): HOAI-Grundleistungen a) bis h), die acht Qualitätsprämissen,
+  formale Anforderungen und Darstellung (1:100, 3-Strich), Planungsdokumente je Gewerk (KG 410–480).
+- **Entwurfsplanung Gebäudeautomation (KG 480):** die 14 Planungsdokumente, Abhängigkeiten zu anderen Gewerken,
+  Regelwerke (HOAI, DIN EN ISO 16484, VDI 3814, VDI 6026, AMEV, DIN 276) und drei Rechner: **Einspeisung des
+  GA-Schaltschranks** (Strom, Schalter mit Reserve, Zuleitung, Selektivität), **Schaltschrankfläche** (Felder, Reserve,
+  Platzbedarf, mit Bild) und **Kostenberechnung KG 480** mit Kostenkontrolle.
+- **HLKS: Symbole und Leitungsfarben** – je eine Bildtafel für Lüftung, Heizung, Sanitär und Kälte sowie die Farben der
+  Luftarten (DIN EN 16798-3), des Trinkwassers (DIN 1988) und der Rohrkennzeichnung (DIN 2403).
+- **Neues Design:** Startseite mit Logo und Kennzahlen, Suchleiste, Kacheln mit Schatten; Bereichsseiten mit
+  Filter-Chips und gezeichneten Symbolen für Rechner, Tabellen und Listen; abgestimmte Farben für hell und dunkel.
+
+| Entwurfsplanung (Lph 3) | Symbole Lüftung |
+|---|---|
+| ![Entwurfsplanung](docs/screenshots/entwurfsplanung.png) | ![Symbole](docs/screenshots/symbole_lueftung.png) |
+
 **Neu in 1.11 – Überspannungsschutz für Rechenzentren und Ex-Bereiche, mit Bildern:**
 - **Bilder im Bereich „Überspannungs- & Blitzschutz“:** Blitzschutzzonen LPZ 0A–3 mit Ableiterpositionen, Schutzkette
   Typ 1+2 → 2 → 3, Schaltbilder 4+0/3+1/3+0 (Varistor, Funkenstrecke), Überspannungskategorien, Rechenzentrum mit nummerierten
@@ -175,9 +192,9 @@ Auf breiten Fenstern (Windows, Tablet) stehen Eingaben und Ergebnisse nebeneinan
 
 ---
 
-## Funktionsumfang (Version 1.11)
+## Funktionsumfang (Version 1.12)
 
-**3 Projektlisten, 124 Rechner und 132 Tabellen** in 15 Bereichen – jedes Thema genau einmal. Alle Formeln, Eingaben und
+**3 Projektlisten, 127 Rechner und 144 Tabellen** in 16 Bereichen – jedes Thema genau einmal. Alle Formeln, Eingaben und
 Quellen stehen in [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/CALCULATIONS.md](docs/CALCULATIONS.md)).
 
 | Bereich | Inhalt |
@@ -187,7 +204,8 @@ Quellen stehen in [docs/BERECHNUNGEN.md](docs/BERECHNUNGEN.md) (englisch: [docs/
 | **Motoren & Antriebe** | **Motorabgang** (MSS/LS, Schütze, Sanftanlasser/FU, Leitung, Reparaturschalter, RCD) mit Motorstrom-Tabelle; Wirkungsgrad, Drehmoment, Drehzahl & Schlupf, Pumpe/Ventilator am FU, NEC-Volllaststrom; Stern-Dreieck, Steinmetz, Schaltschemata 6/9/12 Klemmen, Drehrichtung, Klemmenbezeichnung; IE-Klassen, Isolierstoffklassen, Betriebsarten, Bauformen |
 | **Elektronik & Bauteile** | Farbcode beide Richtungen, E-Reihen, SMD/EIA-96, Kondensator- und Induktivitätscode; Spannungsteiler, Vorwiderstand (LED/Verbraucher), Z-Diode, RC, LC, RLC-Impedanz, Akkulaufzeit |
 | **Gebäudeautomation & MSR** | Analogsignal-Skalierung (NAMUR NE 43), Bürde, Pt/Ni/Cu-Fühler, Leitungsfehler, NTC, Thermoelemente (NIST), 24-V-Versorgung; Reglereinstellung (Ziegler/Nichols, CHR), KNX-Topologie, DALI, Feldbusse; AMEV- und VDI-3814-Kennzeichnung; GA-Effizienz EN ISO 52120 |
-| **HLKS** | h,x-Diagramm (Mollier) mit Zustandsänderungen und Taupunkt, Außenluft (EN 16798-1/CO₂), RLT-Gerät & Kanal; Wärmeleistung ↔ Volumenstrom, Heizkennlinie, Wärmepumpe; hydraulische Grundschaltungen, Ventil kv/kvs, Rohrabmessungen |
+| **HLKS** | h,x-Diagramm (Mollier) mit Zustandsänderungen und Taupunkt, Außenluft (EN 16798-1/CO₂), RLT-Gerät & Kanal; Wärmeleistung ↔ Volumenstrom, Heizkennlinie, Wärmepumpe; hydraulische Grundschaltungen, Ventil kv/kvs, Rohrabmessungen; **Symbole** Lüftung, Heizung, Sanitär, Kälte (mit Bildern) und **Leitungsfarben** (DIN EN 16798-3, DIN 1988, DIN 2403) |
+| **Entwurfsplanung (Lph 3)** | HOAI-Grundleistungen, Qualitätsprämissen, formale Anforderungen, Planungsdokumente je Gewerk; Gebäudeautomation KG 480: Dokumente, Abhängigkeiten, Regelwerke, Rechner Einspeisung und Fläche des GA-Schaltschranks, Kosten KG 480 (nach Vielhauer u. a., Springer Vieweg 2025) |
 | **Überspannungs- & Blitzschutz** | SPD-Auswahl 230/400 V nach Zone und Netzsystem, MSR/Sensoren/Datenleitungen (mit I_imp je Ader nach VdS 2833), wirksamer Schutzpegel und Schutzbereich, Ex-i-Messkreise, induzierte Schleifenspannung, Risikobewertung (CRL); Tabellen LPZ, SPD-Typen, Schaltungen, Überspannungskategorien, Blitzschutzklassen, Prüfkategorien, Kenndaten DEHN-Komponenten (Energie, MSR/Daten), Rechenzentrum (Schutzvorschlag, Planung), Ex-Bereich, Ableitvermögen – mit Bildern |
 | **Explosionsschutz (ATEX)** | Temperaturklasse, Gruppe, Zone/Kategorie/EPL, Staub, Kennzeichnung; Tabellen Zonen, Gruppen, T-Klassen, Zündschutzarten, Zündtemperaturen |
 | **R&I-Kennzeichnung** | Kennbuchstaben-Finder (ISA-5.1, EN 62424, VDI 3814) für 78 Sensoren/Wächter; Kennbuchstaben-Tabellen |

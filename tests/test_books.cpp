@@ -251,3 +251,64 @@ TEST_CASE("transformer: steady short-circuit current without voltage factor (Haa
     CHECK(r.values.at("I2") == Approx(577.35).margin(0.1));
     CHECK(r.values.at("IkD") == Approx(14.43).margin(0.01));
 }
+
+// ------------------------------------------------------------------ Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der
+// Technischen Gebäudeausrüstung (Springer Vieweg 2025), ch. 11.2.4/11.2.5 – book examples Abb. 11.10 and 11.12
+
+namespace {
+
+bool bookWarn(const Result& r) {
+    for (const auto& m : r.messages) {
+        if (m.severity == Severity::Warning) return true;
+    }
+    return false;
+}
+
+bool bookHas(const Text& t, const std::string& s) { return t.de.find(s) != std::string::npos; }
+
+}  // namespace
+
+TEST_CASE("GA cabinet supply: current, switch with 10 % reserve, selectivity (book Abb. 11.10)", "[planning]") {
+    const auto* c = findCalculator("ga_isp_supply");
+    REQUIRE(c);
+    CHECK(c->category == "planning");
+    auto in = defaultInputs(*c);  // AV 100 kW, SV 20 kW at 400 V 3~, USV 2 kW at 230 V 1~, cos φ 0.8, reserve 10 %
+    auto r = evaluate(*c, in, {});
+    REQUIRE_FALSE(r.hasError());
+    CHECK(r.values.at("I_av") == Approx(180.4).margin(0.05));  // book: 180,4 A
+    CHECK(r.values.at("I_sv") == Approx(36.1).margin(0.05));   // book: 36,1 A
+    CHECK(r.values.at("In_av") == Approx(200));                 // book: 200 A
+    CHECK(r.values.at("In_sv") == Approx(40));                  // next gG rating ≥ 39,7 A (book chose 63 A)
+    // USV single-phase 230 V: 2 kW / (230 V · 0,8) = 10,9 A (the book's 3,6 A corresponds to 400 V three-phase)
+    CHECK(r.values.at("I_usv") == Approx(2000.0 / (230 * 0.8)).epsilon(1e-6));
+    CHECK(r.values.at("In_usv") == Approx(16));
+    CHECK(r.values.at("A_av") >= 95);  // I_z ≥ I_n = 200 A at method C, PVC, 3 loaded
+    // rule of thumb: selective if the downstream fuse is at least two rated steps lower (book: 32 A vs. 10 A)
+    in.set("P_av", 15);  // 27 A → 32 A
+    in.set("fuse", 10);
+    r = evaluate(*c, in, {});
+    CHECK(r.values.at("In_av") == Approx(32));
+    CHECK(bookHas(r.texts.at("selectivity"), "selektiv"));
+    CHECK_FALSE(bookWarn(r));
+    in.set("fuse", 25);  // only one step below 32 A
+    CHECK(bookWarn(evaluate(*c, in, {})));
+}
+
+TEST_CASE("GA cabinet area: fields, reserve and footprint (book Abb. 11.12)", "[planning]") {
+    const auto* c = findCalculator("ga_cabinet_area");
+    REQUIRE(c);
+    auto in = defaultInputs(*c);  // 218 dm² power section, 2 feed + 3 automation fields, 20 % reserve
+    auto r = evaluate(*c, in, {});
+    REQUIRE_FALSE(r.hasError());
+    CHECK(r.values.at("nPower") == Approx(4));
+    CHECK(r.values.at("reserve") == Approx(29.0).margin(0.05));  // book: 29,0 %
+    CHECK(r.values.at("fields") == Approx(9));
+    CHECK(r.values.at("width") == Approx(6.2));
+    CHECK(r.values.at("depth") == Approx(1.2));  // 0,4 m cabinet + 0,8 m door
+    in.set("reserveMin", 30);  // 4 fields give only 29 % → 5 fields
+    CHECK(evaluate(*c, in, {}).values.at("nPower") == Approx(5));
+    const auto ch = evaluateChart(*c, defaultInputs(*c), {});
+    REQUIRE(ch);
+    CHECK(ch->diagram);
+}
+

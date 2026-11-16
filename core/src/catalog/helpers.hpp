@@ -58,6 +58,9 @@ void addSurge(std::vector<Calculator>& out);                 // surge.cpp
 void addSurgeTables(std::vector<Table>& out);
 void addSurgeApplications(std::vector<Calculator>& out);     // surge_apps.cpp: Ex i loops, induced loop voltage (v1.11)
 void addSurgeApplicationTables(std::vector<Table>& out);     // surge_apps.cpp: DEHN components, data centre, Ex
+void addPlanning(std::vector<Calculator>& out);              // planning.cpp: design stage (Lph 3) calculators (v1.12)
+void addPlanningTables(std::vector<Table>& out);             // planning.cpp: HOAI, premises, documents, KG 480
+void addHvacSymbolTables(std::vector<Table>& out);           // hvac_symbols.cpp: HVAC symbols and line colours
 ListDef cableTrayList();                                     // lists/cabletray.cpp
 
 

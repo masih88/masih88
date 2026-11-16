@@ -26,6 +26,10 @@ cmake --build build && ./build/tests/elc_tests
   sonst als „schematisch“ kennzeichnen.
 - Bilder des Bereichs Überspannungsschutz in `catalog/surge_drawings.cpp`; Text in Bildern nie auf farbige Flächen legen
   (Tintenfarbe wechselt im Dunkelmodus) – Zonen als farbige Umrisse, Beschriftung auf `bgfill`.
+- HLKS-Symbole und Leitungsfarben in `catalog/hvac_symbols.cpp` (Symboltafel: je Eintrag Zeichenfunktion + Tabellenzeile,
+  Nummern im Bild = Zeilennummern). Bereich Entwurfsplanung in `catalog/planning.cpp` (Buchinhalte in eigenen Worten
+  mit Kapitelangabe, keine Textübernahme).
+- QML-Farben aus `Calc.theme` (CalcBridge::theme, hell/dunkel) statt fester Werte; Symbole in Listen mit `KindIcon.qml`.
 - Projektlisten (`ListDef`) in `core/src/lists/`; Excel-Spaltennamen als `alias()`; Beispielprojekt in `example`.
 - PDFs/Office-Dateien vor dem Lesen mit `doc2md` (Ordner `Tools/doc2md`) in Markdown umwandeln und gezielt greppen.
 - VDI-/DIN-Dokumente nie ins Repository; nur Codelisten/Strukturen mit Quellenangabe übernehmen.

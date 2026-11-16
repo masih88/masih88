@@ -36,6 +36,7 @@ QString categoryColor(const std::string& id) {
     if (id == "building") return QStringLiteral("#B04A7A");
     if (id == "comms") return QStringLiteral("#3D7EDB");
     if (id == "converters") return QStringLiteral("#6C7A89");
+    if (id == "planning") return QStringLiteral("#00897B");
     return QStringLiteral("#B5873A");
 }
 
@@ -206,6 +207,21 @@ void CalcBridge::setDarkTheme(bool dark) {
 }
 
 QVariantMap CalcBridge::ui() const { return uiStrings(lang_); }
+
+QVariantMap CalcBridge::theme() const {
+    const bool d = dark_;
+    return {{"brand", QStringLiteral("#1F3A5F")},
+            {"brand2", QStringLiteral("#2F6296")},
+            {"accent", QStringLiteral("#F2A900")},
+            {"bg", d ? QStringLiteral("#10151E") : QStringLiteral("#F2F4F8")},
+            {"surface", d ? QStringLiteral("#1A212D") : QStringLiteral("#FFFFFF")},
+            {"surfaceAlt", d ? QStringLiteral("#212A38") : QStringLiteral("#F6F8FB")},
+            {"pressed", d ? QStringLiteral("#273244") : QStringLiteral("#EAEFF5")},
+            {"border", d ? QStringLiteral("#2A3445") : QStringLiteral("#E2E7EE")},
+            {"shadow", d ? QStringLiteral("#0B0F15") : QStringLiteral("#D9E0EA")},
+            {"text", d ? QStringLiteral("#E7EBF1") : QStringLiteral("#18222F")},
+            {"muted", d ? QStringLiteral("#9AA7B8") : QStringLiteral("#5E6C7F")}};
+}
 
 QString CalcBridge::version() const { return q(std::string(elc::version())); }
 

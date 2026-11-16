@@ -21,6 +21,7 @@ class CalcBridge : public QObject {
     Q_PROPERTY(QString currency READ currency WRITE setCurrency NOTIFY currencyChanged)
     Q_PROPERTY(double chfPerEur READ chfPerEur WRITE setChfPerEur NOTIFY currencyChanged)
     Q_PROPERTY(QVariantMap ui READ ui NOTIFY languageChanged)
+    Q_PROPERTY(QVariantMap theme READ theme NOTIFY darkThemeChanged)
     Q_PROPERTY(QVariantList categories READ categories NOTIFY languageChanged)
     Q_PROPERTY(QStringList favorites READ favorites NOTIFY favoritesChanged)
     /// Category ids the user hid on the home page
@@ -45,6 +46,8 @@ public:
     Q_INVOKABLE QString formatNumber(double v, int decimals) const;
     Q_INVOKABLE double parseNumber(const QString& text) const;
     [[nodiscard]] QVariantMap ui() const;
+    /// Design tokens (colours as #RRGGBB) for the current light/dark theme – one place for all pages
+    [[nodiscard]] QVariantMap theme() const;
     [[nodiscard]] QVariantList categories() const;
     [[nodiscard]] QStringList favorites() const { return favorites_; }
     [[nodiscard]] QStringList hiddenCategories() const { return hiddenCategories_; }

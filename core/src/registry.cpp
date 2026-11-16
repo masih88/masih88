@@ -73,6 +73,7 @@ const std::vector<Calculator>& calculators() {
         catalog::addElectricalResources(v);
         catalog::addMotorFeeder(v);
         catalog::addSurge(v);
+        catalog::addPlanning(v);
         assignAreas(v);
         return v;
     }();
@@ -96,6 +97,8 @@ const std::vector<Table>& tables() {
         catalog::addPinoutTables(v);
         catalog::addMotorFeederTables(v);
         catalog::addSurgeTables(v);
+        catalog::addPlanningTables(v);
+        catalog::addHvacSymbolTables(v);
         assignAreas(v);
         for (auto& t : v) {
             if (!t.drawing) t.drawing = catalog::tableDrawing(t);

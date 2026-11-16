@@ -236,3 +236,11 @@ Das öffentliche Projekt hat kein eigenes Icon. Ein Icon wird nur eingebaut, wen
 vor, kopiert der Workflow „Apps bauen“ die Manifest-Vorlage aus der Qt-Installation nach `app/android/AndroidManifest.xml`
 (nicht eingecheckt) und setzt `android:icon`; `app/CMakeLists.txt` setzt dann `QT_ANDROID_PACKAGE_SOURCE_DIR`.
 Private Varianten (eigenes Icon) liegen in einem privaten Repository, das nur diese Icon-Dateien zusätzlich enthält.
+
+## Design (ab 1.12)
+
+Farben kommen zentral aus `CalcBridge::theme()` (`Calc.theme.bg`, `surface`, `surfaceAlt`, `pressed`, `border`, `shadow`,
+`text`, `muted`, `brand`, `brand2`, `accent`) und wechseln mit `Calc.darkTheme`. `Card.qml` zeichnet einen weichen Schatten
+(Rechteck mit `z: -1`, ohne Effekt-Module – läuft mit Qt 6.4 und 6.8). Listenzeilen (`ItemRow.qml`) zeigen statt des
+Bereichskürzels ein gezeichnetes Symbol je Art (`KindIcon.qml`: Rechner, Tabelle, Projektliste) in der Bereichsfarbe.
+Bereichsseiten (`ListPage.qml`) haben einen Kopf mit Kürzel und Anzahl, Filter-Chips je Gruppe und offene Abschnitte.

@@ -3288,6 +3288,304 @@ Smallest controllable flow: V̇_min/V̇_100 = 1/√(1 + a·(S_v² − 1)), S_v =
 
 *Threaded pipes EN 10255 / ISO 65 or seamless/welded pipes EN 10220 (outer diameter in mm). The inch size is a nominal size, not the diameter. Wall thickness depends on the series (medium/heavy).*
 
+### Symbols & line colours
+
+#### Symbols ventilation (AHU)
+
+| No. | Symbol | Meaning / use | Modelled on |
+|---|---|---|---|
+| 1 | Fan | Supply or extract fan, tip in flow direction | DIN EN 12792 |
+| 2 | Air filter | Filter stage (ISO ePM1 … coarse), monitor pressure drop | DIN EN 12792 |
+| 3 | Heating coil | Hot water or electric coil, frost protection | DIN EN 12792 |
+| 4 | Cooling coil | Chilled water or DX coil, with droplet separator | DIN EN 12792 |
+| 5 | Humidifier | Steam or evaporative humidifier | DIN EN 12792 |
+| 6 | Plate heat exchanger | Cross or counter flow, air streams separated | DIN EN 12792 |
+| 7 | Rotary heat exchanger | Rotor with moisture recovery, speed controlled | DIN EN 12792 |
+| 8 | Run-around coil system | Two coils with pump loop, air streams apart | DIN EN 12792 |
+| 9 | Silencer | Splitter or circular silencer | DIN EN 12792 |
+| 10 | Damper | Shut-off or control damper, with actuator (M) | DIN EN 12792 |
+| 11 | Fire damper | Closes in case of fire, thermal or smoke-detector release | DIN EN 12792, DIN EN 15650 |
+| 12 | VAV / CAV controller | Constant or variable flow, with measurement | DIN EN 12792 |
+| 13 | Weather louvre | Outdoor air intake / exhaust outlet | DIN EN 12792 |
+| 14 | Supply air diffuser | Swirl or slot diffuser, air into the room | DIN EN 12792 |
+| 15 | Extract air grille | Extract grille or disc valve, air out of the room | DIN EN 12792 |
+
+*Graphical symbols for ventilation schematics and plans in the usual form, modelled on EN 12792 (ventilation – symbols and terms) and EN ISO 10628-2. Air types and their colours see table "Line colours". Check against the edition in force and the office standard.*
+
+#### Symbols heating and hydronics
+
+| No. | Symbol | Meaning / use | Modelled on |
+|---|---|---|---|
+| 1 | Heat generator (boiler) | Gas, oil or biomass boiler with burner | DIN EN 12828 |
+| 2 | Heat pump | Air, brine or water heat pump | DIN EN 12828 |
+| 3 | Circulating pump | Tip in flow direction | DIN EN ISO 10628-2, DIN 2429-2 |
+| 4 | Variable-speed pump | High-efficiency pump with speed control (arrow = adjustable) | DIN EN ISO 10628-2, DIN 2429-2 |
+| 5 | Stop valve | Globe valve, shown open | DIN EN ISO 10628-2, DIN 2429-2 |
+| 6 | Ball valve / butterfly valve | Quick shut-off, full bore | DIN EN ISO 10628-2, DIN 2429-2 |
+| 7 | Non-return valve | Flow only in arrow direction | DIN EN ISO 10628-2, DIN 2429-2 |
+| 8 | Two-way control valve with actuator | Flow control, actuator M | DIN EN ISO 10628-2, DIN 2429-2 |
+| 9 | Three-way control valve with actuator | Mixing or diverting, actuator M | DIN EN ISO 10628-2, DIN 2429-2 |
+| 10 | Balancing valve | Hydronic balancing, with test points | DIN EN ISO 10628-2, DIN 2429-2 |
+| 11 | Safety valve | Limits the system pressure, visible discharge | DIN EN 12828 |
+| 12 | Expansion vessel | Membrane expansion vessel, set the pre-pressure | DIN EN 12828 |
+| 13 | Radiator | Room heating surface with thermostatic valve | DIN EN 12828 |
+| 14 | Plate heat exchanger | System separation, e.g. district heat or glycol loop | DIN EN ISO 10628-2, DIN 2429-2 |
+| 15 | Strainer | Protects pumps, valves and meters | DIN EN ISO 10628-2, DIN 2429-2 |
+| 16 | Buffer tank | Hydraulic decoupling, longer run times | DIN EN 12828 |
+
+*Graphical symbols for heating and chilled water schematics in the usual form, modelled on EN ISO 10628-2 and DIN 2429-2 (pumps, valves) and EN 12828 (safety of heating systems). Hydronic circuits see group "Hydronics & valves". Check against the edition in force and the office standard.*
+
+#### Symbols plumbing
+
+| No. | Symbol | Meaning / use | Modelled on |
+|---|---|---|---|
+| 1 | Water meter | Main or sub-meter, straight inlet and outlet | DIN 1988-100, DIN EN 806-1 |
+| 2 | Backflow preventer (BA) | Protects drinking water up to category 4 (EN 1717) | DIN EN 1717 |
+| 3 | Pressure reducer | Limits the static pressure after the service connection | DIN 1988-100, DIN EN 806-1 |
+| 4 | Drinking water filter | Backwash filter after the meter | DIN 1988-100, DIN EN 806-1 |
+| 5 | Stop valve | Isolation per riser and floor | DIN 1988-100, DIN EN 806-1 |
+| 6 | Non-return valve | Prevents backflow (category 2) | DIN 1988-100, DIN EN 806-1 |
+| 7 | Water heater (cylinder) | Cylinder with coil, ≥ 60 °C at the outlet | DIN 1988-100, DIN EN 806-1 |
+| 8 | Circulation pump | Keeps the hot water network hot (≥ 55 °C) | DIN 1988-100, DIN EN 806-1 |
+| 9 | Washbasin | Plan symbol with bowl | DIN 1986-100 |
+| 10 | WC | Plan symbol with cistern or frame | DIN 1986-100 |
+| 11 | Shower | Tray or level-access with drain | DIN 1986-100 |
+| 12 | Floor drain | With trap, backflow stop if needed | DIN 1986-100 |
+| 13 | Stack (foul water) | Plan: circle with stroke, arrow = flow direction | DIN 1986-100 |
+| 14 | Lifting plant | Lifts waste water below the backflow level | DIN EN 12050 |
+| 15 | Backflow stop | Protects drains below the backflow level | DIN EN 13564 |
+
+*Graphical symbols for drinking water and drainage plans in the usual form, modelled on DIN 1988-100 / EN 806-1, EN 1717 (backflow protection), DIN 1986-100 (drainage) and EN 12050 / EN 13564. Check against the edition in force and the office standard.*
+
+#### Symbols refrigeration
+
+| No. | Symbol | Meaning / use | Modelled on |
+|---|---|---|---|
+| 1 | Compressor | Reciprocating, scroll or screw compressor | DIN EN 1861 |
+| 2 | Air-cooled condenser | Rejects the heat to outdoor air | DIN EN 1861 |
+| 3 | Evaporator | Absorbs heat from water or air | DIN EN 1861 |
+| 4 | Thermostatic expansion valve | Controls superheat, bulb on the suction line | DIN EN 1861 |
+| 5 | Solenoid valve | Shuts the liquid line at standstill | DIN EN 1861 |
+| 6 | Liquid receiver | Holds refrigerant during load changes | DIN EN 1861 |
+| 7 | Filter drier | Removes moisture and dirt from the refrigerant | DIN EN 1861 |
+| 8 | Sight glass | Shows charge and moisture (colour change) | DIN EN 1861 |
+| 9 | Dry cooler | Re-cooling of the condenser loop, free cooling | DIN EN 1861 |
+| 10 | Chiller | Produces chilled water, e.g. 6/12 °C or 16/19 °C | DIN EN 1861 |
+| 11 | Chilled water buffer | Limits cycling, minimum volume per manufacturer | DIN EN 1861 |
+| 12 | Chilled water pump | Primary or secondary circuit | DIN EN ISO 10628-2 |
+| 13 | Pressure switch (high/low) | Safety cut-out of the compressor | DIN EN 378 |
+| 14 | Fan coil unit | Room cooling with fan and cooling coil | DIN EN 1861 |
+
+*Graphical symbols for refrigerating systems in the usual form, modelled on EN 1861 (system flow diagrams and P&I diagrams), EN ISO 10628-2 and EN 378. Check against the edition in force and the office standard.*
+
+#### Line colours (air types, drinking water, heating, DIN 2403)
+
+| Area | Medium | Code | Colour | Basis |
+|---|---|---|---|---|
+| Air | Outdoor air | ODA | green | DIN EN 16798-3 |
+| Air | Supply air | SUP | blue (EN 12792: green/red/blue/violet by treatment) | DIN EN 16798-3 |
+| Air | Indoor air | IDA | grey | DIN EN 16798-3 |
+| Air | Transferred air | TRA | grey | DIN EN 16798-3 |
+| Air | Extract air | ETA | yellow | DIN EN 16798-3 |
+| Air | Recirculation air | RCA | orange (EN 12792: yellow) | DIN EN 16798-3 |
+| Air | Exhaust air | EHA | brown | DIN EN 16798-3 |
+| Air | Secondary air | SEC | orange | DIN EN 16798-3 |
+| Air | Mixed air | MIA | colours of the parts or orange | DIN EN 16798-3 |
+| Air | Leakage air | LEA | grey | DIN EN 16798-3 |
+| Drinking water | Cold drinking water | PWC | green | DIN 1988-100 |
+| Drinking water | Hot drinking water | PWH | red | DIN 1988-100 |
+| Drinking water | Circulation | PWH-C | violet | DIN 1988-100 |
+| Heating | Supply | F | red | drawing practice, not standardised |
+| Heating | Return | R | blue | drawing practice, not standardised |
+| Cooling | Chilled water supply/return | KVL/KRL | fix per project (e.g. dark green/light blue) | drawing practice, not standardised |
+| Pipe marking | Water | Group 1 | green | DIN 2403 |
+| Pipe marking | Steam | Group 2 | red | DIN 2403 |
+| Pipe marking | Air | Group 3 | grey | DIN 2403 |
+| Pipe marking | Combustible gases | Group 4 | yellow, additional red | DIN 2403 |
+| Pipe marking | Non-combustible gases | Group 5 | yellow, additional black | DIN 2403 |
+| Pipe marking | Acids | Group 6 | orange | DIN 2403 |
+| Pipe marking | Alkalis | Group 7 | violet | DIN 2403 |
+| Pipe marking | Combustible liquids and solids | Group 8 | brown, additional red | DIN 2403 |
+| Pipe marking | Non-combustible liquids and solids | Group 9 | brown, additional black | DIN 2403 |
+| Pipe marking | Oxygen | Group 0 | blue | DIN 2403 |
+
+*Air types per EN 16798-3 (non-residential; for dwellings EN 12792 with differences: supply air green, red, blue or violet by treatment, recirculation yellow). Drinking water codes per DIN 1988-100 / EN 806-1 with the usual identification colours. Pipeline identification per DIN 2403 (group colour, additional colour) as given in TRGS 201 annex 3. Heating and cooling are not standardised for drawings: supply red / return blue is common practice (e.g. CAD layer structure University of Hamburg 2006); fix cooling colours per project. Always state the colours in the drawing legend. Check against the edition in force.*
+
+## Design planning (stage 3)
+
+### Design stage basics
+
+#### HOAI stage 3: basic services building services
+
+| No. | Basic service (HOAI 2021) | In practice |
+|---|---|---|
+| a) | Working through the concept (step-by-step solution) considering all trade-specific requirements and the specialist designs integrated by the architect up to the complete design | All trades at the same level, integrated in time by the architect |
+| b) | Fixing all systems and plant components | Final decision on the systems so that stage 5 follows without fundamental changes – not every single part |
+| c) | Calculating and sizing plant and components; estimating annual demand (useful, final, primary energy) and operating costs; coordinating space; drawings at the agreed scale with dimension-defining sizes; updating and detailing the function and riser schematics; listing all plant with technical data; plant descriptions with conditions of use | Heating/cooling loads, mains and networks sized, power balance; drawings usually 1:100 |
+| d) | Handing over results for required certificates; stating and coordinating openings and loads for the structural design (without drawing slot and opening plans) | Weights, footprints and openings to the structural engineer; results to building physics/fire safety |
+| e) | Negotiations with authorities and other bodies about approvability | Prior consultation with authorities, utilities and inspection experts |
+| f) | Cost calculation per DIN 276 (3rd level) and scheduling | Quantities must be traceable in the drawings |
+| g) | Cost control by comparing the cost calculation with the estimate | Be able to explain deviations |
+| h) | Summarising, explaining and documenting the results | Explanatory report with plant descriptions |
+
+*Wording per HOAI 2021, annex 15 (re § 55 (3), § 56 (3)), stage 3 "design planning (system and integration planning)" – unchanged from HOAI 2013. Column "In practice" summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 4.2: core stage of building services design – complete design, all systems fixed, all calculations, space and structure coordinated, authorities consulted. The HOAI is fee law; it defines the services only if the contract refers to it.*
+
+#### Quality premises of the design stage
+
+| No. | Premise | How to check it |
+|---|---|---|
+| 1 | Further planning without changes | Stage 5 can build on the design without fundamental changes |
+| 2 | All systems and components finally fixed | No open variants for generators, networks and main components |
+| 3 | Calculation results available for all components | Loads, networks and components sized and documented |
+| 4 | Loads and forces coordinated with the structural design | Weights, footprints and openings handed over and confirmed |
+| 5 | Prior negotiation with the authorities done | Approvability clarified (fire, water, emissions) |
+| 6 | Locations fixed; drawings, schematics, calculation and description consistent | Same figures and names in every document |
+| 7 | Task fully covered, integration and coordination complete | Freedom from collisions proven (plans, sections, 3D) |
+| 8 | Topics with major cost impact handled by the specialist | No cost-relevant points left open or deferred to execution |
+
+*Summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 4.6 (derived from the HOAI, HOAI commentaries, VDI 6026 and case law). Apply to all trades.*
+
+#### Formal requirements and presentation (stage 3)
+
+| Topic | Requirement | Chapter |
+|---|---|---|
+| Completeness | All drawings, schematics, calculations and specifications needed | 4.7 |
+| Clarity | Understandable for client, installer and checker; explain terms and abbreviations | 4.7 |
+| Conformity | Comply with current standards and rules | 4.7 |
+| Identification | Unique numbering and revision of each document; drawing list | 4.7 |
+| Structure and checkability | Logical structure, indexes; evidence that checkers can verify | 4.7 |
+| Legend | List every symbol used and describe it in plain words | 4.7 |
+| Scale | Floor plans usually 1:100 with dimension-defining sizes | 2.3 |
+| Line representation | 3-line (pipe axis + outer edge of insulation) recommended, dimensioned to the axis; 5-line unreadable at 1:100; single line only for small jobs with sections | 2.3, VDI 6026 |
+| Freedom from collisions | Governed by piped trades (heating, cooling, plumbing, sprinkler) and ducts; proof by plans, sections or 3D | 2.3 |
+| Construction tolerances | Allow for them at shafts, raised floors and bulkheads, draw where needed | 2.2 |
+| Interfaces | Interface list, pictogram and plan between the trades | 2.4 |
+| Cost | Cost calculation DIN 276 at level 3; quantities traceable in the drawings | 2.5 |
+| Operating cost | Estimate annual demand and energy indicators | 2.6 |
+| Schedule | Update design and construction schedules, allow time for quality assurance | 2.7 |
+
+*Summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 2 and 4.7, with VDI 6026 part 1 (2022), table 5.1. Agree presentation and level of detail per trade in the contract – the same for all designers.*
+
+### Design stage building automation (KG 480)
+
+#### BACS design stage: documents
+
+| No. | Document | Content at the design stage | Note |
+|---|---|---|---|
+| 1 | System architecture (topology) | Number and location of control panels, remote components, connected plant, communication paths panel–plant, panel–panel, to the management level and outside; as a building section with all levels | Topology and networks in one document |
+| 2 | Automation schematic | Per plant (typicals only if agreed), with sensors and actuators; coloured by media, BACS scope highlighted | Check the control task, e.g. report a low-load valve at the heat exchanger back to the plant designer |
+| 3 | BACS function list | Data points (physical and communicated) and functions per plant per VDI 3814 / EN ISO 16484-3 | Quantities for the cost calculation |
+| 4 | Electrical calculations | Power balance per panel (power, diversity, voltage, supply type normal/safety/UPS, rated current); energy only for the BACS' own consumption; power cables by voltage drop; selectivity by rule of thumb; installation methods A1 … G | Calculator "BACS panel: supply" |
+| 5 | Control panel design | Supplies (current, switch, feeder, terminals), area from supply, power and automation sections with at least 20 % spare, door swing and escape route, panel views | Calculator "BACS panel: area" |
+| 6 | Field devices | Calculate control valves; sensor and actuator lists only if they are checked | Calculator "Valve kv/kvs" in HVAC |
+| 7 | Floor plans | Panels and routes in position, to scale and dimensioned (with levels); BACS components outside plant rooms | Refer to fixed building elements |
+| 8 | Descriptions | System description of the BACS with conditions of use, function descriptions, explanatory report | Do not describe other trades' work |
+| 9 | Addressing system | Cross-trade user address with fixed positions; to be agreed by the client for all trades | Area BACS: AMEV and VDI 3814 identification |
+| 10 | Costs | Cost calculation DIN 276 level 3 (KG 481–485, 489) per data point; per plant under VDI 6026; cost control against the estimate | Calculator "Cost KG 480" |
+| 11 | Interfaces | Interface document: feeder and phase rotation test, supply and fitting of sensors, actuators and drives | Attach to every issue |
+| 12 | System integration | System integration list: every plant by cost group with type of integration | VDI 3814 |
+| 13 | Fire safety | Requirements from the fire concept (e.g. secondary smoke control points), fire control matrix, circuit integrity | Push buttons in plans, wiring in the schematic |
+| 14 | Maintenance | Maintenance areas (door swing, escape route), access panels, maintenance notes and costs | VDI 6026 |
+
+*Summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.2 (KG 480 planning documents). Service definition depending on the contract from HOAI, EN ISO 16484, VDI 3814, VDI 6026 and AMEV GA – see table "Rules".*
+
+#### BACS panel: supply
+
+*Current, supply switch and feeder per supply type normal/safety/UPS, selectivity – after the book example* — `ga_isp_supply`
+
+```text
+Planning the supplies of a BACS control panel at the design stage after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.2.4/11.2.5, fig. 11.10:
+• Power per supply type from the power balance (Σ P · diversity + spare), current I = P / (√3 · U · cos φ) at 400 V three-phase or I = P / (U · cos φ) at 230 V single-phase, cos φ as average of the main loads (book: 0.8).
+• Supply switch and cable with at least 10 % spare: next switch rating ≥ 1.1 · I.
+• Feeder: larger of voltage drop (Cu, 70 °C) and ampacity I_z ≥ I_n (method C, PVC, 30 °C). Planning value only – final sizing by the electrical trade or installer.
+• Selectivity (rule of thumb of the book): two fuses are selective if the downstream one is at least two rating steps smaller (example 32 A vs. 10 A).
+Book example: normal 100 kW → 180.4 A, switch 200 A; safety 20 kW → 36.1 A (book 63 A, next step would be 40 A). UPS 2 kW: the book calculates 3.6 A as for 400 V three-phase; at 230 V single-phase it is 10.9 A.
+```
+
+**Inputs:** Power normal supply [kW], Voltage normal supply, Power safety supply [kW], Voltage safety supply, Power UPS [kW], Voltage UPS, Power factor cos φ (average), Spare switch and cable [%], Feeder length [m], Permitted voltage drop [%], Largest outgoing fuse in the panel [A]
+
+**Results:** Current normal [A], Supply switch normal [A], Feeder normal (planning value) [mm²], Current safety [A], Supply switch safety [A], Feeder safety (planning value) [mm²], Current UPS [A], Supply switch UPS [A], Feeder UPS (planning value) [mm²], Selectivity (rule of thumb)
+
+#### BACS panel: area and sections
+
+*Power sections from the component area with minimum spare, total width and footprint with door swing* — `ga_cabinet_area`
+
+```text
+Control panel area calculation at the design stage after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.2.5, fig. 11.12:
+• Supply and automation sections are fixed as whole sections (two supply types: one supply section at each end).
+• Power section by calculation: spread the sum of component mounting areas (dm²) over power sections until the spare (usable − required) / usable reaches the minimum (book: 20 %). Sketch large single parts (VFD, switch disconnector) – they cannot be split.
+• Usable area per power section = section width · usable width share · usable height. The defaults 80 % and 1.2 m (76.8 dm² at 0.8 m width) are our assumption; they reproduce the book example (218 dm² → 4 sections, 29.0 % spare).
+• Footprint: row width × (cabinet depth + door swing = widest section with a single door). Mind the escape route width in front of the panel as well.
+```
+
+**Inputs:** Mounting area power section [dm²], Width power section [m], Usable width share (ducts deducted) [%], Usable mounting height [m], Minimum spare [%], Supply sections, Width supply section [m], Automation sections, Width automation section [m], Cabinet depth [m], Doors
+
+**Results:** Power sections, Actual spare [%], Sections total, Width of the row [m], Depth with door swing [m], Footprint [m²], Usable area per power section [dm²]
+
+#### Cost calculation KG 480 and cost control
+
+*Data points × average price, plausibility against the AMEV indicator, deviation from the estimate* — `ga_cost_480`
+
+```text
+Building automation cost calculation at the design stage after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.2.10:
+• DIN 276 (2018) requires level 3 – six values for BACS: KG 481 automation equipment, 482 panels/automation centres, 483 automation management, 484 cables, wiring and containment, 485 data networks, 489 other; unit the data point.
+• Data points = physical and communicated from the BACS function list; account for cheaper communicated points by an adjusted average price.
+• AMEV GA, tab. 2: usual range 300 … 580 € per hardware data point (default 440 € = middle). Use project experience.
+• Cost control: calculation against the estimate, explain the deviation. VDI 6026 additionally requires a per-plant breakdown.
+```
+
+**Inputs:** Physical data points, Communicated data points, Average price per data point [€ / CHF], Cost estimate (stage 2) [€ / CHF]
+
+**Results:** Cost KG 480 [€], Data points total, Deviation from the estimate [%], Level 3 breakdown
+
+#### BACS design stage: dependencies on other trades
+
+| Direction | Topic | From / to | Purpose |
+|---|---|---|---|
+| Input | Floor plans | Architect, building services | Locations of panels and field devices, routes |
+| Input | Plant schematics | Heating, ventilation, cooling, plumbing | Basis of the automation schematics |
+| Input | Plant and function descriptions | Services designers | Control functions |
+| Input | List of electrical loads | HVAC, electrical | Power section, power balance |
+| Input | Thermal data of consumer circuits | Heating, cooling | Valve sizing (kvs, authority) |
+| Input | Ex zone and safety concepts | Client, experts | Device selection, safety functions |
+| Output | Building data | Architect, structural engineer | Panel footprints, openings, access panels |
+| Output | Electrical power balance | Electrical | Request supply capacity per supply type |
+| Output | Heat loads of the panels | Ventilation, cooling | Cooling of plant rooms |
+| Output | Scheduling | Project management | Allow for the BACS lag |
+
+*Summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.1.6. BACS design lags behind: it needs intermediate results from the plant design and returns results – agree a common planning status (design freeze).*
+
+#### BACS design stage: rules
+
+| Rule | Meaning for the design stage |
+|---|---|
+| HOAI 2021, Anlage 15 | Fee law; basic services a) to h) very general – to be detailed for BACS by further rules |
+| DIN EN ISO 16484 | Basic BACS standard (generally accepted rule), but without separation by stages |
+| VDI 3814 (old, 2003–2010) | Withdrawn but still the basis of many designs; part 1 no. 11.2 lists contents without stages |
+| VDI 3814 (new, from 2019) | Services per stage (part 2.2, no. 5.5); requires finished designs of other trades; only if agreed by contract |
+| VDI 6026 Blatt 1 (2022) | Detailed document contents per trade and stage (tab. 8 BACS), e.g. panel views, per-plant costs, maintenance areas |
+| AMEV GA | Power supply concept, assisting with lists (valves, meters), cost indicators 300–580 € per hardware data point |
+| DIN 276 (2018) | Cost calculation at level 3: KG 481–485 and 489, unit data point |
+
+*Summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 11.1.3. The contract decides which rule applies; without agreement coordinate early with the client. Check editions against the current status.*
+
+### Documents per trade
+
+#### Stage 3 documents per trade
+
+| KG | Schematics | Plans / sections | Calculation / sizing | Report / other |
+|---|---|---|---|---|
+| 410 waste water | Stacks, collectors and drains with sizes, lifting plants, backflow stops, separators, sewer connections | Pipes dimensioned to solid elements, DN and slope, invert levels, flow arrows at stacks, openings, roof outlets with catchment area | Foul and rain water (DIN 1986-100, EN 12056), frequency factor K 0.5/0.7/1.0, lifting plants, grease separators, soakaways | Agreement with disposer, fire and kitchen requirements, runoff coefficients, function description |
+| 412 drinking water | Cold, hot and circulation with sizes, heater, booster, treatment | Distances to elements, hot/cold separation, DN, risers with arrows, axis levels, openings | Pipe network per DIN 1988-300 (building type, minimum flow pressures, v_max), circulation, water heaters, cold/hot demand | Supply pressure, hygiene (VDI 6023 room book), pump and treatment sizing |
+| 420 heat | Function and riser schematics: generators, buffers, manifolds, pump groups, control valves, expansion vessels, heat exchangers with temperatures, pressures | Heating surfaces, valves, pumps, pipes with insulation, dimensioned to the axis, openings, venting at high points | Design heat load (EN 12831), room heating surfaces, network, all components, insulation matrix | Energy concept, system per room type, plant rooms, temperatures |
+| 430 ventilation | AHUs, fire dampers, VAV boxes, silencers, transfer units, special extract (kitchen, lab, batteries) | Room numbers and stamps, round/rectangular ducts dimensioned, air type, levels, insulation/fire cladding, components, air flows | Air flows per room (EN 16798), duct network per branch (+ about 10 % pressure-drop reserve), tightness class ATC, acoustics | Systems per area, duct velocities, humidity, design in the psychrometric chart |
+| 434 cooling | Chillers, re-coolers, buffers, manifolds, pump groups, fan coils, surface cooling | As heating: units, insulated pipes, levels, openings | Cooling load (VDI 2078), room cooling surfaces, network, components, insulation matrix | Cooling concept, temperatures, wiring and connection diagrams of chillers |
+| 440 electrical | MV, standby generation, PV, LV main, risers, sub-distributions, KNX, voltage drops, emergency lighting, bonding | Cable routes, installation, lighting, earthing, lightning protection | Power balance, transformer cooling, pressure relief, network calculation, route space, lighting, LPS separation distance | Luminaire catalogue, room conditions, data point list for BACS |
+| 450 communication and security | Door intercom, PA, fire alarm, voice alarm, intrusion, CCTV, access control, data networks | Detectors, loudspeakers, cameras, outlets; door details, rack layouts | Fire alarm design, PA calculation, further simulations | Fire detection and alarm concept per DIN 14675 |
+| 480 building automation | System architecture (topology) and automation schematics per plant | Control panels and routes in position, to scale, dimensioned; panel views | BACS function lists, power balance, supplies, panel areas, control valves | See group "Building automation (KG 480)" |
+
+*Checklist summarised after Vielhauer/Geyer/Hürst/Adelmann, Entwurfsplanung der Technischen Gebäudeausrüstung, Springer Vieweg 2025, ch. 5 to 11 (sections "planning documents"). Each row: what a design stage should contain at least. Plus a drawing list and document list per trade matching all plans, schematics and calculations.*
+
 ## Surge & lightning protection
 
 ### Power supply 230/400 V

@@ -29,6 +29,7 @@ qt_add_qml_module(ElektroRechner
         qml/Status.js
         qml/ChartView.qml
         qml/CategoryToggles.qml
+        qml/KindIcon.qml
 )
 
 target_compile_definitions(ElektroRechner PRIVATE ELC_APP_VERSION="${PROJECT_VERSION}")
@@ -47,7 +48,7 @@ set_target_properties(ElektroRechner PROPERTIES
     OUTPUT_NAME ElektroRechner
     # Android (Qt 6.5+ reads these; older versions ignore them)
     QT_ANDROID_VERSION_NAME ${PROJECT_VERSION}
-    QT_ANDROID_VERSION_CODE 13
+    QT_ANDROID_VERSION_CODE 14
 )
 
 # Optional app icon: app/icon/app.rc (Windows, IDI_ICON1 → .ico) and app/android/ (Android launcher icons in res/mipmap-*;

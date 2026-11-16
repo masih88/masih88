@@ -18,7 +18,7 @@ ApplicationWindow {
     Material.theme: Calc.darkTheme ? Material.Dark : Material.Light
     Material.primary: brand
     Material.accent: amber
-    color: Calc.darkTheme ? "#121722" : "#F3F5F8"
+    color: Calc.theme.bg
 
     function openItem(id) {
         const kind = Calc.kindOf(id)
@@ -75,9 +75,27 @@ ApplicationWindow {
                 ToolTip.text: Calc.favorites.indexOf(fid) >= 0 ? Calc.ui.favoriteRemove : Calc.ui.favoriteAdd
             }
             ToolButton {
-                text: Calc.language === "de" ? "EN" : "DE"
-                font.bold: true
+                id: langButton
                 onClicked: Calc.language = (Calc.language === "de" ? "en" : "de")
+                contentItem: Item {
+                    implicitWidth: 40
+                    implicitHeight: 26
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 13
+                        color: "transparent"
+                        border.color: "white"
+                        border.width: 1.5
+                        opacity: 0.55
+                    }
+                    Label {
+                        anchors.centerIn: parent
+                        text: Calc.language === "de" ? "EN" : "DE"
+                        color: "white"
+                        font.pixelSize: 12
+                        font.bold: true
+                    }
+                }
             }
             ToolButton {
                 visible: !(stack.currentItem && stack.currentItem.isSettings)

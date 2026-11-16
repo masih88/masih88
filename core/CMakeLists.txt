@@ -50,6 +50,8 @@ add_library(elc_core STATIC
     src/catalog/surge.cpp
     src/catalog/surge_apps.cpp
     src/catalog/surge_drawings.cpp
+    src/catalog/planning.cpp
+    src/catalog/hvac_symbols.cpp
     src/tables/tables.cpp
     src/tables/vdi_tables.cpp
     src/lists/lists.cpp

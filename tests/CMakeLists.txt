@@ -24,6 +24,7 @@ add_executable(elc_tests
     test_electrical.cpp
     test_v110.cpp
     test_v111.cpp
+    test_v112.cpp
 )
 target_link_libraries(elc_tests PRIVATE elc::core elc_warnings Catch2::Catch2WithMain)
 

@@ -1,0 +1,461 @@
+-- Android toolchain file within NDK detected: /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /usr/local/share/cmake-3.31/Modules/CMakeDetermineSystem.cmake:146 (include)
+  CMakeLists.txt:3 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /usr/local/share/cmake-3.31/Modules/CMakeDetermineSystem.cmake:146 (include)
+  CMakeLists.txt:3 (project)
+
+
+-- Android toolchain file within NDK detected: /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  CMakeLists.txt:3 (project)
+
+
+-- The CXX compiler identification is Clang 17.0.2
+-- Detecting CXX compiler ABI info
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-Vzu74U/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-Vzu74U/CMakeLists.txt:4 (project)
+
+
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/local/lib/android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-rDtb0z/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-rDtb0z/CMakeLists.txt:4 (project)
+
+
+-- Check if compiler accepts -pthread
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-dxvgd0/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-dxvgd0/CMakeLists.txt:4 (project)
+
+
+-- Check if compiler accepts -pthread - yes
+-- Performing Test HAVE_STDATOMIC
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-BjrvYG/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-BjrvYG/CMakeLists.txt:4 (project)
+
+
+-- Performing Test HAVE_STDATOMIC - Success
+-- Performing Test HAVE_EGL
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-CZGxEf/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-CZGxEf/CMakeLists.txt:4 (project)
+
+
+-- Performing Test HAVE_EGL - Success
+-- Found EGL: /usr/local/lib/android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include (found version "1.5")
+-- Performing Test HAVE_GLESv2
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-pkVqHh/CMakeLists.txt:4 (project)
+
+
+CMake Deprecation Warning at /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android-legacy.toolchain.cmake:34 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+Call Stack (most recent call first):
+  /usr/local/lib/android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake:54 (include)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6/qt.toolchain.cmake:80 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/3.31.6/CMakeSystem.cmake:6 (include)
+  /home/runner/work/masih88/masih88/build/CMakeFiles/CMakeScratch/TryCompile-pkVqHh/CMakeLists.txt:4 (project)
+
+
+-- Performing Test HAVE_GLESv2 - Success
+CMake Warning (dev) at /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6Core/Qt6CoreMacros.cmake:3409 (message):
+  Qt policy QTP0004 is not set: You need qmldir files for each extra
+  directory that contains .qml files for your module.  Check
+  https://doc.qt.io/qt-6/qt-cmake-policy-qtp0004.html for policy details.
+  Use the qt_policy command to set the policy and suppress this warning.
+
+Call Stack (most recent call first):
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:3520 (__qt_internal_setup_policy)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:916 (qt6_target_qml_sources)
+  /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:1254 (qt6_add_qml_module)
+  app/CMakeLists.txt:11 (qt_add_qml_module)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring 'ElektroRechner' for the following Android ABIs: arm64-v8a (default)
+-- Found android platform plugin at: /home/runner/work/_temp/Qt/6.8.3/android_arm64_v8a/plugins/platforms/libplugins_platforms_qtforandroid_arm64-v8a.so
+-- Configuring done (1.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/runner/work/masih88/masih88/build
+[1/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/cables.cpp.o
+[2/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/basics.cpp.o
+[3/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/cabledata.cpp.o
+[4/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/automation.cpp.o
+[5/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/electronics.cpp.o
+[6/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/motors.cpp.o
+[7/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/cleanroom.cpp.o
+[8/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/datacenter.cpp.o
+[9/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/pv.cpp.o
+[10/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/units.cpp.o
+[11/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/air.cpp.o
+[12/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/heating.cpp.o
+[13/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/control.cpp.o
+[14/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/explosion.cpp.o
+[15/114] Building CXX object core/CMakeFiles/elc_core.dir/src/registry.cpp.o
+[16/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/building.cpp.o
+[17/114] Building CXX object core/CMakeFiles/elc_core.dir/src/types.cpp.o
+[18/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/acoustics.cpp.o
+[19/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/thermocouple.cpp.o
+[20/114] Building CXX object core/CMakeFiles/elc_core.dir/src/formulas/electrical.cpp.o
+[21/114] Building CXX object core/CMakeFiles/elc_core.dir/src/instruments/instruments.cpp.o
+[22/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/controls.cpp.o
+[23/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/pid.cpp.o
+[24/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/process.cpp.o
+[25/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/basics.cpp.o
+[26/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/hydraulics.cpp.o
+[27/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/hvac.cpp.o
+[28/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/cleanroom.cpp.o
+[29/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/pv.cpp.o
+[30/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/datacenter.cpp.o
+[31/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/building.cpp.o
+[32/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/cables.cpp.o
+[33/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/industry.cpp.o
+[34/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/motors.cpp.o
+[35/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/converters.cpp.o
+[36/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/electronics.cpp.o
+[37/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/automation.cpp.o
+[38/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_power.cpp.o
+[39/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_cables.cpp.o
+[40/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_units.cpp.o
+[41/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_components.cpp.o
+[42/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_motors.cpp.o
+[43/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_tables.cpp.o
+[44/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/pinout_drawings.cpp.o
+[45/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/layout.cpp.o
+[46/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/motor_feeder.cpp.o
+[47/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/surge_drawings.cpp.o
+[48/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/surge.cpp.o
+[49/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_pinouts.cpp.o
+[50/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/surge_apps.cpp.o
+[51/114] Building CXX object core/CMakeFiles/elc_core.dir/src/tables/vdi_tables.cpp.o
+[52/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/planning.cpp.o
+[53/114] Building CXX object core/CMakeFiles/elc_core.dir/src/lists/lists.cpp.o
+[54/114] Building CXX object core/CMakeFiles/elc_core.dir/src/tables/tables.cpp.o
+[55/114] Copying ElektroRechner qml sources into build dir
+[56/114] Copying ElektroRechner qml resources into build dir
+[57/114] Building CXX object core/CMakeFiles/elc_core.dir/src/lists/loadlist.cpp.o
+[58/114] Building CXX object core/CMakeFiles/elc_core.dir/src/lists/cabletray.cpp.o
+[59/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/elec_resources.cpp.o
+[60/114] Building CXX object core/CMakeFiles/elc_core.dir/src/lists/gapoints.cpp.o
+[61/114] Building CXX object core/CMakeFiles/elc_core.dir/src/catalog/hvac_symbols.cpp.o
+[62/114] Linking CXX static library core/libelc_core.a
+[63/114] Automatic MOC and UIC for target ElektroRechner
+[64/114] Running AUTOMOC file extraction for target ElektroRechner
+[65/114] Running rcc for resource qmake_ElektroRechnerUi
+[66/114] Generating .rcc/qmlcache/ElektroRechner_qmlcache_loader.cpp
+[67/114] Running moc --collect-json for target ElektroRechner
+[68/114] Running rcc for resource ElektroRechner_raw_qml_0
+[69/114] Automatic QML type registration for target ElektroRechner
+[70/114] Generating .rcc/qmlcache/ElektroRechner_qml/TablePage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/TablePage_qml.cpp.aotstats
+[71/114] Generating .rcc/qmlcache/ElektroRechner_qml/ListPage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ListPage_qml.cpp.aotstats
+[72/114] Generating .rcc/qmlcache/ElektroRechner_qml/SettingsPage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/SettingsPage_qml.cpp.aotstats
+[73/114] Generating .rcc/qmlcache/ElektroRechner_qml/HomePage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/HomePage_qml.cpp.aotstats
+[74/114] Generating .rcc/qmlcache/ElektroRechner_qml/Main_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/Main_qml.cpp.aotstats
+[75/114] Generating .rcc/qmlcache/ElektroRechner_qml/ItemRow_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ItemRow_qml.cpp.aotstats
+[76/114] Generating .rcc/qmlcache/ElektroRechner_qml/Card_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/Card_qml.cpp.aotstats
+[77/114] Generating .rcc/qmlcache/ElektroRechner_qml/ResultView_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ResultView_qml.cpp.aotstats
+[78/114] Generating .rcc/qmlcache/ElektroRechner_qml/CalculatorPage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/CalculatorPage_qml.cpp.aotstats
+[79/114] Generating .rcc/qmlcache/ElektroRechner_qml/Status_js.cpp
+[80/114] Generating .rcc/qmlcache/ElektroRechner_qml/InputForm_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/InputForm_qml.cpp.aotstats
+[81/114] Generating .rcc/qmlcache/ElektroRechner_qml/ChartView_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ChartView_qml.cpp.aotstats
+[82/114] Generating .rcc/qmlcache/ElektroRechner_qml/ResultBar_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ResultBar_qml.cpp.aotstats
+[83/114] Generating .rcc/qmlcache/ElektroRechner_qml/CategoryToggles_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/CategoryToggles_qml.cpp.aotstats
+[84/114] Generating .rcc/qmlcache/ElektroRechner_qml/RowEditorPage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/RowEditorPage_qml.cpp.aotstats
+[85/114] Generating .rcc/qmlcache/ElektroRechner_qml/KindIcon_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/KindIcon_qml.cpp.aotstats
+[86/114] Generating .rcc/qmlcache/ElektroRechner_qml/ProjectListPage_qml.cpp, .rcc/qmlcache/ElektroRechner_qml/ProjectListPage_qml.cpp.aotstats
+[87/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.qt/rcc/qrc_qmake_ElektroRechnerUi.cpp.o
+[88/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/elektrorechner_qmltyperegistrations.cpp.o
+[89/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/ElektroRechner_autogen/mocs_compilation.cpp.o
+[90/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qmlcache_loader.cpp.o
+[91/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/UiStrings.cpp.o
+[92/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/main.cpp.o
+[93/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/Main_qml.cpp.o
+[94/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ListPage_qml.cpp.o
+[95/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/HomePage_qml.cpp.o
+[96/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/CalculatorPage_qml.cpp.o
+[97/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/SettingsPage_qml.cpp.o
+[98/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/TablePage_qml.cpp.o
+[99/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ItemRow_qml.cpp.o
+[100/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ResultView_qml.cpp.o
+[101/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/Card_qml.cpp.o
+[102/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/CalcBridge.cpp.o
+[103/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/InputForm_qml.cpp.o
+[104/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ResultBar_qml.cpp.o
+[105/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ChartView_qml.cpp.o
+[106/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.qt/rcc/qrc_ElektroRechner_raw_qml_0.cpp.o
+[107/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/Status_js.cpp.o
+[108/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/ProjectListPage_qml.cpp.o
+[109/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/CategoryToggles_qml.cpp.o
+[110/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/RowEditorPage_qml.cpp.o
+[111/114] Building CXX object app/CMakeFiles/ElektroRechner.dir/.rcc/qmlcache/ElektroRechner_qml/KindIcon_qml.cpp.o
+[112/114] Linking CXX shared module app/libElektroRechner_arm64-v8a.so
+[113/114] Copying ElektroRechner binary to apk folder
+[114/114] Creating APK for ElektroRechner
+Generating Android Package
+  Input file: /home/runner/work/masih88/masih88/build/app/android-ElektroRechner-deployment-settings.json
+  Output directory: /home/runner/work/masih88/masih88/build/app/android-build/
+  Application binary: ElektroRechner
+  Android build platform: android-36-ext19
+  Install to device: No
+Warning: QML import could not be resolved in any of the import paths: QtQuick.Controls.Windows
+Warning: QML import could not be resolved in any of the import paths: QtQuick.Controls.macOS
+Warning: QML import could not be resolved in any of the import paths: QtQuick.Controls.iOS
+Downloading https://services.gradle.org/distributions/gradle-8.10-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.10!
+
+Here are the highlights of this release:
+ - Support for Java 23
+ - Faster configuration cache
+ - Better configuration cache reports
+
+For more details see https://docs.gradle.org/8.10/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 36
+
+This Android Gradle plugin (8.6.0) was tested up to compileSdk = 35.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 36.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 36 is available.
+
+For more information refer to the compatibility table:
+https://d.android.com/r/tools/api-level-support
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=36
+to this project's gradle.properties.
+> Task :preBuild UP-TO-DATE
+> Task :preReleaseBuild UP-TO-DATE
+> Task :javaPreCompileRelease
+> Task :generateReleaseResValues
+> Task :checkReleaseAarMetadata
+> Task :mapReleaseSourceSetPaths
+> Task :generateReleaseResources
+> Task :packageReleaseResources
+> Task :mergeReleaseResources
+> Task :createReleaseCompatibleScreenManifests
+> Task :extractDeepLinksRelease
+> Task :parseReleaseLocalResources
+
+> Task :processReleaseMainManifest
+package="org.qtproject.example.ElektroRechner" found in source AndroidManifest.xml: /home/runner/work/masih88/masih88/build/app/android-build/AndroidManifest.xml.
+Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
+Recommendation: remove package="org.qtproject.example.ElektroRechner" from the source AndroidManifest.xml: /home/runner/work/masih88/masih88/build/app/android-build/AndroidManifest.xml.
+
+> Task :processReleaseManifest
+> Task :extractProguardFiles
+> Task :mergeReleaseJniLibFolders
+> Task :mergeReleaseNativeLibs
+> Task :checkReleaseDuplicateClasses
+> Task :processReleaseManifestForPackage
+> Task :stripReleaseDebugSymbols
+> Task :mergeReleaseStartupProfile
+> Task :processReleaseResources
+> Task :mergeReleaseArtProfile
+> Task :extractReleaseNativeSymbolTables
+> Task :desugarReleaseFileDependencies
+> Task :compileReleaseJavaWithJavac
+> Task :generateReleaseLintVitalReportModel
+> Task :dexBuilderRelease
+> Task :mergeReleaseNativeDebugMetadata
+> Task :lintVitalAnalyzeRelease
+> Task :mergeReleaseShaders
+> Task :mergeReleaseGlobalSynthetics
+> Task :compileReleaseShaders NO-SOURCE
+> Task :generateReleaseAssets UP-TO-DATE
+> Task :lintVitalReportRelease
+> Task :mergeReleaseAssets
+> Task :lintVitalRelease
+> Task :compressReleaseAssets
+> Task :extractReleaseVersionControlInfo
+> Task :processReleaseJavaRes NO-SOURCE
+> Task :collectReleaseDependencies
+> Task :optimizeReleaseResources
+> Task :sdkReleaseDependencyData
+> Task :writeReleaseAppMetadata
+> Task :writeReleaseSigningConfigVersions
+> Task :mergeReleaseJavaResource
+> Task :mergeExtDexRelease
+> Task :mergeDexRelease
+> Task :compileReleaseArtProfile
+> Task :packageRelease
+> Task :createReleaseApkListingFileRedirect
+> Task :assembleRelease
+
+BUILD SUCCESSFUL in 49s
+46 actionable tasks: 46 executed
+Android package built successfully in 50.466 ms.
+  -- File: /home/runner/work/masih88/masih88/build/app/android-build//build/outputs/apk/release/android-build-release-unsigned.apk
+Gebaute APK: build/app/android-build/ElektroRechner.apk
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): false
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+-rw-r--r-- 1 runner runner 24594719 Nov 16 20:14 ElektroRechner-1.12.0.apk
